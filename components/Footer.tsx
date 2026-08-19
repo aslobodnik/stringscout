@@ -9,6 +9,20 @@ const GITHUB_PATH =
 const X_PATH =
   "M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z";
 
+function Icon({ path }: { path: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d={path} />
+    </svg>
+  );
+}
+
 function IconLink({
   href,
   label,
@@ -24,17 +38,9 @@ function IconLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="text-ink-soft hover:text-gold focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out"
+      className="hover:text-ink focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out"
     >
-      <svg
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d={path} />
-      </svg>
+      <Icon path={path} />
     </a>
   );
 }
@@ -46,9 +52,20 @@ export default function Footer() {
         Not affiliated with ICANN. All data self- or press-reported. Updated{" "}
         {lastUpdated}.
       </p>
-      <div className="flex items-center gap-4 ml-auto">
+      <div className="flex items-center gap-3 ml-auto">
+        <span className="label !text-[10px] !tracking-[0.14em]">Developed by</span>
+        <a
+          href={X_PROFILE}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 hover:text-ink focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out"
+        >
+          <Icon path={X_PATH} />
+          <span className="underline decoration-rule hover:decoration-gold">
+            alexslobodnik
+          </span>
+        </a>
         <IconLink href={REPO} label="Stringscout on GitHub" path={GITHUB_PATH} />
-        <IconLink href={X_PROFILE} label="Alex Slobodnik on X" path={X_PATH} />
       </div>
     </footer>
   );
