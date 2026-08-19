@@ -58,7 +58,7 @@ export type Mark = "p" | "u" | "i";
 
 export const MARKS: { mark: Mark; label: string }[] = [
   { mark: "p", label: "stated primary" },
-  { mark: "u", label: "primary or backup not stated" },
+  { mark: "u", label: "unknown if primary or secondary" },
   { mark: "i", label: "stated intent, application not confirmed" },
 ];
 
