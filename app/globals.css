@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f4efe3;
+  --paper-deep: #ece5d3;
+  --ink: #211d15;
+  --ink-soft: #6b6353;
+  --rule: rgba(33, 29, 21, 0.25);
+  --rule-faint: rgba(33, 29, 21, 0.12);
+  --gold: #8a5f1a;
+  --oxblood: #6e2a24;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-rule-faint: var(--rule-faint);
+  --color-gold: var(--gold);
+  --color-oxblood: var(--oxblood);
+  --font-jost: var(--font-jost);
+  --font-oldstandard: var(--font-oldstandard);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-jost), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Period print device: heavy rule over hairline. */
+.double-rule {
+  border-top: 3px solid var(--ink);
+  position: relative;
+}
+.double-rule::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.label {
+  font-family: var(--font-jost), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.serif {
+  font-family: var(--font-oldstandard), serif;
+}
+
+sup.src a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.65em;
+  letter-spacing: 0.05em;
+}
+sup.src a:hover {
+  color: var(--oxblood);
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
