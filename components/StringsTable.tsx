@@ -278,7 +278,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
           title="Download the strings below as CSV, punycode included"
           className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
         >
-          Export CSV
+          CSV
           <span
             aria-hidden
             className="text-[9px] text-rule group-hover:text-gold transition-colors duration-200 ease-in-out"
