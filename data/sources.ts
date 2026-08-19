@@ -122,6 +122,13 @@ export const sources: Source[] = [
     url: "https://domainnamewire.com/2026/08/19/namecheap-starlight/",
     date: "2026-08-19",
   },
+  {
+    id: "di",
+    outlet: "Domain Incite",
+    title: "Second new gTLD contention set revealed",
+    url: "https://domainincite.com/30812-second-new-gtld-contention-set-revealed",
+    date: "2025-02-27",
+  },
 ];
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));
