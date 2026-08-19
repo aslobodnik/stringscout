@@ -245,9 +245,9 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
             setQ(e.target.value);
             setPage(0);
           }}
-          placeholder="Search string or applicant…"
+          placeholder="Search…"
           aria-label="Search strings"
-          className="border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full sm:w-72 placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out"
+          className="border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full sm:w-44 placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out"
         />
         <ApplicantSelect
           options={applicantOptions}
