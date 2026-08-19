@@ -54,17 +54,7 @@ export default function Footer() {
       </p>
       <div className="flex items-center gap-3 ml-auto">
         <span className="label !text-[10px] !tracking-[0.14em]">Developed by</span>
-        <a
-          href={X_PROFILE}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 hover:text-ink focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out"
-        >
-          <Icon path={X_PATH} />
-          <span className="underline decoration-rule hover:decoration-gold">
-            alexslobodnik
-          </span>
-        </a>
+        <IconLink href={X_PROFILE} label="Alex Slobodnik on X" path={X_PATH} />
         <IconLink href={REPO} label="Stringscout on GitHub" path={GITHUB_PATH} />
       </div>
     </footer>
