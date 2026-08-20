@@ -297,9 +297,13 @@ function Legend({
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
+            {/* selected, the whole control is one ink field — a bordered
+                swatch inside it just reads as a box in a box */}
             <span
               aria-hidden
-              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${BLOCK[mark]}`}
+              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
+                on ? "border-paper/45 text-paper" : BLOCK[mark]
+              }`}
             >
               {mark}
             </span>
