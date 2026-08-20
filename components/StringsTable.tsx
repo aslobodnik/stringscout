@@ -571,7 +571,8 @@ export default function StringsTable({
                         }
                         className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
                       >
-                        .{r.tld}
+                        <span className="text-gold">.</span>
+                        {r.tld}
                         <span role="tooltip" className={`${TIP_BOX} serif italic`}>
                           “{r.gloss}”
                         </span>
@@ -583,13 +584,18 @@ export default function StringsTable({
                       )}
                     </>
                   ) : (
-                    <>.{r.tld}</>
+                    <>
+                      <span className="text-gold">.</span>
+                      {r.tld}
+                    </>
                   )}
                   {r.issues.map((issue) => (
                     <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
                   ))}
                 </td>
                 <td className="py-2 pr-4">
+                  <span className="flex items-baseline gap-2">
+                  <span>
                   {r.applicants.map(({ name, mark }, i) => {
                     // keep the marker glued to the last word so it can't
                     // wrap onto a line of its own on narrow screens
@@ -623,10 +629,30 @@ export default function StringsTable({
                       </span>
                     );
                   })}
+                  </span>
+                  {/* dot leader binds the row to its overlap tally, index-style */}
+                  <span
+                    aria-hidden
+                    className={`flex-1 min-w-4 -translate-y-[3px] border-b border-dotted ${
+                      r.overlap ? "border-oxblood/40" : "border-rule-faint"
+                    }`}
+                  />
+                  </span>
                 </td>
                 <td className="py-2 whitespace-nowrap text-right">
                   {r.overlap && (
-                    <span className="label text-oxblood">×{r.count}</span>
+                    <>
+                      {/* ledger tally: one stroke per applicant */}
+                      <span
+                        aria-hidden
+                        className="inline-flex items-baseline gap-[3px]"
+                      >
+                        {Array.from({ length: r.count }, (_, i) => (
+                          <i key={i} className="inline-block w-px h-3.5 bg-oxblood" />
+                        ))}
+                      </span>
+                      <span className="sr-only">{r.count} applicants</span>
+                    </>
                   )}
                 </td>
               </tr>
