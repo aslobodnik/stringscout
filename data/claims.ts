@@ -69,8 +69,14 @@ const suffix = expand(
   "primary"
 );
 
+// Four applicants named exactly one string and referred to "the application"
+// in the singular. AGB Appendix 1 Question Set 5 designates the applied-for
+// string as TAMS.1, the primary, and §5.1 allows at most one replacement, so a
+// single-string applicant has necessarily named its primary. None of the four
+// used the word, which is why they sat at "unknown" until this was decided.
+
 // Wiz — .bitcoin community priority application.
-const wiz = expand(["bitcoin"], "wiz", ["cb"]);
+const wiz = expand(["bitcoin"], "wiz", ["cb"], "primary");
 
 // USA Made in America — .factory, stated as its only primary string.
 const usamade = expand(["factory"], "usamade", ["gnw-factory"], "primary");
@@ -98,7 +104,7 @@ const phoenix = expand(
 const kasmi = expand(["bit", "ion"], "kasmi", ["kasmi-x"]);
 
 // Sui Naming Limited — .sui per SuiNS X post.
-const suinaming = expand(["sui"], "suinaming", ["suins-x"]);
+const suinaming = expand(["sui"], "suinaming", ["suins-x"], "primary");
 
 // Name Space LLC — 10 primary strings named to Domain Name Wire; replacement
 // strings undisclosed.
@@ -110,10 +116,10 @@ const namespace = expand(
 );
 
 // Telegram — .gram per Pavel Durov's X post.
-const telegram = expand(["gram"], "telegram", ["durov-x"]);
+const telegram = expand(["gram"], "telegram", ["durov-x"], "primary");
 
 // easyGroup Ltd — .easy dotBrand per its RNS announcement.
-const easygroup = expand(["easy"], "easygroup", ["easy-rns"]);
+const easygroup = expand(["easy"], "easygroup", ["easy-rns"], "primary");
 
 // Starlight Registry — 40 strings named to Domain Name Wire, listed there as
 // its primary applications.
