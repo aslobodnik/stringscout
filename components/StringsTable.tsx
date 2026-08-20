@@ -110,17 +110,22 @@ function ApplicantSelect({
             className="paper-scroll absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
           >
             {items.map((v) => (
-              <li key={v} role="option" aria-selected={v === value}>
+              <li
+                key={v}
+                role="option"
+                aria-selected={v === value}
+                className="border-t border-dotted border-rule first:border-t-0"
+              >
                 <button
                   type="button"
                   onClick={() => {
                     onChange(v);
                     setOpen(false);
                   }}
-                  className={`label block w-full text-left px-3 py-3 cursor-pointer transition-colors duration-200 ease-in-out border-t border-dotted first:border-t-0 ${
+                  className={`label block w-full text-left px-3 py-3 cursor-pointer transition-colors duration-200 ease-in-out ${
                     v === value
-                      ? "bg-ink text-paper border-ink"
-                      : "text-ink hover:bg-paper-deep border-rule"
+                      ? "bg-ink text-paper"
+                      : "text-ink hover:bg-paper-deep"
                   }`}
                 >
                   {labelFor(v)}
