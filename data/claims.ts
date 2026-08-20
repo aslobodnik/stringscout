@@ -129,6 +129,16 @@ const starlight = expand(
   "primary"
 );
 
+// Pre-window intent announcements, per Domain Incite. Not applications: the
+// "intent" kind keeps them visible in the table without counting them as
+// disclosed strings.
+const intents = [
+  ...expand(["anime", "manga"], "unstoppable", ["di"], "intent"),
+  ...expand(["anime"], "d3", ["di"], "intent"),
+  ...expand(["chain"], "freename", ["di"], "intent"),
+  ...expand(["chain"], "3dns", ["di"], "intent"),
+];
+
 export const claims: Claim[] = [
   ...oinkadot,
   ...lfg,
@@ -146,4 +156,5 @@ export const claims: Claim[] = [
   ...telegram,
   ...easygroup,
   ...starlight,
+  ...intents,
 ];

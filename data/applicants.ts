@@ -1,5 +1,10 @@
+export type ApplicantStatus = "disclosed" | "intent";
+
 export type Applicant = {
   slug: string;
+  // "intent" = announced before the window opened, no confirmed filing.
+  // Promote to "disclosed" once the applicant confirms it filed.
+  status: ApplicantStatus;
   name: string;
   backers: string;
   applicationCount: string;
@@ -12,6 +17,7 @@ export type Applicant = {
 export const applicants: Applicant[] = [
   {
     slug: "oinkadot",
+    status: "disclosed",
     name: "Oinkadot",
     backers: "Ray King (Porkbun CEO) + Todd Han (Dynadot CEO)",
     applicationCount: "25",
@@ -22,6 +28,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "lfg",
+    status: "disclosed",
     name: "Link Freedom Group",
     backers: "Vaughn Liley, CEO",
     applicationCount: "316",
@@ -32,6 +39,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "ibest",
+    status: "disclosed",
     name: "internet.Best",
     backers: "Cyril Frémont, CEO",
     applicationCount: "10",
@@ -42,6 +50,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "endpoint",
+    status: "disclosed",
     name: "Endpoint Domains, Inc.",
     backers: "Michael Blend (System1 CEO) + Josh Jones (DreamHost co-founder)",
     applicationCount: "8",
@@ -52,6 +61,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "jttw",
+    status: "disclosed",
     name: "Journey To The West Corporation",
     backers: "China-based · people undisclosed",
     applicationCount: "323",
@@ -62,6 +72,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "phoenix",
+    status: "disclosed",
     name: "Phoenix Domain Partners",
     backers: "People undisclosed",
     applicationCount: "13",
@@ -72,6 +83,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "kasmi",
+    status: "disclosed",
     name: "Youness Kasmi",
     backers: "@kasmiyouness1 · entity undisclosed",
     applicationCount: "2",
@@ -82,6 +94,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "suinaming",
+    status: "disclosed",
     name: "Sui Naming Limited",
     backers: "SuiNS (Sui Name Service)",
     applicationCount: "1",
@@ -92,6 +105,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "suffix",
+    status: "disclosed",
     name: "Suffix Inc.",
     backers: "Tom (@T0M_3D), founder",
     applicationCount: "13",
@@ -102,6 +116,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "wiz",
+    status: "disclosed",
     name: "Wiz",
     backers: "Operator of mempool.space",
     applicationCount: "1",
@@ -112,6 +127,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "usamade",
+    status: "disclosed",
     name: "USA Made in America Inc.",
     backers: "Colin Campbell + Michele Van Tilborg",
     applicationCount: "1",
@@ -122,6 +138,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "tld1",
+    status: "disclosed",
     name: "TLD1 LLC",
     backers: "John Alagna, CEO · Joe Alagna, advisor",
     applicationCount: "4",
@@ -132,6 +149,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "namespace",
+    status: "disclosed",
     name: "Name Space LLC",
     backers: "Gerardo Aristizabal, CEO of CCI",
     applicationCount: "10",
@@ -142,6 +160,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "telegram",
+    status: "disclosed",
     name: "Telegram",
     backers: "Pavel Durov, founder & CEO",
     applicationCount: "1",
@@ -152,6 +171,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "easygroup",
+    status: "disclosed",
     name: "easyGroup Ltd",
     backers: "Sir Stelios Haji-Ioannou",
     applicationCount: "1",
@@ -162,6 +182,7 @@ export const applicants: Applicant[] = [
   },
   {
     slug: "starlight",
+    status: "disclosed",
     name: "Starlight Registry",
     backers: "Namecheap · Hillan Klein, CEO of Namecheap and Spaceship",
     applicationCount: "40",
@@ -169,5 +190,49 @@ export const applicants: Applicant[] = [
     revealedOn: "2026-08-19",
     note: null,
     sourceIds: ["dnw-starlight"],
+  },
+  {
+    slug: "unstoppable",
+    status: "intent",
+    name: "Unstoppable Domains",
+    backers: "With Kintsugi Global",
+    applicationCount: "2",
+    feesPaid: null,
+    revealedOn: "2024-06",
+    note: null,
+    sourceIds: ["di"],
+  },
+  {
+    slug: "d3",
+    status: "intent",
+    name: "D3",
+    backers: "With Animecoin Foundation and Azuki",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2025-02-27",
+    note: null,
+    sourceIds: ["di"],
+  },
+  {
+    slug: "freename",
+    status: "intent",
+    name: "Freename.io",
+    backers: "People undisclosed",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2025-02-27",
+    note: null,
+    sourceIds: ["di"],
+  },
+  {
+    slug: "3dns",
+    status: "intent",
+    name: "3DNS",
+    backers: "People undisclosed",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2025-02-27",
+    note: null,
+    sourceIds: ["di"],
   },
 ];

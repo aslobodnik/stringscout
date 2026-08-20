@@ -2,7 +2,6 @@ import { claims, type Claim } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { existingTlds } from "@/data/existingTlds";
-import { intents } from "@/data/intents";
 
 export type StringRow = {
   tld: string;
@@ -90,34 +89,13 @@ export function applicantMarks(
 
 export function stats() {
   const rows = stringRows();
+  // Applicant and string counts are applied-only: an intent announcement is
+  // not a disclosed string. Overlaps do count intent, since a pre-window
+  // announcement on the same string is exactly the collision worth seeing.
   return {
-    applicants: applicants.length,
+    applicants: applicants.filter((a) => a.status === "disclosed").length,
     strings: rows.length,
     contested: rows.filter((r) => r.contested).length,
-    claims: claims.length,
+    claims: claims.filter((c) => c.kind !== "intent").length,
   };
-}
-
-// Pre-window intent announcements, grouped by string. Deliberately separate
-// from stringRows(): none of these is an application, so none of them belongs
-// in the main table or the counts.
-export type IntentRow = {
-  tld: string;
-  announcers: { name: string; partners: string | null; announcedOn: string }[];
-  sourceIds: string[];
-};
-
-export function intentRows(): IntentRow[] {
-  const byTld = new Map<string, IntentRow>();
-  for (const i of intents) {
-    const row = byTld.get(i.tld) ?? { tld: i.tld, announcers: [], sourceIds: [] };
-    row.announcers.push({
-      name: i.announcer,
-      partners: i.partners,
-      announcedOn: i.announcedOn,
-    });
-    row.sourceIds = [...new Set([...row.sourceIds, ...i.sourceIds])];
-    byTld.set(i.tld, row);
-  }
-  return [...byTld.values()].sort((a, b) => a.tld.localeCompare(b.tld));
 }

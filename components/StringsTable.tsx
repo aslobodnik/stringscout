@@ -179,12 +179,18 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
   const [q, setQ] = useState("");
   const [applicant, setApplicant] = useState("all");
   const [contestedOnly, setContestedOnly] = useState(false);
+  const [existingOnly, setExistingOnly] = useState(false);
   const [page, setPage] = useState(0);
   const [pinned, setPinned] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
     key: "tld",
     dir: 1,
   });
+
+  const existingCount = useMemo(
+    () => rows.filter((r) => r.existing).length,
+    [rows]
+  );
 
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
@@ -200,6 +206,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
     const needle = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
+      if (existingOnly && !r.existing) return false;
       if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
         return false;
       if (
@@ -210,7 +217,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
         return false;
       return true;
     });
-  }, [rows, q, applicant, contestedOnly]);
+  }, [rows, q, applicant, contestedOnly, existingOnly]);
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -286,6 +293,24 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
             ↓
           </span>
         </button>
+        {existingCount > 0 && (
+          <button
+            type="button"
+            aria-pressed={existingOnly}
+            onClick={() => {
+              setExistingOnly((v) => !v);
+              setPage(0);
+            }}
+            title="Strings that are already delegated TLDs and cannot be applied for"
+            className={`label !text-[10px] cursor-pointer border-b border-dotted transition-colors duration-200 ease-in-out ${
+              existingOnly
+                ? "text-oxblood border-oxblood"
+                : "text-ink-soft border-rule hover:text-oxblood hover:border-oxblood"
+            }`}
+          >
+            Already delegated ({existingCount})
+          </button>
+        )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
 
@@ -384,12 +409,20 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
                     <>.{r.tld}</>
                   )}
                   {r.existing && (
-                    <span className="group relative label text-oxblood ml-2 !text-[9px]">
+                    <button
+                      type="button"
+                      aria-pressed={existingOnly}
+                      onClick={() => {
+                        setExistingOnly((v) => !v);
+                        setPage(0);
+                      }}
+                      className="group relative label text-oxblood ml-2 !text-[9px] cursor-pointer"
+                    >
                       existing tld
                       <span role="tooltip" className={TIP_BOX}>
                         Already in the IANA root zone
                       </span>
-                    </span>
+                    </button>
                   )}
                 </td>
                 <td className="py-2 pr-4">

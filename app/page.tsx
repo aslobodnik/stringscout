@@ -1,5 +1,5 @@
 import { sources } from "@/data/sources";
-import { applicantMarks, intentRows, stats, stringRows } from "@/lib/derive";
+import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
@@ -16,7 +16,6 @@ function SectionHead({ n, title }: { n: string; title: string }) {
 export default function Home() {
   const s = stats();
   const rows = stringRows();
-  const intents = intentRows();
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
@@ -75,66 +74,9 @@ export default function Home() {
         />
       </section>
 
-      {/* Pre-window intent */}
-      <section className="mb-14">
-        <SectionHead n="II" title="Intent Announcements" />
-        <p className="text-sm text-ink-soft mb-5 max-w-2xl">
-          Announced before the application window opened, with no confirmed
-          filing. Not counted above.
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse sm:min-w-[480px]">
-            <thead>
-              <tr className="text-left">
-                {["String", "Announced by", "Announced"].map((h, i) => (
-                  <th
-                    key={h}
-                    className={`label text-ink-soft pb-2 font-medium ${
-                      i < 2 ? "pr-4" : ""
-                    }`}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {intents.map((r) => (
-                <tr key={r.tld} className="border-t border-rule-faint align-top">
-                  <td className="py-2 pr-4 font-medium whitespace-nowrap">
-                    .{r.tld}
-                  </td>
-                  <td className="py-2 pr-4">
-                    {r.announcers.map((a, i) => (
-                      <span key={a.name}>
-                        {i > 0 && <span className="text-ink-soft"> · </span>}
-                        {a.name}
-                        <sup className="ml-px text-[9px] text-gold">i</sup>
-                        {a.partners && (
-                          <span className="text-ink-soft"> with {a.partners}</span>
-                        )}
-                      </span>
-                    ))}
-                  </td>
-                  <td className="py-2 whitespace-nowrap text-ink-soft">
-                    {[...new Set(r.announcers.map((a) => a.announcedOn))].join(
-                      " · "
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-4 label text-ink-soft !text-[10px] !tracking-[0.08em]">
-          <sup className="text-gold">i</sup> stated intent, application not
-          confirmed
-        </p>
-      </section>
-
       {/* Sources */}
       <section className="mb-14">
-        <SectionHead n="III" title="Sources" />
+        <SectionHead n="II" title="Sources" />
         <ol className="text-sm space-y-2">
           {sources.map((src, i) => (
             <li key={src.id} id={`src-${i + 1}`} className="flex gap-3">
