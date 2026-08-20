@@ -102,7 +102,7 @@ export type Mark = "p" | "u" | "i";
 export const MARKS: { mark: Mark; label: string }[] = [
   { mark: "p", label: "stated primary" },
   { mark: "u", label: "unknown if primary or secondary" },
-  { mark: "i", label: "stated intent, application not confirmed" },
+  { mark: "i", label: "intent to apply" },
 ];
 
 const RANK: Record<Mark, number> = { p: 0, u: 1, i: 2 };

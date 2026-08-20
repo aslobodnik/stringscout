@@ -611,15 +611,6 @@ export default function StringsTable({
             }}
           />
         )}
-        {markFilter && (
-          <FilterChip
-            label={MARK_LABEL[markFilter]}
-            onClear={() => {
-              setMarkFilter(null);
-              setPage(0);
-            }}
-          />
-        )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
 
