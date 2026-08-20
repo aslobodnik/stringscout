@@ -1,17 +1,7 @@
-import { sources } from "@/data/sources";
 import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
-
-function SectionHead({ n, title }: { n: string; title: string }) {
-  return (
-    <div className="double-rule pt-4 mb-5 flex items-baseline justify-between">
-      <h2 className="label !text-sm text-ink">{title}</h2>
-      <span className="label text-ink-soft">{n}</span>
-    </div>
-  );
-}
 
 export default function Home() {
   const s = stats();
@@ -23,7 +13,7 @@ export default function Home() {
       <TopBar current="/" />
       <header className="pt-8 pb-8">
         <div className="double-rule" />
-        <h1 className="mt-5 flex uppercase font-medium leading-[0.82] tracking-[0.12em] text-[clamp(2.75rem,9vw,5.5rem)]">
+        <h1 className="mt-5 flex uppercase font-medium leading-[0.85] tracking-[0.14em] text-[clamp(1.75rem,4.5vw,2.75rem)]">
           <span>String</span>
           <span className="text-gold">scout</span>
         </h1>
