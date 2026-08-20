@@ -386,7 +386,7 @@ function StatTiles({
   const cap =
     "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
   const tiles = [
-    { v: s.applicants, l: "Applicants revealed", href: "/applicants" },
+    { v: s.applicants, l: "Applicants", href: "/applicants" },
     { v: s.strings, l: "Strings disclosed", act: onAll, title: "Show every string" },
     {
       v: s.contested,
