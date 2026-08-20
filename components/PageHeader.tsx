@@ -1,8 +1,11 @@
 import Link from "next/link";
 
+// /withdrawn is deliberately absent: it exists for the record, reachable by
+// typing the path, but it is not something to send a reader to.
 const NAV = [
   { href: "/", label: "Strings" },
   { href: "/applicants", label: "Applicants" },
+  { href: "/sources", label: "Sources" },
 ];
 
 export function TopBar({ current }: { current: string }) {

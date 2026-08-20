@@ -70,3 +70,22 @@ sup.src a:hover {
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
+
+/* The applicant list scrolls against paper; the browser's default scrollbar
+   cuts a white gutter straight through it. */
+.paper-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) var(--paper-deep);
+}
+.paper-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+.paper-scroll::-webkit-scrollbar-track {
+  background: var(--paper-deep);
+}
+.paper-scroll::-webkit-scrollbar-thumb {
+  background: var(--rule);
+}
+.paper-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-soft);
+}

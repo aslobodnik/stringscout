@@ -1,7 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
-import { MARKS, type Issue, type Mark } from "@/lib/derive";
+import { useSearchParams } from "next/navigation";
+import { MARKS, type Mark } from "@/lib/marks";
+import type { Issue } from "@/lib/derive";
+import { matches } from "@/lib/search";
+import { formatDate, slugify } from "@/lib/format";
+
+// Passed in from the server rather than imported: this is the only client
+// component, and importing @/data/sources drags the whole announced dataset
+// and every claim into the browser bundle for 62 entries it actually reads.
+export type Citation = { n: number; outlet: string; date: string };
+export type Citations = Record<string, Citation>;
 
 export type UiStringRow = {
   tld: string;
@@ -9,19 +20,24 @@ export type UiStringRow = {
   gloss?: string; // English translation, shown on hover for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
-  applicants: { name: string; mark: Mark }[];
+  applicants: { name: string; mark: Mark; sourceIds: string[] }[];
   overlap: boolean;
   count: number;
 };
 
 const PAGE = 25;
+const MIN_ROWS = 12; // floor, so typing never collapses the page under the reader
+const DEBOUNCE_MS = 180;
 
+// applicants, markers and sources stay parallel: index n of each describes
+// the same applicant on that string.
 const CSV_COLS = [
   "string",
   "punycode",
   "english",
   "applicants",
   "markers",
+  "sources",
   "applicant_count",
   "overlap",
   "existing_tld",
@@ -31,7 +47,7 @@ const CSV_COLS = [
 const csvCell = (v: string) =>
   /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
-function toCsv(rows: UiStringRow[]): string {
+function toCsv(rows: UiStringRow[], cites: Citations): string {
   const lines = rows.map((r) =>
     [
       r.tld,
@@ -39,6 +55,14 @@ function toCsv(rows: UiStringRow[]): string {
       r.gloss ?? "",
       r.applicants.map((a) => a.name).join("; "),
       r.applicants.map((a) => a.mark).join("; "),
+      r.applicants
+        .map((a) =>
+          a.sourceIds
+            .map((id) => cites[id]?.n)
+            .filter(Boolean)
+            .join("+")
+        )
+        .join("; "),
       String(r.count),
       r.overlap ? "yes" : "no",
       r.existing ? "yes" : "no",
@@ -51,16 +75,19 @@ function toCsv(rows: UiStringRow[]): string {
   return `\uFEFF${CSV_COLS.join(",")}\n${lines.join("\n")}\n`;
 }
 
-function downloadCsv(rows: UiStringRow[]) {
+function downloadCsv(rows: UiStringRow[], scope: string, cites: Citations) {
   const stamp = new Date().toISOString().slice(0, 10);
   const url = URL.createObjectURL(
-    new Blob([toCsv(rows)], { type: "text/csv;charset=utf-8" })
+    new Blob([toCsv(rows, cites)], { type: "text/csv;charset=utf-8" })
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = `stringscout-${stamp}.csv`;
+  a.download = `stringscout-${scope}-${stamp}.csv`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  // revoking synchronously cancels the download in Safari and Firefox
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function ApplicantSelect({
@@ -95,10 +122,15 @@ function ApplicantSelect({
           <Backdrop onClose={() => setOpen(false)} />
           <ul
             role="listbox"
-            className="absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
+            className="paper-scroll absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
           >
             {items.map((v) => (
-              <li key={v} role="option" aria-selected={v === value}>
+              <li
+                key={v}
+                role="option"
+                aria-selected={v === value}
+                className="border-t border-dotted border-rule first:border-t-0"
+              >
                 <button
                   type="button"
                   onClick={() => {
@@ -127,16 +159,79 @@ const TIP_BOX =
 
 const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
 
-// Superscript on an applicant's name: how firmly that applicant tied itself
-// to this string.
-function Marker({ mark }: { mark: Mark }) {
+// How firmly an applicant tied itself to a string. Every claim carries one:
+// "u" is 83% of them and says only that nobody stated which, which a reader
+// should be told rather than left to infer from an absence. It is drawn at
+// hairline weight so the two marks that carry information still read first.
+const BLOCK: Record<Mark, string> = {
+  p: "bg-ink text-paper border-ink",
+  u: "border-rule-faint text-ink-soft",
+  i: "text-oxblood border-oxblood",
+};
+
+function MarkBlock({ mark, inverted }: { mark: Mark; inverted?: boolean }) {
   return (
-    <span className="group relative">
-      <sup className="ml-px text-[9px] text-gold cursor-help">{mark}</sup>
-      <span role="tooltip" className={TIP_BOX}>
-        {MARK_LABEL[mark]}
-      </span>
+    <span
+      aria-hidden
+      className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
+        inverted ? "border-paper/45 text-paper" : BLOCK[mark]
+      }`}
+    >
+      {mark}
     </span>
+  );
+}
+
+function Marker({
+  mark,
+  onFilter,
+}: {
+  mark: Mark;
+  onFilter: (m: Mark) => void;
+}) {
+  return (
+    // inline-block keeps the applicant button's underline from running beneath
+    // the block: decorations are not drawn through an atomic inline
+    // no tooltip: the legend defines all three marks four lines above the
+    // table and never scrolls out from under them
+    <span className="inline-block no-underline align-[0.1em]">
+      <button
+        type="button"
+        aria-label={MARK_LABEL[mark]}
+        title={MARK_LABEL[mark]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onFilter(mark);
+        }}
+        className="ml-1 cursor-pointer align-middle"
+      >
+        <MarkBlock mark={mark} />
+      </button>
+    </span>
+  );
+}
+
+// The number in the /sources list. The native title carries the outlet, so a
+// reader can identify the source without a box covering the row.
+function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
+  const nums = ids
+    .map((id) => ({ id, c: cites[id] }))
+    .filter((x): x is { id: string; c: Citation } => !!x.c);
+  if (!nums.length) return null;
+  return (
+    <sup className="src ml-0.5 text-[9px] no-underline">
+      {nums.map(({ id, c }, i) => (
+        <span key={id}>
+          {i > 0 && <span className="text-rule">,</span>}
+          <a
+            href={`/sources#src-${c.n}`}
+            title={`${c.outlet} · ${formatDate(c.date)}`}
+          >
+            {c.n}
+          </a>
+        </span>
+      ))}
+    </sup>
   );
 }
 
@@ -152,8 +247,11 @@ const ISSUE_TIP: Record<Issue["kind"], string> = {
   similar: "Singular or plural of another applicant's string",
 };
 
+// The string column is a fixed 128px below sm, so an inline tag has nowhere
+// to go and spills under the applicants column. Stack it under the string
+// there and only sit it alongside once there is room.
 const TAG =
-  "group relative label text-oxblood ml-2 !text-[9px] whitespace-nowrap";
+  "group relative label text-oxblood !text-[9px] block mt-1 w-fit sm:inline sm:mt-0 sm:ml-2 sm:whitespace-nowrap";
 
 function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
   const tip = (
@@ -206,20 +304,47 @@ function FilterChip({
   );
 }
 
-function Legend({ present }: { present: Mark[] }) {
+// The legend doubles as a filter: the markers are the only way to separate a
+// confirmed application from an announcement, so the definition and the way to
+// isolate it belong in the same control.
+function Legend({
+  present,
+  active,
+  onToggle,
+}: {
+  present: Mark[];
+  active: Mark | null;
+  onToggle: (m: Mark) => void;
+}) {
   return (
-    <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1">
-      {MARKS.filter((m) => present.includes(m.mark)).map(({ mark, label }) => (
-        <div key={mark} className="flex items-baseline gap-1.5">
-          <dt className="text-gold text-[11px]">
-            <sup>{mark}</sup>
-          </dt>
-          <dd className="label text-ink-soft !text-[10px] !tracking-[0.08em]">
-            {label}
-          </dd>
-        </div>
-      ))}
-    </dl>
+    <div className="mt-4 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+      {MARKS.filter((m) => present.includes(m.mark)).map(({ mark, label }) => {
+        const on = active === mark;
+        return (
+          <button
+            key={mark}
+            type="button"
+            aria-pressed={on}
+            title={on ? "Show every marker" : `Show only ${label}`}
+            onClick={() => onToggle(mark)}
+            className={`flex items-center gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-1 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+              on ? "bg-ink text-paper" : "hover:bg-paper-deep"
+            }`}
+          >
+            {/* selected, the whole control is one ink field — a bordered
+                swatch inside it just reads as a box in a box */}
+            <MarkBlock mark={mark} inverted={on} />
+            <span
+              className={`label !text-[10px] !tracking-[0.08em] ${
+                on ? "text-paper" : "text-ink-soft"
+              }`}
+            >
+              {label}
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -246,33 +371,36 @@ const collator = new Intl.Collator();
 
 export type UiStats = {
   applicants: number;
-  claims: number;
+  strings: number;
   contested: number;
   issues: number;
 };
 
-// Two of the four tiles are also the table's filters: the number and the way
-// to see what is behind it belong in the same place.
+// Every tile is a way in: two filter the table, one clears it, one leaves for
+// the applicants page. The number and the way to see behind it belong in the
+// same place.
 function StatTiles({
   s,
   contestedOnly,
   issuesOnly,
+  onAll,
   onContested,
   onIssues,
 }: {
   s: UiStats;
   contestedOnly: boolean;
   issuesOnly: boolean;
+  onAll: () => void;
   onContested: () => void;
   onIssues: () => void;
 }) {
-  const cell = "p-3 sm:p-4 text-left";
+  const cell = "p-3 sm:p-4 text-left w-full";
   const num = "text-2xl sm:text-3xl font-light";
   const cap =
-    "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem]";
+    "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
   const tiles = [
-    { v: s.applicants, l: "Applicants revealed" },
-    { v: s.claims, l: "Strings disclosed" },
+    { v: s.applicants, l: "Applicants", href: "/applicants" },
+    { v: s.strings, l: "Strings disclosed", act: onAll, title: "Show every string" },
     {
       v: s.contested,
       l: "Overlapping strings",
@@ -283,38 +411,37 @@ function StatTiles({
   ];
   return (
     <section className="grid grid-cols-2 sm:grid-cols-4 border border-ink mb-10">
-      {tiles.map(({ v, l, on, act }, i) => {
+      {tiles.map(({ v, l, on, act, href, title }, i) => {
         const divider = [
           i % 2 === 1 ? "border-l border-rule" : "",
           i > 1 ? "border-t border-rule sm:border-t-0" : "",
           i === 2 ? "sm:border-l sm:border-rule" : "",
         ].join(" ");
-        if (!act)
+        const inner = (
+          <>
+            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
+            <div className={`${cap} ${on ? "!text-oxblood" : ""}`}>{l}</div>
+          </>
+        );
+        const shell = `${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+          on ? "bg-paper-deep" : "hover:bg-paper-deep"
+        }`;
+        if (href)
           return (
-            <div key={l} className={`${cell} ${divider}`}>
-              <div className={num}>{v}</div>
-              <div className={cap}>{l}</div>
-            </div>
+            <Link key={l} href={href} title="See every applicant" className={`${shell} block`}>
+              {inner}
+            </Link>
           );
         return (
           <button
             key={l}
             type="button"
             aria-pressed={on}
-            title={on ? "Show all strings" : `Show only these ${v}`}
+            title={title ?? (on ? "Show all strings" : `Show only these ${v}`)}
             onClick={act}
-            className={`${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out ${
-              on ? "bg-paper-deep" : "hover:bg-paper-deep"
-            }`}
+            className={shell}
           >
-            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
-            <div
-              className={`${cap} ${
-                on ? "!text-oxblood" : ""
-              } border-b border-dotted border-rule inline-block`}
-            >
-              {l}
-            </div>
+            {inner}
           </button>
         );
       })}
@@ -325,14 +452,27 @@ function StatTiles({
 export default function StringsTable({
   rows,
   stats,
+  cites,
+  backers,
 }: {
   rows: UiStringRow[];
   stats: UiStats;
+  cites: Citations;
+  backers: Record<string, string>;
 }) {
-  const [q, setQ] = useState("");
-  const [applicant, setApplicant] = useState("all");
+  const backerMap = useMemo(() => new Map(Object.entries(backers)), [backers]);
+  const [q, setQ] = useState(""); // what the input shows
+  const [query, setQuery] = useState(""); // what the table filters on
+  const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // /?applicant=Name — how the applicants page hands off to this table.
+  // useSearchParams opts this subtree out of static prerendering, so the value
+  // survives hydration; reading window.location in a useState initializer does
+  // not, because the prerendered HTML says "all".
+  const fromUrl = useSearchParams().get("applicant");
+  const [applicant, setApplicant] = useState(fromUrl ?? "all");
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
+  const [markFilter, setMarkFilter] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
   const [pinned, setPinned] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
@@ -351,6 +491,12 @@ export default function StringsTable({
       block: "start",
     });
 
+  const toggleMark = (m: Mark) => {
+    setMarkFilter((v) => (v === m ? null : m));
+    setPage(0);
+    revealResults();
+  };
+
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
     [rows]
@@ -361,22 +507,17 @@ export default function StringsTable({
     [rows]
   );
 
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    return rows.filter((r) => {
-      if (contestedOnly && !r.overlap) return false;
-      if (issuesOnly && !r.issues.length) return false;
-      if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
-        return false;
-      if (
-        needle &&
-        !r.tld.includes(needle) &&
-        !r.applicants.some((a) => a.name.toLowerCase().includes(needle))
-      )
-        return false;
-      return true;
-    });
-  }, [rows, q, applicant, contestedOnly, issuesOnly]);
+  const filtered = useMemo(
+    () =>
+      rows.filter((r) =>
+        matches(
+          r,
+          { q: query, applicant, contestedOnly, issuesOnly, mark: markFilter },
+          backerMap
+        )
+      ),
+    [rows, query, applicant, contestedOnly, issuesOnly, markFilter, backerMap]
+  );
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -395,11 +536,30 @@ export default function StringsTable({
   const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE));
   const current = Math.min(page, pageCount - 1);
   const visible = sorted.slice(current * PAGE, (current + 1) * PAGE);
+  // hold a full page while paging, and a floor under short result sets
+  const padRows = Math.max(
+    0,
+    Math.max(MIN_ROWS, Math.min(sorted.length, PAGE)) - visible.length
+  );
+
+  // the filename should say which slice of the table it holds
+  const csvScope =
+    filtered.length === rows.length
+      ? "all"
+      : [
+          contestedOnly && "overlapping",
+          issuesOnly && "issues",
+          markFilter && MARK_LABEL[markFilter].split(" ")[0],
+          applicant !== "all" && slugify(applicant),
+          query.trim() && "search",
+        ]
+          .filter(Boolean)
+          .join("-");
 
   const countLabel =
     filtered.length === rows.length
       ? `${rows.length} strings`
-      : `${filtered.length} match`;
+      : `${filtered.length} of ${rows.length} strings`;
 
   return (
     <div>
@@ -407,6 +567,16 @@ export default function StringsTable({
         s={stats}
         contestedOnly={contestedOnly}
         issuesOnly={issuesOnly}
+        onAll={() => {
+          setQ("");
+          setQuery("");
+          setApplicant("all");
+          setContestedOnly(false);
+          setIssuesOnly(false);
+          setMarkFilter(null);
+          setPage(0);
+          revealResults();
+        }}
         onContested={() => {
           setContestedOnly((v) => !v);
           setPage(0);
@@ -419,11 +589,6 @@ export default function StringsTable({
         }}
       />
 
-      <div className="double-rule pt-4 mb-5 flex items-baseline justify-between">
-        <h2 className="label !text-sm text-ink">All Applied Strings</h2>
-        <span className="label text-ink-soft">I</span>
-      </div>
-
       <div
         ref={toolbarRef}
         className="flex flex-wrap items-center gap-3 mb-5 scroll-mt-14"
@@ -432,8 +597,13 @@ export default function StringsTable({
           type="search"
           value={q}
           onChange={(e) => {
-            setQ(e.target.value);
-            setPage(0);
+            const v = e.target.value;
+            setQ(v);
+            if (debounce.current) clearTimeout(debounce.current);
+            debounce.current = setTimeout(() => {
+              setQuery(v);
+              setPage(0);
+            }, DEBOUNCE_MS);
           }}
           placeholder="Search…"
           aria-label="Search strings"
@@ -449,7 +619,7 @@ export default function StringsTable({
         />
         <button
           type="button"
-          onClick={() => downloadCsv(sorted)}
+          onClick={() => downloadCsv(sorted, csvScope, cites)}
           title="Download the strings below as CSV, punycode included"
           className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
         >
@@ -482,10 +652,20 @@ export default function StringsTable({
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
 
+      <Legend
+        present={presentMarks}
+        active={markFilter}
+        onToggle={toggleMark}
+      />
+
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
       {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
-      <div className="overflow-x-auto sm:overflow-visible sm:min-h-[970px]">
+      {/* While paging, every page holds the same height so Prev/Next does not
+          move the footer, and a short result set keeps a floor under it so
+          typing does not collapse the page. Filler rows rather than a pixel
+          constant, so this tracks whatever padding a real row has. */}
+      <div className="overflow-x-auto sm:overflow-visible">
         <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
           {/* fixed layout so column widths don't shift with sort/page/filter */}
           <colgroup>
@@ -562,7 +742,8 @@ export default function StringsTable({
                         }
                         className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
                       >
-                        .{r.tld}
+                        <span className="text-gold">.</span>
+                        {r.tld}
                         <span role="tooltip" className={`${TIP_BOX} serif italic`}>
                           “{r.gloss}”
                         </span>
@@ -574,40 +755,81 @@ export default function StringsTable({
                       )}
                     </>
                   ) : (
-                    <>.{r.tld}</>
+                    <>
+                      <span className="text-gold">.</span>
+                      {r.tld}
+                    </>
                   )}
                   {r.issues.map((issue) => (
                     <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
                   ))}
                 </td>
                 <td className="py-2 pr-4">
-                  {r.applicants.map(({ name, mark }, i) => (
-                    <span key={name}>
-                      {i > 0 && <span className="text-ink-soft"> · </span>}
-                      <button
-                        type="button"
-                        aria-pressed={applicant === name}
-                        title={
-                          applicant === name ? "Clear filter" : `Only ${name}`
-                        }
-                        onClick={() => {
-                          setApplicant(applicant === name ? "all" : name);
-                          setPage(0);
-                        }}
-                        className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
-                          applicant === name ? "text-gold decoration-gold" : ""
-                        }`}
-                      >
-                        {name}
-                      </button>
-                      <Marker mark={mark} />
-                    </span>
-                  ))}
+                  <span className="flex items-baseline gap-2">
+                  <span>
+                  {r.applicants.map(({ name, mark, sourceIds }, i) => {
+                    return (
+                      <span key={name}>
+                        {i > 0 && <span className="text-ink-soft"> · </span>}
+                        <span className="whitespace-nowrap">
+                          <button
+                            type="button"
+                            aria-pressed={applicant === name}
+                            title={
+                              applicant === name ? "Clear filter" : `Only ${name}`
+                            }
+                            onClick={() => {
+                              setApplicant(applicant === name ? "all" : name);
+                              setPage(0);
+                              revealResults();
+                            }}
+                            className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
+                              applicant === name ? "text-gold decoration-gold" : ""
+                            }`}
+                          >
+                            {name}
+                          </button>
+                          <Marker
+                            mark={mark}
+                            onFilter={toggleMark}
+                          />
+                          <Cite ids={sourceIds} cites={cites} />
+                        </span>
+                      </span>
+                    );
+                  })}
+                  </span>
+                  {/* dot leader binds the row to its overlap tally, index-style */}
+                  <span
+                    aria-hidden
+                    className={`flex-1 min-w-4 -translate-y-[3px] border-b border-dotted ${
+                      r.overlap ? "border-oxblood/40" : "border-rule-faint"
+                    }`}
+                  />
+                  </span>
                 </td>
                 <td className="py-2 whitespace-nowrap text-right">
                   {r.overlap && (
-                    <span className="label text-oxblood">×{r.count}</span>
+                    <>
+                      {/* ledger tally: one stroke per applicant */}
+                      <span
+                        aria-hidden
+                        className="inline-flex items-baseline gap-[3px]"
+                      >
+                        {Array.from({ length: r.count }, (_, i) => (
+                          <i key={i} className="inline-block w-px h-3.5 bg-oxblood" />
+                        ))}
+                      </span>
+                      <span className="sr-only">{r.count} applicants</span>
+                    </>
                   )}
+                </td>
+              </tr>
+            ))}
+            {Array.from({ length: padRows }, (_, i) => (
+              <tr key={`pad-${i}`} className="border-t border-rule-faint" aria-hidden>
+                <td className="py-2" colSpan={3}>
+                  &nbsp;
                 </td>
               </tr>
             ))}
@@ -622,14 +844,15 @@ export default function StringsTable({
         </table>
       </div>
 
-      <Legend present={presentMarks} />
-
-      {rows.length > PAGE && (
+      {sorted.length > PAGE && (
         <div className="flex flex-wrap items-center gap-3 mt-4">
           <button
             type="button"
             disabled={current === 0}
-            onClick={() => setPage(current - 1)}
+            onClick={() => {
+              setPage(current - 1);
+              revealResults();
+            }}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Prev
@@ -637,7 +860,10 @@ export default function StringsTable({
           <button
             type="button"
             disabled={current === pageCount - 1}
-            onClick={() => setPage(current + 1)}
+            onClick={() => {
+              setPage(current + 1);
+              revealResults();
+            }}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Next

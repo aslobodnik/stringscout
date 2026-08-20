@@ -14,7 +14,9 @@ export type Applicant = {
   sourceIds: string[];
 };
 
-export const applicants: Applicant[] = [
+import { announcedApplicants } from "./announcedAdapter";
+
+export const handApplicants: Applicant[] = [
   {
     slug: "oinkadot",
     status: "disclosed",
@@ -30,7 +32,7 @@ export const applicants: Applicant[] = [
     slug: "lfg",
     status: "disclosed",
     name: "Link Freedom Group",
-    backers: "Vaughn Liley, CEO",
+    backers: "Vaughn Liley, CEO of Link Freedom Group",
     applicationCount: "316",
     feesPaid: null,
     revealedOn: "2026-08-13",
@@ -206,7 +208,7 @@ export const applicants: Applicant[] = [
     slug: "unstoppable",
     status: "intent",
     name: "Unstoppable Domains",
-    backers: "With Kintsugi Global",
+    backers: "People undisclosed",
     applicationCount: "2",
     feesPaid: null,
     revealedOn: "2024-06",
@@ -217,7 +219,7 @@ export const applicants: Applicant[] = [
     slug: "d3",
     status: "intent",
     name: "D3",
-    backers: "With Animecoin Foundation and Azuki",
+    backers: "People undisclosed",
     applicationCount: "1",
     feesPaid: null,
     revealedOn: "2025-02-27",
@@ -246,4 +248,9 @@ export const applicants: Applicant[] = [
     note: null,
     sourceIds: ["di"],
   },
+];
+
+export const applicants: Applicant[] = [
+  ...handApplicants,
+  ...announcedApplicants,
 ];

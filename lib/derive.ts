@@ -2,6 +2,9 @@ import { claims, type Claim } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
+import { MARKS, type Mark } from "./marks";
+
+export { MARKS, type Mark };
 
 // Things worth a reader's attention before they trust a row.
 // delegated: the string is already a TLD, so it cannot be applied for.
@@ -94,14 +97,11 @@ export function contestedRows(): StringRow[] {
 
 export const applicantName = new Map(applicants.map((a) => [a.slug, a.name]));
 
-// Per-string marker shown as a superscript next to an applicant's name.
-export type Mark = "p" | "u" | "i";
+// name -> backers, sent once instead of repeated on all 812 claim rows
+export const applicantBackers = new Map(
+  applicants.map((a) => [a.name, a.backers])
+);
 
-export const MARKS: { mark: Mark; label: string }[] = [
-  { mark: "p", label: "stated primary" },
-  { mark: "u", label: "unknown if primary or secondary" },
-  { mark: "i", label: "stated intent, application not confirmed" },
-];
 
 const RANK: Record<Mark, number> = { p: 0, u: 1, i: 2 };
 
@@ -115,17 +115,24 @@ function markOf(kind: Claim["kind"]): Mark {
 // more than once keeps its strongest marker.
 export function applicantMarks(
   rows: Claim[]
-): { name: string; mark: Mark }[] {
+): { name: string; mark: Mark; sourceIds: string[] }[] {
   const best = new Map<string, Mark>();
+  const srcs = new Map<string, Set<string>>();
   for (const c of rows) {
     const m = markOf(c.kind);
     const prev = best.get(c.applicantSlug);
     if (!prev || RANK[m] < RANK[prev]) best.set(c.applicantSlug, m);
+    const set = srcs.get(c.applicantSlug) ?? new Set<string>();
+    for (const id of c.sourceIds) set.add(id);
+    srcs.set(c.applicantSlug, set);
   }
-  return [...best].map(([slug, mark]) => ({
-    name: applicantName.get(slug) ?? slug,
-    mark,
-  }));
+  return [...best]
+    .map(([slug, mark]) => ({
+      name: applicantName.get(slug) ?? slug,
+      mark,
+      sourceIds: [...(srcs.get(slug) ?? [])],
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function stats() {

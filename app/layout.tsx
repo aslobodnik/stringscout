@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { Jost, Old_Standard_TT } from "next/font/google";
 import "./globals.css";
@@ -37,7 +38,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${jost.variable} ${oldStandard.variable}`}>
-      <body className="min-h-screen">{children}</body>
+      <body>
+        {/* One shell for every page: Footer's mt-auto only pins inside this
+            exact flex column, so it cannot live in the pages. */}
+        <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
+          {children}
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
