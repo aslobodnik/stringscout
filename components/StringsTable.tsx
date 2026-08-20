@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { MARKS, type Issue, type Mark } from "@/lib/derive";
-import { sourceIndex, sources, type Source } from "@/data/sources";
+import { MARKS, type Mark } from "@/lib/marks";
+import type { Issue } from "@/lib/derive";
 import { matches } from "@/lib/search";
+import { formatDate, slugify } from "@/lib/format";
 
-const sourceById = new Map(sources.map((s) => [s.id, s]));
+// Passed in from the server rather than imported: this is the only client
+// component, and importing @/data/sources drags the whole announced dataset
+// and every claim into the browser bundle for 62 entries it actually reads.
+export type Citation = { n: number; outlet: string; date: string };
+export type Citations = Record<string, Citation>;
 
 export type UiStringRow = {
   tld: string;
@@ -15,18 +20,12 @@ export type UiStringRow = {
   gloss?: string; // English translation, shown on hover for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
-  applicants: {
-    name: string;
-    mark: Mark;
-    backers?: string;
-    sourceIds: string[];
-  }[];
+  applicants: { name: string; mark: Mark; sourceIds: string[] }[];
   overlap: boolean;
   count: number;
 };
 
 const PAGE = 25;
-const ROW_PX = 37; // measured single-line row, used only to reserve height
 const MIN_ROWS = 12; // floor, so typing never collapses the page under the reader
 const DEBOUNCE_MS = 180;
 
@@ -48,7 +47,7 @@ const CSV_COLS = [
 const csvCell = (v: string) =>
   /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
-function toCsv(rows: UiStringRow[]): string {
+function toCsv(rows: UiStringRow[], cites: Citations): string {
   const lines = rows.map((r) =>
     [
       r.tld,
@@ -59,7 +58,7 @@ function toCsv(rows: UiStringRow[]): string {
       r.applicants
         .map((a) =>
           a.sourceIds
-            .map((id) => sourceIndex.get(id))
+            .map((id) => cites[id]?.n)
             .filter(Boolean)
             .join("+")
         )
@@ -76,10 +75,10 @@ function toCsv(rows: UiStringRow[]): string {
   return `\uFEFF${CSV_COLS.join(",")}\n${lines.join("\n")}\n`;
 }
 
-function downloadCsv(rows: UiStringRow[], scope: string) {
+function downloadCsv(rows: UiStringRow[], scope: string, cites: Citations) {
   const stamp = new Date().toISOString().slice(0, 10);
   const url = URL.createObjectURL(
-    new Blob([toCsv(rows)], { type: "text/csv;charset=utf-8" })
+    new Blob([toCsv(rows, cites)], { type: "text/csv;charset=utf-8" })
   );
   const a = document.createElement("a");
   a.href = url;
@@ -170,6 +169,19 @@ const BLOCK: Record<Mark, string> = {
   i: "text-oxblood border-oxblood",
 };
 
+function MarkBlock({ mark, inverted }: { mark: Mark; inverted?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
+        inverted ? "border-paper/45 text-paper" : BLOCK[mark]
+      }`}
+    >
+      {mark}
+    </span>
+  );
+}
+
 function Marker({
   mark,
   onFilter,
@@ -191,9 +203,9 @@ function Marker({
           e.stopPropagation();
           onFilter(mark);
         }}
-        className={`ml-1 border w-[13px] h-[13px] leading-none text-[9px] font-medium uppercase cursor-pointer transition-colors duration-200 ease-in-out ${BLOCK[mark]}`}
+        className="ml-1 cursor-pointer align-middle"
       >
-        {mark}
+        <MarkBlock mark={mark} />
       </button>
     </span>
   );
@@ -201,18 +213,21 @@ function Marker({
 
 // The number in the /sources list. The native title carries the outlet, so a
 // reader can identify the source without a box covering the row.
-function Cite({ ids }: { ids: string[] }) {
+function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
   const nums = ids
-    .map((id) => ({ id, n: sourceIndex.get(id), s: sourceById.get(id) }))
-    .filter((x): x is { id: string; n: number; s: Source } => !!x.n && !!x.s);
+    .map((id) => ({ id, c: cites[id] }))
+    .filter((x): x is { id: string; c: Citation } => !!x.c);
   if (!nums.length) return null;
   return (
     <sup className="src ml-0.5 text-[9px] no-underline">
-      {nums.map(({ id, n, s }, i) => (
+      {nums.map(({ id, c }, i) => (
         <span key={id}>
           {i > 0 && <span className="text-rule">,</span>}
-          <a href={`/sources#src-${n}`} title={`${s.outlet} · ${s.date}`}>
-            {n}
+          <a
+            href={`/sources#src-${c.n}`}
+            title={`${c.outlet} · ${formatDate(c.date)}`}
+          >
+            {c.n}
           </a>
         </span>
       ))}
@@ -318,14 +333,7 @@ function Legend({
           >
             {/* selected, the whole control is one ink field — a bordered
                 swatch inside it just reads as a box in a box */}
-            <span
-              aria-hidden
-              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
-                on ? "border-paper/45 text-paper" : BLOCK[mark]
-              }`}
-            >
-              {mark}
-            </span>
+            <MarkBlock mark={mark} inverted={on} />
             <span
               className={`label !text-[10px] !tracking-[0.08em] ${
                 on ? "text-paper" : "text-ink-soft"
@@ -444,10 +452,15 @@ function StatTiles({
 export default function StringsTable({
   rows,
   stats,
+  cites,
+  backers,
 }: {
   rows: UiStringRow[];
   stats: UiStats;
+  cites: Citations;
+  backers: Record<string, string>;
 }) {
+  const backerMap = useMemo(() => new Map(Object.entries(backers)), [backers]);
   const [q, setQ] = useState(""); // what the input shows
   const [query, setQuery] = useState(""); // what the table filters on
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -478,6 +491,12 @@ export default function StringsTable({
       block: "start",
     });
 
+  const toggleMark = (m: Mark) => {
+    setMarkFilter((v) => (v === m ? null : m));
+    setPage(0);
+    revealResults();
+  };
+
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
     [rows]
@@ -491,15 +510,13 @@ export default function StringsTable({
   const filtered = useMemo(
     () =>
       rows.filter((r) =>
-        matches(r, {
-          q: query,
-          applicant,
-          contestedOnly,
-          issuesOnly,
-          mark: markFilter,
-        })
+        matches(
+          r,
+          { q: query, applicant, contestedOnly, issuesOnly, mark: markFilter },
+          backerMap
+        )
       ),
-    [rows, query, applicant, contestedOnly, issuesOnly, markFilter]
+    [rows, query, applicant, contestedOnly, issuesOnly, markFilter, backerMap]
   );
 
   const sorted = useMemo(() => {
@@ -519,6 +536,11 @@ export default function StringsTable({
   const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE));
   const current = Math.min(page, pageCount - 1);
   const visible = sorted.slice(current * PAGE, (current + 1) * PAGE);
+  // hold a full page while paging, and a floor under short result sets
+  const padRows = Math.max(
+    0,
+    Math.max(MIN_ROWS, Math.min(sorted.length, PAGE)) - visible.length
+  );
 
   // the filename should say which slice of the table it holds
   const csvScope =
@@ -528,11 +550,11 @@ export default function StringsTable({
           contestedOnly && "overlapping",
           issuesOnly && "issues",
           markFilter && MARK_LABEL[markFilter].split(" ")[0],
-          applicant !== "all" && applicant.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+          applicant !== "all" && slugify(applicant),
           query.trim() && "search",
         ]
           .filter(Boolean)
-          .join("-") || "filtered";
+          .join("-");
 
   const countLabel =
     filtered.length === rows.length
@@ -567,7 +589,6 @@ export default function StringsTable({
         }}
       />
 
-
       <div
         ref={toolbarRef}
         className="flex flex-wrap items-center gap-3 mb-5 scroll-mt-14"
@@ -598,7 +619,7 @@ export default function StringsTable({
         />
         <button
           type="button"
-          onClick={() => downloadCsv(sorted, csvScope)}
+          onClick={() => downloadCsv(sorted, csvScope, cites)}
           title="Download the strings below as CSV, punycode included"
           className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
         >
@@ -634,26 +655,17 @@ export default function StringsTable({
       <Legend
         present={presentMarks}
         active={markFilter}
-        onToggle={(m) => {
-          setMarkFilter((v) => (v === m ? null : m));
-          setPage(0);
-        }}
+        onToggle={toggleMark}
       />
 
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
       {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
-      {/* While paging, every page reserves the same height so Prev/Next does
-          not move the footer. A filtered set smaller than one page collapses
-          normally — that shrink is the filter reporting itself. */}
-      <div
-        className="overflow-x-auto sm:overflow-visible"
-        style={{
-          minHeight: `${
-            Math.max(MIN_ROWS, Math.min(sorted.length, PAGE)) * ROW_PX
-          }px`,
-        }}
-      >
+      {/* While paging, every page holds the same height so Prev/Next does not
+          move the footer, and a short result set keeps a floor under it so
+          typing does not collapse the page. Filler rows rather than a pixel
+          constant, so this tracks whatever padding a real row has. */}
+      <div className="overflow-x-auto sm:overflow-visible">
         <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
           {/* fixed layout so column widths don't shift with sort/page/filter */}
           <colgroup>
@@ -756,11 +768,6 @@ export default function StringsTable({
                   <span className="flex items-baseline gap-2">
                   <span>
                   {r.applicants.map(({ name, mark, sourceIds }, i) => {
-                    // keep the block and cite glued to the last word so they
-                    // can't wrap onto a line of their own on narrow screens
-                    const cut = name.lastIndexOf(" ");
-                    const head = cut === -1 ? "" : name.slice(0, cut + 1);
-                    const tail = cut === -1 ? name : name.slice(cut + 1);
                     return (
                       <span key={name}>
                         {i > 0 && <span className="text-ink-soft"> · </span>}
@@ -780,18 +787,13 @@ export default function StringsTable({
                               applicant === name ? "text-gold decoration-gold" : ""
                             }`}
                           >
-                            {head}
-                            <span className="whitespace-nowrap">{tail}</span>
+                            {name}
                           </button>
                           <Marker
                             mark={mark}
-                            onFilter={(m) => {
-                              setMarkFilter((v) => (v === m ? null : m));
-                              setPage(0);
-                              revealResults();
-                            }}
+                            onFilter={toggleMark}
                           />
-                          <Cite ids={sourceIds} />
+                          <Cite ids={sourceIds} cites={cites} />
                         </span>
                       </span>
                     );
@@ -824,6 +826,13 @@ export default function StringsTable({
                 </td>
               </tr>
             ))}
+            {Array.from({ length: padRows }, (_, i) => (
+              <tr key={`pad-${i}`} className="border-t border-rule-faint" aria-hidden>
+                <td className="py-2" colSpan={3}>
+                  &nbsp;
+                </td>
+              </tr>
+            ))}
             {filtered.length === 0 && (
               <tr className="border-t border-rule-faint">
                 <td colSpan={3} className="py-6 text-ink-soft serif italic">
@@ -834,7 +843,6 @@ export default function StringsTable({
           </tbody>
         </table>
       </div>
-
 
       {sorted.length > PAGE && (
         <div className="flex flex-wrap items-center gap-3 mt-4">

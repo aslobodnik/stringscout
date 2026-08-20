@@ -1,3 +1,5 @@
+import { announcedSources } from "./announcedAdapter";
+
 // Where a claim came from, in descending order of authority. "applicant" is
 // the applicant speaking for itself, wire releases included; "trade" is the
 // domain-industry press; "press" is everyone else reporting it secondhand;
@@ -27,17 +29,8 @@ export const KIND_LABEL: Record<SourceKind, string> = {
   reference: "Reference",
 };
 
-export const KIND_NOTE: Record<SourceKind, string> = {
-  applicant: "The applicant speaking for itself: its own site, post, filing or release.",
-  trade: "Domain-industry press. Cited when it is the only record of a reveal.",
-  press: "Reported secondhand by outlets outside the industry.",
-  reference: "Not a reveal. Used to check disclosed strings against the root zone.",
-};
-
 // One source per applicant. Program facts cite the Applicant Guidebook
 // inline as "AGB §x.x" — no link needed.
-import { announcedSources } from "./announcedAdapter";
-
 const handSources: Source[] = [
   {
     id: "dnw",
@@ -191,7 +184,12 @@ const handSources: Source[] = [
 export const sources: Source[] = [...handSources, ...announcedSources].sort(
   (a, b) =>
     KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) ||
-    a.date.localeCompare(b.date)
+    a.date.localeCompare(b.date) ||
+    // 23 sources share a bucket and a date; without this their numbers are
+    // decided by upstream row order and shuffle on every re-scrape
+    a.id.localeCompare(b.id)
 );
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));
+
+export const sourceById = new Map(sources.map((s) => [s.id, s]));

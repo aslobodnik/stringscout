@@ -16,3 +16,10 @@ export function formatDate(d: string): string {
   }
   return d;
 }
+
+export const slugify = (s: string, max = 32) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, max);

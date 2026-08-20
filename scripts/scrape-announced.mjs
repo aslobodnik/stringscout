@@ -29,8 +29,7 @@ const strip = (s) =>
 function splitParties(raw) {
   const cleaned = raw
     .replace(/\s*\.[a-z0-9]+ withdrawn.*$/i, "")
-    .replace(/\s+(New|Withdrawn)\s*$/g, "")
-    .replace(/\s+(New|Withdrawn)\s*$/g, "")
+    .replace(/(\s+(New|Withdrawn))+\s*$/gi, "")
     .trim();
   const parts = cleaned.split(" + ").map((p) => p.trim());
   return { lead: parts[0], partners: parts.slice(1) };
@@ -96,22 +95,20 @@ export const announcedUpdated = ${JSON.stringify(updated)};
 export const announced: Announced[] = ${JSON.stringify(records, null, 2)};
 `;
 
+const now = new Set(records.flatMap((r) => r.strings));
+
 if (existsSync(OUT)) {
   const prev = readFileSync(OUT, "utf8");
   const old = new Set([...prev.matchAll(/"strings":\s*\[([^\]]*)\]/g)].flatMap((m) =>
     [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1])
   ));
-  const now = new Set(records.flatMap((r) => r.strings));
   const added = [...now].filter((s) => !old.has(s));
   const gone = [...old].filter((s) => !now.has(s));
   console.log(`rows ${records.length} | +${added.length} strings, -${gone.length}`);
   if (added.length) console.log("  added:", added.map((s) => "." + s).join(", "));
   if (gone.length) console.log("  gone: ", gone.map((s) => "." + s).join(", "));
 } else {
-  console.log(`rows ${records.length} | ${now_count(records)} strings (first run)`);
-}
-function now_count(rs) {
-  return new Set(rs.flatMap((r) => r.strings)).size;
+  console.log(`rows ${records.length} | ${now.size} strings (first run)`);
 }
 
 writeFileSync(OUT, body);

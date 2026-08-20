@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import Footer from "@/components/Footer";
+import SectionHead from "@/components/SectionHead";
 import { formatDate } from "@/lib/format";
 import { withdrawnClaims } from "@/data/announcedAdapter";
-import { sources } from "@/data/sources";
+import { sourceById, sourceIndex } from "@/data/sources";
 
 export const metadata: Metadata = {
   title: "Withdrawn — Stringscout",
@@ -11,20 +11,16 @@ export const metadata: Metadata = {
     "Strings announced for the 2026 gTLD round and then pulled before the application reached ICANN.",
 };
 
-const sourceById = new Map(sources.map((s, i) => [s.id, { ...s, n: i + 1 }]));
-
 export default function WithdrawnPage() {
   const rows = [...withdrawnClaims].sort((a, b) => a.tld.localeCompare(b.tld));
   // numbered locally: this page's list stands on its own, so the main page's
   // source numbers would only be confusing here
   const cited = [
     ...new Set(rows.map((r) => r.sourceId).filter((x): x is string => !!x)),
-  ].sort(
-    (a, b) => (sourceById.get(a)?.n ?? 0) - (sourceById.get(b)?.n ?? 0)
-  );
+  ].sort((a, b) => (sourceIndex.get(a) ?? 0) - (sourceIndex.get(b) ?? 0));
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
+    <>
       <PageHeader title="Withdrawn" current="/withdrawn" />
 
       <p className="text-sm text-ink-soft mb-8 max-w-2xl">
@@ -95,10 +91,7 @@ export default function WithdrawnPage() {
         </table>
       </div>
 
-      <div className="double-rule pt-4 mt-14 mb-5 flex items-baseline justify-between">
-        <h2 className="label !text-sm text-ink">Sources</h2>
-        <span className="label text-ink-soft">I</span>
-      </div>
+      <SectionHead n="I" title="Sources" className="mt-14" />
       <ol className="text-sm space-y-2">
         {cited.map((id, i) => {
           const s = sourceById.get(id)!;
@@ -122,7 +115,6 @@ export default function WithdrawnPage() {
         })}
       </ol>
 
-      <Footer />
-    </div>
+    </>
   );
 }

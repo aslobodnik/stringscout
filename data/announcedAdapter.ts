@@ -1,4 +1,5 @@
 import { announced, type Announced } from "./announced";
+import { slugify } from "@/lib/format";
 import type { Applicant } from "./applicants";
 import type { Claim } from "./claims";
 import type { Source, SourceKind } from "./sources";
@@ -13,28 +14,26 @@ import type { Source, SourceKind } from "./sources";
 // strings that never went to ICANN — so it is carried for the record and
 // excluded from every count.
 
-// Rows whose lead entity already has a hand-written applicant record.
-const EXISTING: Record<string, string> = {
+// Scraped lead name -> the hand-written applicant it is the same entity as.
+// Joined on the name a third party prints, so an upstream rewording silently
+// mints a second slug for one applicant and every string it holds turns into
+// a fabricated overlap. `tests/` asserts each key still appears upstream.
+export const ALIASES: Record<string, string> = {
   "unstoppable domains": "unstoppable",
   "d3 global": "d3",
   "freename.io": "freename",
   "3dns": "3dns",
 };
 
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 32);
-
 export const leadSlug = (lead: string) =>
-  EXISTING[lead.toLowerCase()] ?? `aa-${slugify(lead)}`;
+  ALIASES[lead.toLowerCase()] ?? `aa-${slugify(lead)}`;
 
 const byLead = new Map<string, Announced[]>();
 for (const r of announced) {
   const k = leadSlug(r.lead);
-  byLead.set(k, [...(byLead.get(k) ?? []), r]);
+  const group = byLead.get(k);
+  if (group) group.push(r);
+  else byLead.set(k, [r]);
 }
 
 // One source per distinct trade-press URL the table cites. Applicant Auction
@@ -87,12 +86,8 @@ for (const r of announced) {
   });
 }
 
-const sourceIdsFor = (rows: Announced[]) => [
-  ...new Set(rows.map((r) => r.sourceUrl && urlIds.get(r.sourceUrl)).filter((x): x is string => !!x)),
-];
-
 export const announcedApplicants: Applicant[] = [...byLead]
-  .filter(([slug]) => slug.startsWith("aa-"))
+  .filter(([, rows]) => !(rows[0].lead.toLowerCase() in ALIASES))
   .map(([slug, rows]) => {
     const live = rows.filter((r) => !r.withdrawn);
     const partners = [...new Set(rows.flatMap((r) => r.partners))];
@@ -108,20 +103,15 @@ export const announcedApplicants: Applicant[] = [...byLead]
       feesPaid: null,
       revealedOn: rows.map((r) => r.date).sort()[0],
       note: noted,
-      sourceIds: sourceIdsFor(rows),
+      sourceIds: [
+        ...new Set(
+          rows
+            .map((r) => r.sourceUrl && urlIds.get(r.sourceUrl))
+            .filter((x): x is string => !!x)
+        ),
+      ],
     };
   });
-
-// Partners named by the scrape, including for applicants first entered by
-// hand — their stored "backers" line predates most of these rows.
-// Withdrawn rows are excluded: a partner that pulled out is not who is behind
-// the application now.
-export const announcedPartners = new Map<string, string[]>(
-  [...byLead].map(([slug, rows]) => [
-    slug,
-    [...new Set(rows.filter((r) => !r.withdrawn).flatMap((r) => r.partners))],
-  ])
-);
 
 // Extra strings for applicants we already track by hand.
 export const announcedClaims: Claim[] = announced

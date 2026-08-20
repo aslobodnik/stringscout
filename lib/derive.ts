@@ -2,6 +2,9 @@ import { claims, type Claim } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
+import { MARKS, type Mark } from "./marks";
+
+export { MARKS, type Mark };
 
 // Things worth a reader's attention before they trust a row.
 // delegated: the string is already a TLD, so it cannot be applied for.
@@ -94,16 +97,11 @@ export function contestedRows(): StringRow[] {
 
 export const applicantName = new Map(applicants.map((a) => [a.slug, a.name]));
 
-const applicantBackers = new Map(applicants.map((a) => [a.slug, a.backers]));
+// name -> backers, sent once instead of repeated on all 812 claim rows
+export const applicantBackers = new Map(
+  applicants.map((a) => [a.name, a.backers])
+);
 
-// Per-string marker shown as a superscript next to an applicant's name.
-export type Mark = "p" | "u" | "i";
-
-export const MARKS: { mark: Mark; label: string }[] = [
-  { mark: "p", label: "stated primary" },
-  { mark: "u", label: "unknown if primary or secondary" },
-  { mark: "i", label: "intent to apply" },
-];
 
 const RANK: Record<Mark, number> = { p: 0, u: 1, i: 2 };
 
@@ -117,7 +115,7 @@ function markOf(kind: Claim["kind"]): Mark {
 // more than once keeps its strongest marker.
 export function applicantMarks(
   rows: Claim[]
-): { name: string; mark: Mark; backers?: string; sourceIds: string[] }[] {
+): { name: string; mark: Mark; sourceIds: string[] }[] {
   const best = new Map<string, Mark>();
   const srcs = new Map<string, Set<string>>();
   for (const c of rows) {
@@ -132,7 +130,6 @@ export function applicantMarks(
     .map(([slug, mark]) => ({
       name: applicantName.get(slug) ?? slug,
       mark,
-      backers: applicantBackers.get(slug),
       sourceIds: [...(srcs.get(slug) ?? [])],
     }))
     .sort((a, b) => a.name.localeCompare(b.name));

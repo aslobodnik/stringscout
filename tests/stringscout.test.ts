@@ -3,8 +3,8 @@ import { claims } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { sources, sourceIndex, KIND_ORDER } from "@/data/sources";
 import { announced } from "@/data/announced";
-import { leadSlug, withdrawnClaims } from "@/data/announcedAdapter";
-import { applicantMarks, stats, stringRows } from "@/lib/derive";
+import { ALIASES, leadSlug, withdrawnClaims } from "@/data/announcedAdapter";
+import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
 import { matches, type Searchable } from "@/lib/search";
 import { formatDate } from "@/lib/format";
 
@@ -23,7 +23,8 @@ const NONE = {
   issuesOnly: false,
   mark: null,
 } as const;
-const find = (q: string) => rows.map(ui).filter((r) => matches(r, { ...NONE, q }));
+const find = (q: string) =>
+  rows.map(ui).filter((r) => matches(r, { ...NONE, q }, applicantBackers));
 
 describe("search", () => {
   it("strips a leading dot, so the text the table prints is findable", () => {
@@ -96,6 +97,27 @@ describe("scraped announcements", () => {
       (s) => !/^[a-z0-9-]+$/.test(s)
     );
     expect(bad).toEqual([]);
+  });
+
+  it("still recognises every aliased lead upstream", () => {
+    // If Applicant Auction rewords a lead, the alias misses, a second slug is
+    // minted for the same entity, and every string it holds becomes a
+    // fabricated overlap. Fail here instead.
+    const leads = new Set(announced.map((a) => a.lead.toLowerCase()));
+    for (const name of Object.keys(ALIASES))
+      expect(leads.has(name), `"${name}" no longer appears upstream`).toBe(true);
+  });
+
+  it("gives each lead entity exactly one slug", () => {
+    const bySlug = new Map<string, Set<string>>();
+    for (const a of announced) {
+      const slug = leadSlug(a.lead);
+      const names = bySlug.get(slug) ?? new Set<string>();
+      names.add(a.lead);
+      bySlug.set(slug, names);
+    }
+    const slugs = [...new Set(announced.map((a) => leadSlug(a.lead)))];
+    expect(slugs.length).toBe(bySlug.size);
   });
 
   it("never emits a withdrawn announcement as a claim by that applicant", () => {

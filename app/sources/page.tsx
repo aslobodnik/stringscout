@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import Footer from "@/components/Footer";
+import SectionHead from "@/components/SectionHead";
 import { formatDate } from "@/lib/format";
 import {
   sources,
   sourceIndex,
   KIND_ORDER,
   KIND_LABEL,
-  type SourceKind,
 } from "@/data/sources";
 
 export const metadata: Metadata = {
@@ -25,20 +24,16 @@ export default function SourcesPage() {
   })).filter((g) => g.rows.length);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
+    <>
       <PageHeader title="Sources" current="/sources" />
-
 
       {byKind.map((g, gi) => (
         <section key={g.kind} className="mb-12">
-          <div className="double-rule pt-4 mb-3 flex items-baseline justify-between gap-4">
-            <h2 className="label !text-sm text-ink">
-              {KIND_LABEL[g.kind as SourceKind]}
-            </h2>
-            <span className="label text-ink-soft shrink-0">
-              {g.rows.length} · {ROMAN[gi]}
-            </span>
-          </div>
+          <SectionHead
+            n={ROMAN[gi]}
+            title={KIND_LABEL[g.kind]}
+            count={g.rows.length}
+          />
           <ol className="text-sm">
             {g.rows.map((src) => (
               <li
@@ -71,7 +66,6 @@ export default function SourcesPage() {
         </section>
       ))}
 
-      <Footer />
-    </div>
+    </>
   );
 }

@@ -3,16 +3,16 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { applicants, type Applicant } from "@/data/applicants";
 import { claims } from "@/data/claims";
-import Footer from "@/components/Footer";
+import SectionHead from "@/components/SectionHead";
 import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Applicants — Stringscout",
 };
 
-// The stored applicationCount is what the applicant said; this is what it has
-// actually named. They diverge once a scrape adds strings to an applicant that
-// was first entered by hand, so count the claims rather than trust the field.
+// What each applicant has actually named. The stored applicationCount goes
+// stale the moment a scrape adds strings, so both the column and the sort
+// read this, never the field.
 const named = new Map<string, Set<string>>();
 for (const c of claims) {
   const set = named.get(c.applicantSlug) ?? new Set<string>();
@@ -22,8 +22,7 @@ for (const c of claims) {
 const countFor = (slug: string) => named.get(slug)?.size ?? 0;
 
 const byCount = (a: Applicant, b: Applicant) =>
-  (parseInt(b.applicationCount) || countFor(b.slug)) -
-  (parseInt(a.applicationCount) || countFor(a.slug));
+  countFor(b.slug) - countFor(a.slug);
 
 function Table({
   rows,
@@ -48,7 +47,9 @@ function Table({
           </tr>
         </thead>
         <tbody>
-          {rows.map((a) => (
+          {rows.map((a) => {
+            const count = countFor(a.slug);
+            return (
             <tr key={a.slug} className="border-t border-rule-faint align-top">
               <td className="py-3 pr-4 font-medium">{a.name}</td>
               <td className="py-3 pr-4 text-ink-soft max-w-xs">
@@ -60,12 +61,12 @@ function Table({
                 )}
               </td>
               <td className="py-3 pr-4 whitespace-nowrap">
-                {countFor(a.slug) > 0 ? (
+                {count > 0 ? (
                   <Link
                     href={`/?applicant=${encodeURIComponent(a.name)}`}
                     className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out"
                   >
-                    {countFor(a.slug)}
+                    {count}
                   </Link>
                 ) : (
                   <span className="text-ink-soft">—</span>
@@ -73,18 +74,10 @@ function Table({
               </td>
               <td className="py-3 pr-4 whitespace-nowrap">{formatDate(a.revealedOn)}</td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function SectionHead({ n, title }: { n: string; title: string }) {
-  return (
-    <div className="double-rule pt-4 mb-5 flex items-baseline justify-between">
-      <h2 className="label !text-sm text-ink">{title}</h2>
-      <span className="label text-ink-soft">{n}</span>
     </div>
   );
 }
@@ -101,7 +94,7 @@ export default function ApplicantsPage() {
     .sort(byCount);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
+    <>
       <PageHeader title="The Applicants" current="/applicants" />
 
       <section className="mb-14">
@@ -114,7 +107,6 @@ export default function ApplicantsPage() {
         <Table rows={intent} dateLabel="Announced" />
       </section>
 
-      <Footer />
-    </div>
+    </>
   );
 }
