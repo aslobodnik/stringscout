@@ -1,11 +1,18 @@
 const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
 
-// Dates arrive at mixed granularity: mostly full ISO, occasionally a bare
-// year. Anything that is not a full date passes through as written.
+// Dates arrive at three granularities: a full ISO date, a year and month
+// where the day was never reported, or a bare year. Each renders at the
+// precision it actually has, in the same worded shape.
 export function formatDate(d: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
-  if (!m) return d;
-  const month = MONTHS[Number(m[2]) - 1];
-  if (!month) return d;
-  return `${Number(m[3])} ${month} ${m[1]}`;
+  const full = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+  if (full) {
+    const m = MONTHS[Number(full[2]) - 1];
+    if (m) return `${Number(full[3])} ${m} ${full[1]}`;
+  }
+  const month = /^(\d{4})-(\d{2})$/.exec(d);
+  if (month) {
+    const m = MONTHS[Number(month[2]) - 1];
+    if (m) return `${m} ${month[1]}`;
+  }
+  return d;
 }

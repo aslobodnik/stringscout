@@ -27,6 +27,8 @@ export type UiStringRow = {
 
 const PAGE = 25;
 const ROW_PX = 37; // measured single-line row, used only to reserve height
+const MIN_ROWS = 12; // floor, so typing never collapses the page under the reader
+const DEBOUNCE_MS = 180;
 
 // applicants, markers and sources stay parallel: index n of each describes
 // the same applicant on that string.
@@ -446,7 +448,9 @@ export default function StringsTable({
   rows: UiStringRow[];
   stats: UiStats;
 }) {
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(""); // what the input shows
+  const [query, setQuery] = useState(""); // what the table filters on
+  const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   // /?applicant=Name — how the applicants page hands off to this table.
   // useSearchParams opts this subtree out of static prerendering, so the value
   // survives hydration; reading window.location in a useState initializer does
@@ -487,9 +491,15 @@ export default function StringsTable({
   const filtered = useMemo(
     () =>
       rows.filter((r) =>
-        matches(r, { q, applicant, contestedOnly, issuesOnly, mark: markFilter })
+        matches(r, {
+          q: query,
+          applicant,
+          contestedOnly,
+          issuesOnly,
+          mark: markFilter,
+        })
       ),
-    [rows, q, applicant, contestedOnly, issuesOnly, markFilter]
+    [rows, query, applicant, contestedOnly, issuesOnly, markFilter]
   );
 
   const sorted = useMemo(() => {
@@ -519,7 +529,7 @@ export default function StringsTable({
           issuesOnly && "issues",
           markFilter && MARK_LABEL[markFilter].split(" ")[0],
           applicant !== "all" && applicant.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-          q.trim() && "search",
+          query.trim() && "search",
         ]
           .filter(Boolean)
           .join("-") || "filtered";
@@ -537,6 +547,7 @@ export default function StringsTable({
         issuesOnly={issuesOnly}
         onAll={() => {
           setQ("");
+          setQuery("");
           setApplicant("all");
           setContestedOnly(false);
           setIssuesOnly(false);
@@ -565,8 +576,13 @@ export default function StringsTable({
           type="search"
           value={q}
           onChange={(e) => {
-            setQ(e.target.value);
-            setPage(0);
+            const v = e.target.value;
+            setQ(v);
+            if (debounce.current) clearTimeout(debounce.current);
+            debounce.current = setTimeout(() => {
+              setQuery(v);
+              setPage(0);
+            }, DEBOUNCE_MS);
           }}
           placeholder="Search…"
           aria-label="Search strings"
@@ -632,9 +648,11 @@ export default function StringsTable({
           normally — that shrink is the filter reporting itself. */}
       <div
         className="overflow-x-auto sm:overflow-visible"
-        style={
-          sorted.length > PAGE ? { minHeight: `${PAGE * ROW_PX}px` } : undefined
-        }
+        style={{
+          minHeight: `${
+            Math.max(MIN_ROWS, Math.min(sorted.length, PAGE)) * ROW_PX
+          }px`,
+        }}
       >
         <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
           {/* fixed layout so column widths don't shift with sort/page/filter */}

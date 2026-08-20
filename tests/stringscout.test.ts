@@ -117,8 +117,19 @@ describe("sources", () => {
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
-  it("formats a full date and passes anything else through", () => {
+  it("renders each date at the precision it actually has", () => {
     expect(formatDate("2026-08-13")).toBe("13 Aug 2026");
+    expect(formatDate("2024-06")).toBe("Jun 2024");
     expect(formatDate("2026")).toBe("2026");
+    expect(formatDate("2026-13-01")).toBe("2026-13-01"); // not a month
+  });
+
+  it("leaves no unformatted date on any page", () => {
+    const dates = [
+      ...sources.map((s) => s.date),
+      ...applicants.map((a) => a.revealedOn),
+    ];
+    for (const d of dates)
+      expect(formatDate(d), `${d} rendered raw`).not.toMatch(/^\d{4}-\d{2}/);
   });
 });
