@@ -1,4 +1,5 @@
 import { sources } from "@/data/sources";
+import { withdrawnClaims } from "@/data/announcedAdapter";
 import { lastUpdated } from "@/data/meta";
 import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
@@ -75,9 +76,33 @@ export default function Home() {
         />
       </section>
 
+      {/* Withdrawn */}
+      <section className="mb-14">
+        <SectionHead n="II" title="Withdrawn Before Filing" />
+        <p className="text-sm text-ink-soft mb-4 max-w-2xl">
+          Announced, then pulled before the application went to ICANN. Counted
+          nowhere above; kept because a collapsed announcement still tells you
+          who wanted the string.
+        </p>
+        <ul className="text-sm grid gap-x-8 gap-y-2 sm:grid-cols-2">
+          {withdrawnClaims.map((w) => (
+            <li key={`${w.tld}-${w.applicant}`} className="flex items-baseline gap-2">
+              <span className="font-medium whitespace-nowrap">
+                <span className="text-gold">.</span>
+                <span className="line-through decoration-oxblood/70">{w.tld}</span>
+              </span>
+              <span className="text-ink-soft [overflow-wrap:anywhere]">
+                {w.applicant}
+                {w.partners.length ? ` + ${w.partners.join(", ")}` : ""}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* Sources */}
       <section className="mb-14">
-        <SectionHead n="II" title="Sources" />
+        <SectionHead n="III" title="Sources" />
         <ol className="text-sm space-y-2">
           {sources.map((src, i) => (
             <li key={src.id} id={`src-${i + 1}`} className="flex gap-3">

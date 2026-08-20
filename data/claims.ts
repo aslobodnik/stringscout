@@ -1,5 +1,6 @@
 import { lfgStrings } from "./lfgStrings";
 import { jttwPrimary, jttwOther } from "./jttwStrings";
+import { announcedClaims } from "./announcedAdapter";
 
 // "intent" = stated an intention to apply, application not confirmed.
 export type ClaimKind = "primary" | "backup" | "unknown" | "intent";
@@ -157,4 +158,5 @@ export const claims: Claim[] = [
   ...easygroup,
   ...starlight,
   ...intents,
+  ...announcedClaims,
 ];

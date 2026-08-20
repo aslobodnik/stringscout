@@ -8,7 +8,9 @@ export type Source = {
 
 // One source per applicant. Program facts cite the Applicant Guidebook
 // inline as "AGB §x.x" — no link needed.
-export const sources: Source[] = [
+import { announcedSources } from "./announcedAdapter";
+
+const handSources: Source[] = [
   {
     id: "dnw",
     outlet: "Domain Name Wire",
@@ -137,5 +139,7 @@ export const sources: Source[] = [
     date: "2026-08-19",
   },
 ];
+
+export const sources: Source[] = [...handSources, ...announcedSources];
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));

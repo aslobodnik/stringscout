@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { MARKS, type Issue, type Mark } from "@/lib/derive";
 
@@ -254,28 +255,31 @@ export type UiStats = {
   issues: number;
 };
 
-// Two of the four tiles are also the table's filters: the number and the way
-// to see what is behind it belong in the same place.
+// Every tile is a way in: two filter the table, one clears it, one leaves for
+// the applicants page. The number and the way to see behind it belong in the
+// same place.
 function StatTiles({
   s,
   contestedOnly,
   issuesOnly,
+  onAll,
   onContested,
   onIssues,
 }: {
   s: UiStats;
   contestedOnly: boolean;
   issuesOnly: boolean;
+  onAll: () => void;
   onContested: () => void;
   onIssues: () => void;
 }) {
-  const cell = "p-3 sm:p-4 text-left";
+  const cell = "p-3 sm:p-4 text-left w-full";
   const num = "text-2xl sm:text-3xl font-light";
   const cap =
-    "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem]";
+    "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
   const tiles = [
-    { v: s.applicants, l: "Applicants revealed" },
-    { v: s.strings, l: "Strings disclosed" },
+    { v: s.applicants, l: "Applicants revealed", href: "/applicants" },
+    { v: s.strings, l: "Strings disclosed", act: onAll, title: "Show every string" },
     {
       v: s.contested,
       l: "Overlapping strings",
@@ -286,38 +290,37 @@ function StatTiles({
   ];
   return (
     <section className="grid grid-cols-2 sm:grid-cols-4 border border-ink mb-10">
-      {tiles.map(({ v, l, on, act }, i) => {
+      {tiles.map(({ v, l, on, act, href, title }, i) => {
         const divider = [
           i % 2 === 1 ? "border-l border-rule" : "",
           i > 1 ? "border-t border-rule sm:border-t-0" : "",
           i === 2 ? "sm:border-l sm:border-rule" : "",
         ].join(" ");
-        if (!act)
+        const inner = (
+          <>
+            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
+            <div className={`${cap} ${on ? "!text-oxblood" : ""}`}>{l}</div>
+          </>
+        );
+        const shell = `${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+          on ? "bg-paper-deep" : "hover:bg-paper-deep"
+        }`;
+        if (href)
           return (
-            <div key={l} className={`${cell} ${divider}`}>
-              <div className={num}>{v}</div>
-              <div className={cap}>{l}</div>
-            </div>
+            <Link key={l} href={href} title="See every applicant" className={`${shell} block`}>
+              {inner}
+            </Link>
           );
         return (
           <button
             key={l}
             type="button"
             aria-pressed={on}
-            title={on ? "Show all strings" : `Show only these ${v}`}
+            title={title ?? (on ? "Show all strings" : `Show only these ${v}`)}
             onClick={act}
-            className={`${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out ${
-              on ? "bg-paper-deep" : "hover:bg-paper-deep"
-            }`}
+            className={shell}
           >
-            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
-            <div
-              className={`${cap} ${
-                on ? "!text-oxblood" : ""
-              } border-b border-dotted border-rule inline-block`}
-            >
-              {l}
-            </div>
+            {inner}
           </button>
         );
       })}
@@ -333,7 +336,11 @@ export default function StringsTable({
   stats: UiStats;
 }) {
   const [q, setQ] = useState("");
-  const [applicant, setApplicant] = useState("all");
+  // /?applicant=Name — how the applicants page hands off to this table
+  const [applicant, setApplicant] = useState(() => {
+    if (typeof window === "undefined") return "all";
+    return new URLSearchParams(window.location.search).get("applicant") ?? "all";
+  });
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [page, setPage] = useState(0);
@@ -365,25 +372,28 @@ export default function StringsTable({
   );
 
   const filtered = useMemo(() => {
-    // ".anime" should find anime; the table prints every string with its dot
-    const needle = q.trim().toLowerCase().replace(/^\./, "");
+    const raw = q.trim().toLowerCase();
+    // A leading dot means the reader wants the string itself. Without it the
+    // search also reaches glosses and the people behind each applicant —
+    // otherwise "anime" drags in every string backed by Animecoin.
+    const stringOnly = raw.startsWith(".");
+    const needle = raw.replace(/^\./, "");
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
       if (issuesOnly && !r.issues.length) return false;
       if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
         return false;
-      if (
-        needle &&
-        !r.tld.includes(needle) &&
-        !r.gloss?.toLowerCase().includes(needle) &&
-        !r.applicants.some(
+      if (!needle) return true;
+      if (r.tld.includes(needle)) return true;
+      if (stringOnly) return false;
+      return (
+        !!r.gloss?.toLowerCase().includes(needle) ||
+        r.applicants.some(
           (a) =>
             a.name.toLowerCase().includes(needle) ||
             a.backers?.toLowerCase().includes(needle)
         )
-      )
-        return false;
-      return true;
+      );
     });
   }, [rows, q, applicant, contestedOnly, issuesOnly]);
 
@@ -416,6 +426,14 @@ export default function StringsTable({
         s={stats}
         contestedOnly={contestedOnly}
         issuesOnly={issuesOnly}
+        onAll={() => {
+          setQ("");
+          setApplicant("all");
+          setContestedOnly(false);
+          setIssuesOnly(false);
+          setPage(0);
+          revealResults();
+        }}
         onContested={() => {
           setContestedOnly((v) => !v);
           setPage(0);

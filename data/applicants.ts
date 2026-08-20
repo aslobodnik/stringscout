@@ -14,7 +14,9 @@ export type Applicant = {
   sourceIds: string[];
 };
 
-export const applicants: Applicant[] = [
+import { announcedApplicants } from "./announcedAdapter";
+
+export const handApplicants: Applicant[] = [
   {
     slug: "oinkadot",
     status: "disclosed",
@@ -235,4 +237,9 @@ export const applicants: Applicant[] = [
     note: null,
     sourceIds: ["di"],
   },
+];
+
+export const applicants: Applicant[] = [
+  ...handApplicants,
+  ...announcedApplicants,
 ];
