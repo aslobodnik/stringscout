@@ -129,6 +129,13 @@ export const sources: Source[] = [
     url: "https://domainincite.com/30812-second-new-gtld-contention-set-revealed",
     date: "2025-02-27",
   },
+  {
+    id: "iana",
+    outlet: "IANA",
+    title: "Root Zone Database — the delegated TLDs, checked against every string here",
+    url: "https://www.iana.org/domains/root/db",
+    date: "2026-08-19",
+  },
 ];
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));

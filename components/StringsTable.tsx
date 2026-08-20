@@ -409,20 +409,17 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
                     <>.{r.tld}</>
                   )}
                   {r.existing && (
-                    <button
-                      type="button"
-                      aria-pressed={existingOnly}
-                      onClick={() => {
-                        setExistingOnly((v) => !v);
-                        setPage(0);
-                      }}
-                      className="group relative label text-oxblood ml-2 !text-[9px] cursor-pointer"
+                    <a
+                      href={`https://www.iana.org/domains/root/db/${r.punycode}.html`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative label text-oxblood ml-2 !text-[9px] underline decoration-dotted decoration-oxblood/40 underline-offset-2 hover:decoration-oxblood transition-colors duration-200 ease-in-out"
                     >
                       existing tld
                       <span role="tooltip" className={TIP_BOX}>
-                        Already in the IANA root zone
+                        Already delegated — see it in the IANA root zone
                       </span>
-                    </button>
+                    </a>
                   )}
                 </td>
                 <td className="py-2 pr-4">
