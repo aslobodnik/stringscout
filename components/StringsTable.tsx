@@ -183,31 +183,24 @@ function Marker({
   );
 }
 
-// The number in the /sources list. Hover answers "who says so" without
-// leaving the table; the click is for reading the whole thing.
+// The number in the /sources list. The native title carries the outlet, so a
+// reader can identify the source without a box covering the row.
 function Cite({ ids }: { ids: string[] }) {
   const nums = ids
     .map((id) => ({ id, n: sourceIndex.get(id), s: sourceById.get(id) }))
     .filter((x): x is { id: string; n: number; s: Source } => !!x.n && !!x.s);
   if (!nums.length) return null;
   return (
-    <span className="group relative inline-block no-underline">
-      <sup className="src ml-0.5 text-[9px]">
-        {nums.map(({ id, n }, i) => (
-          <span key={id}>
-            {i > 0 && <span className="text-rule">,</span>}
-            <a href={`/sources#src-${n}`}>{n}</a>
-          </span>
-        ))}
-      </sup>
-      <span role="tooltip" className={`${TIP_BOX} !whitespace-normal max-w-xs`}>
-        {nums.map(({ id, s }) => (
-          <span key={id} className="block">
-            <span className="font-medium">{s.outlet}</span> · {s.date}
-          </span>
-        ))}
-      </span>
-    </span>
+    <sup className="src ml-0.5 text-[9px] no-underline">
+      {nums.map(({ id, n, s }, i) => (
+        <span key={id}>
+          {i > 0 && <span className="text-rule">,</span>}
+          <a href={`/sources#src-${n}`} title={`${s.outlet} · ${s.date}`}>
+            {n}
+          </a>
+        </span>
+      ))}
+    </sup>
   );
 }
 
