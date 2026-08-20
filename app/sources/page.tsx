@@ -37,10 +37,6 @@ export default function SourcesPage() {
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
       <PageHeader title="Sources" current="/sources" />
 
-      <p className="text-sm text-ink-soft mb-10 max-w-2xl">
-        Grouped by how close each source sits to the applicant. A superscript on
-        the strings table is the number in this list.
-      </p>
 
       {byKind.map((g, gi) => (
         <section key={g.kind} className="mb-12">

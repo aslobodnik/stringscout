@@ -175,10 +175,13 @@ function Marker({
   return (
     // inline-block keeps the applicant button's underline from running beneath
     // the block: decorations are not drawn through an atomic inline
-    <span className="group relative inline-block no-underline align-[0.1em]">
+    // no tooltip: the legend defines all three marks four lines above the
+    // table and never scrolls out from under them
+    <span className="inline-block no-underline align-[0.1em]">
       <button
         type="button"
         aria-label={MARK_LABEL[mark]}
+        title={MARK_LABEL[mark]}
         onClick={(e) => {
           e.stopPropagation();
           onFilter(mark);
@@ -187,9 +190,6 @@ function Marker({
       >
         {mark}
       </button>
-      <span role="tooltip" className={TIP_BOX}>
-        {MARK_LABEL[mark]}
-      </span>
     </span>
   );
 }
@@ -572,10 +572,6 @@ export default function StringsTable({
         }}
       />
 
-      <div className="double-rule pt-4 mb-5 flex items-baseline justify-between">
-        <h2 className="label !text-sm text-ink">All Applied Strings</h2>
-        <span className="label text-ink-soft">I</span>
-      </div>
 
       <div
         ref={toolbarRef}

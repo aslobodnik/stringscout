@@ -3,7 +3,6 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { applicants, type Applicant } from "@/data/applicants";
 import { claims } from "@/data/claims";
-import { announcedPartners } from "@/data/announcedAdapter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -20,14 +19,6 @@ for (const c of claims) {
   named.set(c.applicantSlug, set);
 }
 const countFor = (slug: string) => named.get(slug)?.size ?? 0;
-
-// Same divergence on the "who" line: a hand-written record names the one
-// partner it was entered with, the scrape has since named the rest.
-const backersFor = (a: Applicant) => {
-  const p = announcedPartners.get(a.slug) ?? [];
-  if (p.length < 2) return a.backers;
-  return `With ${p.join(", ")}`;
-};
 
 const byCount = (a: Applicant, b: Applicant) =>
   (parseInt(b.applicationCount) || countFor(b.slug)) -
@@ -60,7 +51,7 @@ function Table({
             <tr key={a.slug} className="border-t border-rule-faint align-top">
               <td className="py-3 pr-4 font-medium">{a.name}</td>
               <td className="py-3 pr-4 text-ink-soft max-w-xs">
-                {backersFor(a)}
+                {a.backers}
                 {a.note && (
                   <span className="serif italic block mt-1 text-[13px]">
                     {a.note}
@@ -119,12 +110,6 @@ export default function ApplicantsPage() {
 
       <section className="mb-14">
         <SectionHead n="II" title="Intent" />
-        <p className="text-sm text-ink-soft mb-5 max-w-2xl">
-          Announced before the application window opened, with no confirmed
-          filing. Their strings carry an{" "}
-          <sup className="text-gold">i</sup> in the table and are not counted as
-          disclosed.
-        </p>
         <Table rows={intent} dateLabel="Announced" />
       </section>
 
