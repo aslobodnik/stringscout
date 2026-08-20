@@ -129,6 +129,9 @@ const starlight = expand(
   "primary"
 );
 
+// Brian Harbin — .grit, via Domain Name Wire (only record of the reveal).
+const harbin = expand(["grit"], "harbin", ["dnw-grit"]);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -156,5 +159,6 @@ export const claims: Claim[] = [
   ...telegram,
   ...easygroup,
   ...starlight,
+  ...harbin,
   ...intents,
 ];

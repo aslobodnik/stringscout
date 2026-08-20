@@ -192,6 +192,17 @@ export const applicants: Applicant[] = [
     sourceIds: ["dnw-starlight"],
   },
   {
+    slug: "harbin",
+    status: "disclosed",
+    name: "Brian Harbin",
+    backers: "Brian Harbin, founder of Grit Brokerage",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-08-20",
+    note: null,
+    sourceIds: ["dnw-grit"],
+  },
+  {
     slug: "unstoppable",
     status: "intent",
     name: "Unstoppable Domains",

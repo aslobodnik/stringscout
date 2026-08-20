@@ -123,6 +123,13 @@ export const sources: Source[] = [
     date: "2026-08-19",
   },
   {
+    id: "dnw-grit",
+    outlet: "Domain Name Wire",
+    title: "Brian Harbin hopes to spread grit with .grit top level domain name",
+    url: "https://domainnamewire.com/2026/08/20/brian-harbin-hopes-to-spread-grit-with-grit-top-level-domain-name/",
+    date: "2026-08-20",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
