@@ -221,7 +221,91 @@ const SORT_COLS: {
 
 const collator = new Intl.Collator();
 
-export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
+export type UiStats = {
+  applicants: number;
+  claims: number;
+  contested: number;
+  issues: number;
+};
+
+// Two of the four tiles are also the table's filters: the number and the way
+// to see what is behind it belong in the same place.
+function StatTiles({
+  s,
+  contestedOnly,
+  issuesOnly,
+  onContested,
+  onIssues,
+}: {
+  s: UiStats;
+  contestedOnly: boolean;
+  issuesOnly: boolean;
+  onContested: () => void;
+  onIssues: () => void;
+}) {
+  const cell = "p-3 sm:p-4 text-left";
+  const num = "text-2xl sm:text-3xl font-light";
+  const cap =
+    "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem]";
+  const tiles = [
+    { v: s.applicants, l: "Applicants revealed" },
+    { v: s.claims, l: "Strings disclosed" },
+    {
+      v: s.contested,
+      l: "Overlapping strings",
+      on: contestedOnly,
+      act: onContested,
+    },
+    { v: s.issues, l: "Potential issues", on: issuesOnly, act: onIssues },
+  ];
+  return (
+    <section className="grid grid-cols-2 sm:grid-cols-4 border border-ink mb-10">
+      {tiles.map(({ v, l, on, act }, i) => {
+        const divider = [
+          i % 2 === 1 ? "border-l border-rule" : "",
+          i > 1 ? "border-t border-rule sm:border-t-0" : "",
+          i === 2 ? "sm:border-l sm:border-rule" : "",
+        ].join(" ");
+        if (!act)
+          return (
+            <div key={l} className={`${cell} ${divider}`}>
+              <div className={num}>{v}</div>
+              <div className={cap}>{l}</div>
+            </div>
+          );
+        return (
+          <button
+            key={l}
+            type="button"
+            aria-pressed={on}
+            title={on ? "Show all strings" : `Show only these ${v}`}
+            onClick={act}
+            className={`${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out ${
+              on ? "bg-paper-deep" : "hover:bg-paper-deep"
+            }`}
+          >
+            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
+            <div
+              className={`${cap} ${
+                on ? "!text-oxblood" : ""
+              } border-b border-dotted border-rule inline-block`}
+            >
+              {l}
+            </div>
+          </button>
+        );
+      })}
+    </section>
+  );
+}
+
+export default function StringsTable({
+  rows,
+  stats,
+}: {
+  rows: UiStringRow[];
+  stats: UiStats;
+}) {
   const [q, setQ] = useState("");
   const [applicant, setApplicant] = useState("all");
   const [contestedOnly, setContestedOnly] = useState(false);
@@ -232,11 +316,6 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
     key: "tld",
     dir: 1,
   });
-
-  const issueCount = useMemo(
-    () => rows.filter((r) => r.issues.length).length,
-    [rows]
-  );
 
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
@@ -290,6 +369,25 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
 
   return (
     <div>
+      <StatTiles
+        s={stats}
+        contestedOnly={contestedOnly}
+        issuesOnly={issuesOnly}
+        onContested={() => {
+          setContestedOnly((v) => !v);
+          setPage(0);
+        }}
+        onIssues={() => {
+          setIssuesOnly((v) => !v);
+          setPage(0);
+        }}
+      />
+
+      <div className="double-rule pt-4 mb-5 flex items-baseline justify-between">
+        <h2 className="label !text-sm text-ink">All Applied Strings</h2>
+        <span className="label text-ink-soft">I</span>
+      </div>
+
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <input
           type="search"
@@ -312,21 +410,6 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
         />
         <button
           type="button"
-          aria-pressed={contestedOnly}
-          onClick={() => {
-            setContestedOnly((v) => !v);
-            setPage(0);
-          }}
-          className={`label border px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out ${
-            contestedOnly
-              ? "bg-oxblood text-paper border-oxblood"
-              : "border-ink text-ink hover:bg-paper-deep"
-          }`}
-        >
-          Overlaps only
-        </button>
-        <button
-          type="button"
           onClick={() => downloadCsv(sorted)}
           title="Download the strings below as CSV, punycode included"
           className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
@@ -339,24 +422,6 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
             ↓
           </span>
         </button>
-        {issueCount > 0 && (
-          <button
-            type="button"
-            aria-pressed={issuesOnly}
-            onClick={() => {
-              setIssuesOnly((v) => !v);
-              setPage(0);
-            }}
-            title="Already delegated, or confusingly similar to a delegated TLD or another disclosed string"
-            className={`label !text-[10px] cursor-pointer border-b border-dotted transition-colors duration-200 ease-in-out ${
-              issuesOnly
-                ? "text-oxblood border-oxblood"
-                : "text-ink-soft border-rule hover:text-oxblood hover:border-oxblood"
-            }`}
-          >
-            Potential issues ({issueCount})
-          </button>
-        )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
 

@@ -137,6 +137,7 @@ export function stats() {
     applicants: applicants.filter((a) => a.status === "disclosed").length,
     strings: rows.length,
     contested: rows.filter((r) => r.contested).length,
+    issues: rows.filter((r) => r.issues.length).length,
     claims: claims.filter((c) => c.kind !== "intent").length,
   };
 }

@@ -39,27 +39,10 @@ export default function Home() {
         </p>
       </header>
 
-      {/* Stat row */}
-      <section className="grid grid-cols-3 border border-ink mb-10">
-        {[
-          { v: String(s.applicants), l: "Applicants revealed" },
-          { v: String(s.claims), l: "Strings disclosed" },
-          { v: String(s.contested), l: "Overlapping strings" },
-        ].map(({ v, l }, i) => (
-          <div
-            key={l}
-            className={`p-3 sm:p-4 ${i > 0 ? "border-l border-rule" : ""}`}
-          >
-            <div className="text-2xl sm:text-3xl font-light">{v}</div>
-            <div className="label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem]">{l}</div>
-          </div>
-        ))}
-      </section>
-
       {/* All strings */}
       <section className="mb-14">
-        <SectionHead n="I" title="All Applied Strings" />
         <StringsTable
+          stats={s}
           rows={rows.map(
             (r): UiStringRow => ({
               tld: r.tld,
