@@ -26,14 +26,15 @@ export default function WithdrawnPage() {
       <p className="text-sm text-ink-soft mb-8 max-w-2xl">
         Announced for the 2026 round, then pulled before the application reached
         ICANN. Counted nowhere else on this site. Kept because a collapsed
-        announcement still records who wanted the string.
+        announcement still records who wanted the string. Announced is the piece
+        that reported the string; Withdrawn is where the retraction is recorded.
       </p>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse sm:min-w-[560px]">
           <thead>
             <tr className="text-left">
-              {["String", "Announced by", "Source", "Announced"].map((h) => (
+              {["String", "Announced by", "Announced in", "Withdrawn in", "Date"].map((h) => (
                 <th
                   key={h}
                   scope="col"
@@ -76,6 +77,20 @@ export default function WithdrawnPage() {
                         className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out [overflow-wrap:anywhere]"
                       >
                         {src.outlet}
+                      </a>
+                    ) : (
+                      <span className="text-ink-soft">—</span>
+                    )}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {w.withdrawnUrl ? (
+                      <a
+                        href={w.withdrawnUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out"
+                      >
+                        Unstoppable refund list
                       </a>
                     ) : (
                       <span className="text-ink-soft">—</span>

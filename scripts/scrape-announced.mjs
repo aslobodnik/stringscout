@@ -69,6 +69,11 @@ const records = rows.map((r) => {
     strings,
     note: strings.length ? null : rawStrings,
     withdrawn: /\bWithdrawn\b/.test(rawCompany),
+    // the "Withdrawn" badge carries its own link — the page showing the
+    // string never went to ICANN. The Source column is the announcement.
+    withdrawnUrl: /\bWithdrawn\b/.test(rawCompany)
+      ? (tds[0].match(/href="([^"]+)"/)?.[1] ?? null)
+      : null,
     sourceUrl: tds[2].match(/href="([^"]+)"/)?.[1] ?? null,
     sourceTitle: strip(tds[2]),
     date: strip(tds[3]),
@@ -85,6 +90,7 @@ export type Announced = {
   strings: string[];
   note: string | null; // set when the row names no concrete string
   withdrawn: boolean;
+  withdrawnUrl: string | null; // where the withdrawal is recorded
   sourceUrl: string | null;
   sourceTitle: string;
   date: string;

@@ -589,6 +589,10 @@ export default function StringsTable({
         }}
       />
 
+      {/* separates the summary from the table's own controls — the rule the
+          removed section heading used to carry */}
+      <div className="double-rule mb-5" />
+
       <div
         ref={toolbarRef}
         className="flex flex-wrap items-center gap-3 mb-5 scroll-mt-14"

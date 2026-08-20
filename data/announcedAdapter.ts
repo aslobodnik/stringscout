@@ -133,6 +133,7 @@ export const withdrawnClaims = announced
       tld,
       applicant: r.lead,
       partners: r.partners,
+      withdrawnUrl: r.withdrawnUrl,
       sourceId: r.sourceUrl ? urlIds.get(r.sourceUrl)! : null,
       date: r.date,
     }))
