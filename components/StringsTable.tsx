@@ -107,7 +107,7 @@ function ApplicantSelect({
           <Backdrop onClose={() => setOpen(false)} />
           <ul
             role="listbox"
-            className="absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
+            className="paper-scroll absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
           >
             {items.map((v) => (
               <li key={v} role="option" aria-selected={v === value}>
@@ -117,10 +117,10 @@ function ApplicantSelect({
                     onChange(v);
                     setOpen(false);
                   }}
-                  className={`label block w-full text-left px-3 py-3 cursor-pointer transition-colors duration-200 ease-in-out ${
+                  className={`label block w-full text-left px-3 py-3 cursor-pointer transition-colors duration-200 ease-in-out border-t border-dotted first:border-t-0 ${
                     v === value
-                      ? "bg-ink text-paper"
-                      : "text-ink hover:bg-paper-deep"
+                      ? "bg-ink text-paper border-ink"
+                      : "text-ink hover:bg-paper-deep border-rule"
                   }`}
                 >
                   {labelFor(v)}
@@ -283,7 +283,7 @@ function Legend({
   onToggle: (m: Mark) => void;
 }) {
   return (
-    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+    <div className="mt-4 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2">
       {MARKS.filter((m) => present.includes(m.mark)).map(({ mark, label }) => {
         const on = active === mark;
         return (
@@ -293,7 +293,7 @@ function Legend({
             aria-pressed={on}
             title={on ? "Show every marker" : `Show only ${label}`}
             onClick={() => onToggle(mark)}
-            className={`flex items-baseline gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-0.5 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+            className={`flex items-center gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-1 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
