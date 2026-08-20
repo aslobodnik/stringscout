@@ -101,7 +101,12 @@ export default function ApplicantsPage() {
   const disclosed = applicants
     .filter((a) => a.status === "disclosed")
     .sort(byCount);
-  const intent = applicants.filter((a) => a.status === "intent").sort(byCount);
+  // An applicant that has named no string has nothing to show here. The row
+  // stays in the data (the announcement is real) but a table of strings is
+  // the wrong place for it.
+  const intent = applicants
+    .filter((a) => a.status === "intent" && countFor(a.slug) > 0)
+    .sort(byCount);
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
