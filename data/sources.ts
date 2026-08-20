@@ -189,7 +189,9 @@ const handSources: Source[] = [
 // Numbered in bucket order so a superscript resolves to exactly one entry and
 // the numbering matches the order they are printed on /sources.
 export const sources: Source[] = [...handSources, ...announcedSources].sort(
-  (a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
+  (a, b) =>
+    KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) ||
+    a.date.localeCompare(b.date)
 );
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));
