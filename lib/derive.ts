@@ -1,18 +1,40 @@
 import { claims, type Claim } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
-import { existingTlds } from "@/data/existingTlds";
+import { rootZone } from "@/data/rootZone";
+
+// Things worth a reader's attention before they trust a row.
+// delegated: the string is already a TLD, so it cannot be applied for.
+// plural:    singular/plural of a delegated TLD, which ICANN treats as
+//            confusingly similar.
+// similar:   singular/plural of a string another applicant disclosed.
+export type IssueKind = "delegated" | "plural" | "similar";
+
+export type Issue = {
+  kind: IssueKind;
+  other?: string; // the TLD or string it collides with
+};
 
 export type StringRow = {
   tld: string;
   punycode: string; // A-label; identical to tld for ASCII strings
   gloss?: string; // English translation for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
+  issues: Issue[];
   claims: Claim[];
   contested: boolean;
 };
 
-const existingSet = new Set(existingTlds);
+const rootSet = new Set(rootZone);
+
+// Two-letter entries are ccTLDs. A word that merely ends in "s" is not
+// confusable with a country code, so they would be pure noise here.
+const isCc = (t: string) => t.length === 2;
+
+const variantsOf = (t: string) =>
+  [`${t}s`, t.endsWith("s") ? t.slice(0, -1) : null].filter(
+    (v): v is string => v !== null
+  );
 
 // A-label form of a string. URL parsing does the IDNA conversion; ASCII
 // strings come back unchanged.
@@ -32,14 +54,33 @@ export function stringRows(): StringRow[] {
     byTld.set(c.tld, rows);
   }
   return [...byTld.entries()]
-    .map(([tld, rows]) => ({
-      tld,
-      punycode: toPunycode(tld),
-      gloss: cjkGloss[tld],
-      existing: existingSet.has(tld),
-      claims: rows,
-      contested: new Set(rows.map((c) => c.applicantSlug)).size > 1,
-    }))
+    .map(([tld, rows]) => {
+      const punycode = toPunycode(tld);
+      const issues: Issue[] = [];
+      if (rootSet.has(punycode)) {
+        issues.push({ kind: "delegated" });
+      } else {
+        for (const v of variantsOf(punycode)) {
+          if (rootSet.has(v) && !isCc(v)) issues.push({ kind: "plural", other: v });
+        }
+      }
+      const owners = new Set(rows.map((c) => c.applicantSlug));
+      for (const v of variantsOf(tld)) {
+        const other = byTld.get(v);
+        if (!other) continue;
+        if (other.some((c) => !owners.has(c.applicantSlug)))
+          issues.push({ kind: "similar", other: v });
+      }
+      return {
+        tld,
+        punycode,
+        gloss: cjkGloss[tld],
+        existing: issues.some((i) => i.kind === "delegated"),
+        issues,
+        claims: rows,
+        contested: owners.size > 1,
+      };
+    })
     .sort((a, b) => a.tld.localeCompare(b.tld));
 }
 

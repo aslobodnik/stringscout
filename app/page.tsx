@@ -66,6 +66,7 @@ export default function Home() {
               punycode: r.punycode,
               gloss: r.gloss,
               existing: r.existing,
+              issues: r.issues,
               applicants: applicantMarks(r.claims),
               overlap: r.contested,
               count: new Set(r.claims.map((c) => c.applicantSlug)).size,

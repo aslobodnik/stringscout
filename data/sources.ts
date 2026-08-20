@@ -132,7 +132,7 @@ export const sources: Source[] = [
   {
     id: "iana",
     outlet: "IANA",
-    title: "Root Zone Database — the delegated TLDs, checked against every string here",
+    title: "Root Zone Database — every delegated TLD, checked against every string here",
     url: "https://www.iana.org/domains/root/db",
     date: "2026-08-19",
   },

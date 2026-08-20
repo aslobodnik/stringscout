@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { MARKS, type Mark } from "@/lib/derive";
+import { MARKS, type Issue, type Mark } from "@/lib/derive";
 
 export type UiStringRow = {
   tld: string;
   punycode: string; // A-label; same as tld for ASCII strings
   gloss?: string; // English translation, shown on hover for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
+  issues: Issue[];
   applicants: { name: string; mark: Mark }[];
   overlap: boolean;
   count: number;
@@ -24,6 +25,7 @@ const CSV_COLS = [
   "applicant_count",
   "overlap",
   "existing_tld",
+  "issues",
 ] as const;
 
 const csvCell = (v: string) =>
@@ -40,6 +42,7 @@ function toCsv(rows: UiStringRow[]): string {
       String(r.count),
       r.overlap ? "yes" : "no",
       r.existing ? "yes" : "no",
+      r.issues.map(issueLabel).join("; "),
     ]
       .map(csvCell)
       .join(",")
@@ -137,6 +140,49 @@ function Marker({ mark }: { mark: Mark }) {
   );
 }
 
+function issueLabel(issue: Issue) {
+  if (issue.kind === "delegated") return "existing tld";
+  if (issue.kind === "plural") return `plural of .${issue.other}`;
+  return `near .${issue.other}`;
+}
+
+const ISSUE_TIP: Record<Issue["kind"], string> = {
+  delegated: "Already delegated — see it in the IANA root zone",
+  plural: "Singular or plural of a delegated TLD",
+  similar: "Singular or plural of another applicant's string",
+};
+
+const TAG =
+  "group relative label text-oxblood ml-2 !text-[9px] whitespace-nowrap";
+
+function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
+  const tip = (
+    <span role="tooltip" className={TIP_BOX}>
+      {ISSUE_TIP[issue.kind]}
+    </span>
+  );
+  const target =
+    issue.kind === "delegated" ? punycode : issue.kind === "plural" ? issue.other : null;
+  if (!target)
+    return (
+      <span className={TAG}>
+        {issueLabel(issue)}
+        {tip}
+      </span>
+    );
+  return (
+    <a
+      href={`https://www.iana.org/domains/root/db/${target}.html`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${TAG} underline decoration-dotted decoration-oxblood/40 underline-offset-2 hover:decoration-oxblood transition-colors duration-200 ease-in-out`}
+    >
+      {issueLabel(issue)}
+      {tip}
+    </a>
+  );
+}
+
 function Legend({ present }: { present: Mark[] }) {
   return (
     <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1">
@@ -179,7 +225,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
   const [q, setQ] = useState("");
   const [applicant, setApplicant] = useState("all");
   const [contestedOnly, setContestedOnly] = useState(false);
-  const [existingOnly, setExistingOnly] = useState(false);
+  const [issuesOnly, setIssuesOnly] = useState(false);
   const [page, setPage] = useState(0);
   const [pinned, setPinned] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
@@ -187,8 +233,8 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
     dir: 1,
   });
 
-  const existingCount = useMemo(
-    () => rows.filter((r) => r.existing).length,
+  const issueCount = useMemo(
+    () => rows.filter((r) => r.issues.length).length,
     [rows]
   );
 
@@ -206,7 +252,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
     const needle = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
-      if (existingOnly && !r.existing) return false;
+      if (issuesOnly && !r.issues.length) return false;
       if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
         return false;
       if (
@@ -217,7 +263,7 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
         return false;
       return true;
     });
-  }, [rows, q, applicant, contestedOnly, existingOnly]);
+  }, [rows, q, applicant, contestedOnly, issuesOnly]);
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -293,22 +339,22 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
             ↓
           </span>
         </button>
-        {existingCount > 0 && (
+        {issueCount > 0 && (
           <button
             type="button"
-            aria-pressed={existingOnly}
+            aria-pressed={issuesOnly}
             onClick={() => {
-              setExistingOnly((v) => !v);
+              setIssuesOnly((v) => !v);
               setPage(0);
             }}
-            title="Strings that are already delegated TLDs and cannot be applied for"
+            title="Already delegated, or confusingly similar to a delegated TLD or another disclosed string"
             className={`label !text-[10px] cursor-pointer border-b border-dotted transition-colors duration-200 ease-in-out ${
-              existingOnly
+              issuesOnly
                 ? "text-oxblood border-oxblood"
                 : "text-ink-soft border-rule hover:text-oxblood hover:border-oxblood"
             }`}
           >
-            Already delegated ({existingCount})
+            Potential issues ({issueCount})
           </button>
         )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
@@ -408,19 +454,9 @@ export default function StringsTable({ rows }: { rows: UiStringRow[] }) {
                   ) : (
                     <>.{r.tld}</>
                   )}
-                  {r.existing && (
-                    <a
-                      href={`https://www.iana.org/domains/root/db/${r.punycode}.html`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative label text-oxblood ml-2 !text-[9px] underline decoration-dotted decoration-oxblood/40 underline-offset-2 hover:decoration-oxblood transition-colors duration-200 ease-in-out"
-                    >
-                      existing tld
-                      <span role="tooltip" className={TIP_BOX}>
-                        Already delegated — see it in the IANA root zone
-                      </span>
-                    </a>
-                  )}
+                  {r.issues.map((issue) => (
+                    <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
+                  ))}
                 </td>
                 <td className="py-2 pr-4">
                   {r.applicants.map(({ name, mark }, i) => (
