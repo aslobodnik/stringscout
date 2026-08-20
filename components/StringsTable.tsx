@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { MARKS, type Issue, type Mark } from "@/lib/derive";
 
 export type UiStringRow = {
@@ -183,6 +183,29 @@ function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
   );
 }
 
+function FilterChip({
+  label,
+  onClear,
+}: {
+  label: string;
+  onClear: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClear}
+      aria-label={`Clear the ${label.toLowerCase()} filter`}
+      title={`Clear the ${label.toLowerCase()} filter`}
+      className="label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
+    >
+      {label}
+      <span aria-hidden className="text-[11px] leading-none">
+        ×
+      </span>
+    </button>
+  );
+}
+
 function Legend({ present }: { present: Mark[] }) {
   return (
     <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1">
@@ -316,6 +339,17 @@ export default function StringsTable({
     key: "tld",
     dir: 1,
   });
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // A tile sits above the fold and the rows it filters sit below it, so the
+  // filtering is invisible without this.
+  const revealResults = () =>
+    toolbarRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
 
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
@@ -376,10 +410,12 @@ export default function StringsTable({
         onContested={() => {
           setContestedOnly((v) => !v);
           setPage(0);
+          revealResults();
         }}
         onIssues={() => {
           setIssuesOnly((v) => !v);
           setPage(0);
+          revealResults();
         }}
       />
 
@@ -388,7 +424,10 @@ export default function StringsTable({
         <span className="label text-ink-soft">I</span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 mb-5">
+      <div
+        ref={toolbarRef}
+        className="flex flex-wrap items-center gap-3 mb-5 scroll-mt-14"
+      >
         <input
           type="search"
           value={q}
@@ -422,6 +461,24 @@ export default function StringsTable({
             ↓
           </span>
         </button>
+        {contestedOnly && (
+          <FilterChip
+            label="Overlapping strings"
+            onClear={() => {
+              setContestedOnly(false);
+              setPage(0);
+            }}
+          />
+        )}
+        {issuesOnly && (
+          <FilterChip
+            label="Potential issues"
+            onClear={() => {
+              setIssuesOnly(false);
+              setPage(0);
+            }}
+          />
+        )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
 
