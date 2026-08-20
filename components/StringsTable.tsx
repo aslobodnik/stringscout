@@ -144,40 +144,35 @@ const TIP_BOX =
 
 const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
 
-// How firmly an applicant tied itself to a string. "u" is 83% of all claims
-// and means only that nobody said — an absent block is the honest encoding,
-// and it keeps the two marks that carry information legible.
-const BLOCK: Partial<Record<Mark, string>> = {
+// How firmly an applicant tied itself to a string. Every claim carries one:
+// "u" is 83% of them and says only that nobody stated which, which a reader
+// should be told rather than left to infer from an absence. It is drawn at
+// hairline weight so the two marks that carry information still read first.
+const BLOCK: Record<Mark, string> = {
   p: "bg-ink text-paper border-ink",
+  u: "border-rule-faint text-ink-soft",
   i: "text-oxblood border-oxblood",
 };
 
 function Marker({
   mark,
   onFilter,
-  active,
 }: {
   mark: Mark;
   onFilter: (m: Mark) => void;
-  active: boolean;
 }) {
-  const style = BLOCK[mark];
-  if (!style) return null;
   return (
     // inline-block keeps the applicant button's underline from running beneath
     // the block: decorations are not drawn through an atomic inline
     <span className="group relative inline-block no-underline align-[0.1em]">
       <button
         type="button"
-        aria-pressed={active}
         aria-label={MARK_LABEL[mark]}
         onClick={(e) => {
           e.stopPropagation();
           onFilter(mark);
         }}
-        className={`ml-1 border w-[13px] h-[13px] leading-none text-[9px] font-medium uppercase cursor-pointer transition-colors duration-200 ease-in-out ${style} ${
-          active ? "ring-1 ring-gold" : ""
-        }`}
+        className={`ml-1 border w-[13px] h-[13px] leading-none text-[9px] font-medium uppercase cursor-pointer transition-colors duration-200 ease-in-out ${BLOCK[mark]}`}
       >
         {mark}
       </button>
@@ -302,15 +297,11 @@ function Legend({
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
-            {/* the swatch mirrors the row exactly: "u" has no block there, so
-                it shows as an empty one here */}
             <span
               aria-hidden
-              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
-                BLOCK[mark] ?? "border-dashed border-rule"
-              }`}
+              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${BLOCK[mark]}`}
             >
-              {BLOCK[mark] ? mark : ""}
+              {mark}
             </span>
             <span
               className={`label !text-[10px] !tracking-[0.08em] ${
@@ -756,7 +747,6 @@ export default function StringsTable({
                           </button>
                           <Marker
                             mark={mark}
-                            active={markFilter === mark}
                             onFilter={(m) => {
                               setMarkFilter((v) => (v === m ? null : m));
                               setPage(0);
