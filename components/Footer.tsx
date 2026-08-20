@@ -1,4 +1,5 @@
 import { lastUpdated } from "@/data/meta";
+import { formatDate } from "@/lib/format";
 
 const REPO = "https://github.com/aslobodnik/stringscout";
 const X_PROFILE = "https://x.com/alexslobodnik";
@@ -50,7 +51,7 @@ export default function Footer() {
     <footer className="mt-auto double-rule pt-5 text-sm text-ink-soft flex flex-wrap items-center gap-x-6 gap-y-3">
       <p className="max-w-xl">
         Not affiliated with ICANN. All data self- or press-reported. Updated{" "}
-        {lastUpdated}.
+        {formatDate(lastUpdated)}.
       </p>
       <div className="flex items-center gap-3 ml-auto">
         <span className="label !text-[10px] !tracking-[0.14em]">Developed by</span>
