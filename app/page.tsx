@@ -3,6 +3,7 @@ import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
+import RootGlobe from "@/components/RootGlobe";
 
 function SectionHead({ n, title }: { n: string; title: string }) {
   return (
@@ -21,11 +22,15 @@ export default function Home() {
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
       {/* Header */}
       <TopBar current="/" />
-      <header className="pb-6">
-        <h1 className="serif italic mt-5 text-base sm:text-lg font-normal text-ink max-w-2xl">
+      {/* The globe spans the header and the stat block: a sphere cut flat by a
+          100px header reads as an accident. */}
+      <div className="relative overflow-hidden">
+      <RootGlobe className="pointer-events-none absolute -right-24 -top-6 w-[210px] h-[210px] sm:w-[280px] sm:h-[280px] sm:-right-20" />
+      <header className="relative pb-6">
+        <h1 className="relative serif italic mt-5 text-base sm:text-lg font-normal text-ink max-w-2xl">
           Self-revealed strings in the 2026 gTLD round.
         </h1>
-        <p className="mt-2 text-sm text-ink-soft">
+        <p className="relative mt-2 text-sm text-ink-soft">
           Created by the team behind{" "}
           <a
             href="https://earlywarning.report"
@@ -40,7 +45,7 @@ export default function Home() {
       </header>
 
       {/* All strings */}
-      <section className="mb-14">
+      <section className="relative mb-14">
         <StringsTable
           stats={s}
           rows={rows.map(
@@ -57,6 +62,8 @@ export default function Home() {
           )}
         />
       </section>
+
+      </div>
 
       {/* Sources */}
       <section className="mb-14">
