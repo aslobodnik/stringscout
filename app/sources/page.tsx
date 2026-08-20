@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import Footer from "@/components/Footer";
+import { formatDate } from "@/lib/format";
 import {
   sources,
   sourceIndex,
@@ -17,16 +18,6 @@ export const metadata: Metadata = {
 
 const ROMAN = ["I", "II", "III", "IV"];
 
-const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
-
-// Sources carry mixed granularity: most are full ISO dates, a few are a bare
-// year. Anything that is not a full date passes through as written.
-function formatDate(d: string) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
-  if (!m) return d;
-  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1]}`;
-}
-
 export default function SourcesPage() {
   const byKind = KIND_ORDER.map((kind) => ({
     kind,
@@ -34,7 +25,7 @@ export default function SourcesPage() {
   })).filter((g) => g.rows.length);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
+    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
       <PageHeader title="Sources" current="/sources" />
 
 

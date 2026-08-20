@@ -8,7 +8,7 @@ export default function Home() {
   const rows = stringRows();
 
   return (
-    <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
+    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
       {/* Header */}
       <TopBar current="/" />
       {/* The wordmark is in the top bar a few lines up; repeating it larger

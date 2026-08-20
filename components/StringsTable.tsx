@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MARKS, type Issue, type Mark } from "@/lib/derive";
 import { sourceIndex, sources, type Source } from "@/data/sources";
+import { matches } from "@/lib/search";
 
 const sourceById = new Map(sources.map((s) => [s.id, s]));
 
@@ -24,6 +25,7 @@ export type UiStringRow = {
 };
 
 const PAGE = 25;
+const ROW_PX = 37; // measured single-line row, used only to reserve height
 
 // applicants, markers and sources stay parallel: index n of each describes
 // the same applicant on that string.
@@ -444,11 +446,7 @@ export default function StringsTable({
   stats: UiStats;
 }) {
   const [q, setQ] = useState("");
-  // /?applicant=Name — how the applicants page hands off to this table
-  const [applicant, setApplicant] = useState(() => {
-    if (typeof window === "undefined") return "all";
-    return new URLSearchParams(window.location.search).get("applicant") ?? "all";
-  });
+  const [applicant, setApplicant] = useState("all");
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
@@ -459,6 +457,14 @@ export default function StringsTable({
     dir: 1,
   });
   const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // /?applicant=Name — how the applicants page hands off to this table. This
+  // has to run after hydration: the page is prerendered with "all", so a
+  // useState initializer reading the URL is thrown away on hydrate.
+  useEffect(() => {
+    const name = new URLSearchParams(window.location.search).get("applicant");
+    if (name) setApplicant(name);
+  }, []);
 
   // A tile sits above the fold and the rows it filters sit below it, so the
   // filtering is invisible without this.
@@ -480,33 +486,13 @@ export default function StringsTable({
     [rows]
   );
 
-  const filtered = useMemo(() => {
-    const raw = q.trim().toLowerCase();
-    // A leading dot means the reader wants the string itself. Without it the
-    // search also reaches glosses and the people behind each applicant —
-    // otherwise "anime" drags in every string backed by Animecoin.
-    const stringOnly = raw.startsWith(".");
-    const needle = raw.replace(/^\./, "");
-    return rows.filter((r) => {
-      if (contestedOnly && !r.overlap) return false;
-      if (issuesOnly && !r.issues.length) return false;
-      if (markFilter && !r.applicants.some((a) => a.mark === markFilter))
-        return false;
-      if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
-        return false;
-      if (!needle) return true;
-      if (r.tld.includes(needle)) return true;
-      if (stringOnly) return false;
-      return (
-        !!r.gloss?.toLowerCase().includes(needle) ||
-        r.applicants.some(
-          (a) =>
-            a.name.toLowerCase().includes(needle) ||
-            a.backers?.toLowerCase().includes(needle)
-        )
-      );
-    });
-  }, [rows, q, applicant, contestedOnly, issuesOnly, markFilter]);
+  const filtered = useMemo(
+    () =>
+      rows.filter((r) =>
+        matches(r, { q, applicant, contestedOnly, issuesOnly, mark: markFilter })
+      ),
+    [rows, q, applicant, contestedOnly, issuesOnly, markFilter]
+  );
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -643,7 +629,15 @@ export default function StringsTable({
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
       {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
-      <div className="overflow-x-auto sm:overflow-visible">
+      {/* While paging, every page reserves the same height so Prev/Next does
+          not move the footer. A filtered set smaller than one page collapses
+          normally — that shrink is the filter reporting itself. */}
+      <div
+        className="overflow-x-auto sm:overflow-visible"
+        style={
+          sorted.length > PAGE ? { minHeight: `${PAGE * ROW_PX}px` } : undefined
+        }
+      >
         <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
           {/* fixed layout so column widths don't shift with sort/page/filter */}
           <colgroup>
@@ -831,7 +825,10 @@ export default function StringsTable({
           <button
             type="button"
             disabled={current === 0}
-            onClick={() => setPage(current - 1)}
+            onClick={() => {
+              setPage(current - 1);
+              revealResults();
+            }}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Prev
@@ -839,7 +836,10 @@ export default function StringsTable({
           <button
             type="button"
             disabled={current === pageCount - 1}
-            onClick={() => setPage(current + 1)}
+            onClick={() => {
+              setPage(current + 1);
+              revealResults();
+            }}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Next

@@ -4,6 +4,7 @@ import PageHeader from "@/components/PageHeader";
 import { applicants, type Applicant } from "@/data/applicants";
 import { claims } from "@/data/claims";
 import Footer from "@/components/Footer";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Applicants — Stringscout",
@@ -70,7 +71,7 @@ function Table({
                   <span className="text-ink-soft">—</span>
                 )}
               </td>
-              <td className="py-3 pr-4 whitespace-nowrap">{a.revealedOn}</td>
+              <td className="py-3 pr-4 whitespace-nowrap">{formatDate(a.revealedOn)}</td>
             </tr>
           ))}
         </tbody>
@@ -100,7 +101,7 @@ export default function ApplicantsPage() {
     .sort(byCount);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
+    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
       <PageHeader title="The Applicants" current="/applicants" />
 
       <section className="mb-14">

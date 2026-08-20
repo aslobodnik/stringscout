@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import Footer from "@/components/Footer";
+import { formatDate } from "@/lib/format";
 import { withdrawnClaims } from "@/data/announcedAdapter";
 import { sources } from "@/data/sources";
 
@@ -23,7 +24,7 @@ export default function WithdrawnPage() {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
+    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
       <PageHeader title="Withdrawn" current="/withdrawn" />
 
       <p className="text-sm text-ink-soft mb-8 max-w-2xl">
@@ -85,7 +86,7 @@ export default function WithdrawnPage() {
                     )}
                   </td>
                   <td className="py-3 pr-4 whitespace-nowrap text-ink-soft">
-                    {w.date}
+                    {formatDate(w.date)}
                   </td>
                 </tr>
               );
@@ -106,7 +107,7 @@ export default function WithdrawnPage() {
               <span className="text-gold w-5 shrink-0 text-right">{i + 1}.</span>
               <span>
                 <span className="font-medium">{s.outlet}</span>
-                <span className="text-ink-soft"> · {s.date} · </span>
+                <span className="text-ink-soft"> · {formatDate(s.date)} · </span>
                 <a
                   href={s.url}
                   target="_blank"
