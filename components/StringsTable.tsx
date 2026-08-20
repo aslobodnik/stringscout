@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { MARKS, type Issue, type Mark } from "@/lib/derive";
+import { sourceIndex, sources, type Source } from "@/data/sources";
+
+const sourceById = new Map(sources.map((s) => [s.id, s]));
 
 export type UiStringRow = {
   tld: string;
@@ -10,7 +13,12 @@ export type UiStringRow = {
   gloss?: string; // English translation, shown on hover for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
-  applicants: { name: string; mark: Mark; backers?: string }[];
+  applicants: {
+    name: string;
+    mark: Mark;
+    backers?: string;
+    sourceIds: string[];
+  }[];
   overlap: boolean;
   count: number;
 };
@@ -131,16 +139,73 @@ const TIP_BOX =
 
 const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
 
-// Superscript on an applicant's name: how firmly that applicant tied itself
-// to this string.
-function Marker({ mark }: { mark: Mark }) {
+// How firmly an applicant tied itself to a string. "u" is 83% of all claims
+// and means only that nobody said — an absent block is the honest encoding,
+// and it keeps the two marks that carry information legible.
+const BLOCK: Partial<Record<Mark, string>> = {
+  p: "bg-ink text-paper border-ink",
+  i: "text-oxblood border-oxblood",
+};
+
+function Marker({
+  mark,
+  onFilter,
+  active,
+}: {
+  mark: Mark;
+  onFilter: (m: Mark) => void;
+  active: boolean;
+}) {
+  const style = BLOCK[mark];
+  if (!style) return null;
   return (
     // inline-block keeps the applicant button's underline from running beneath
-    // the superscript: decorations are not drawn through an atomic inline
-    <span className="group relative inline-block no-underline">
-      <sup className="ml-px text-[9px] text-gold cursor-help">{mark}</sup>
+    // the block: decorations are not drawn through an atomic inline
+    <span className="group relative inline-block no-underline align-[0.1em]">
+      <button
+        type="button"
+        aria-pressed={active}
+        aria-label={MARK_LABEL[mark]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onFilter(mark);
+        }}
+        className={`ml-1 border w-[13px] h-[13px] leading-none text-[9px] font-medium uppercase cursor-pointer transition-colors duration-200 ease-in-out ${style} ${
+          active ? "ring-1 ring-gold" : ""
+        }`}
+      >
+        {mark}
+      </button>
       <span role="tooltip" className={TIP_BOX}>
         {MARK_LABEL[mark]}
+      </span>
+    </span>
+  );
+}
+
+// The number in the /sources list. Hover answers "who says so" without
+// leaving the table; the click is for reading the whole thing.
+function Cite({ ids }: { ids: string[] }) {
+  const nums = ids
+    .map((id) => ({ id, n: sourceIndex.get(id), s: sourceById.get(id) }))
+    .filter((x): x is { id: string; n: number; s: Source } => !!x.n && !!x.s);
+  if (!nums.length) return null;
+  return (
+    <span className="group relative inline-block no-underline">
+      <sup className="src ml-0.5 text-[9px]">
+        {nums.map(({ id, n }, i) => (
+          <span key={id}>
+            {i > 0 && <span className="text-rule">,</span>}
+            <a href={`/sources#src-${n}`}>{n}</a>
+          </span>
+        ))}
+      </sup>
+      <span role="tooltip" className={`${TIP_BOX} !whitespace-normal max-w-xs`}>
+        {nums.map(({ id, s }) => (
+          <span key={id} className="block">
+            <span className="font-medium">{s.outlet}</span> · {s.date}
+          </span>
+        ))}
       </span>
     </span>
   );
@@ -239,8 +304,15 @@ function Legend({
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
-            <span className={`text-[11px] ${on ? "text-paper" : "text-gold"}`}>
-              <sup>{mark}</sup>
+            {/* the swatch mirrors the row exactly: "u" has no block there, so
+                it shows as an empty one here */}
+            <span
+              aria-hidden
+              className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
+                BLOCK[mark] ?? "border-dashed border-rule"
+              }`}
+            >
+              {BLOCK[mark] ? mark : ""}
             </span>
             <span
               className={`label !text-[10px] !tracking-[0.08em] ${
@@ -372,7 +444,7 @@ export default function StringsTable({
   });
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
-  const [mark, setMark] = useState<Mark | null>(null);
+  const [markFilter, setMarkFilter] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
   const [pinned, setPinned] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
@@ -411,7 +483,8 @@ export default function StringsTable({
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
       if (issuesOnly && !r.issues.length) return false;
-      if (mark && !r.applicants.some((a) => a.mark === mark)) return false;
+      if (markFilter && !r.applicants.some((a) => a.mark === markFilter))
+        return false;
       if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
         return false;
       if (!needle) return true;
@@ -426,7 +499,7 @@ export default function StringsTable({
         )
       );
     });
-  }, [rows, q, applicant, contestedOnly, issuesOnly, mark]);
+  }, [rows, q, applicant, contestedOnly, issuesOnly, markFilter]);
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -462,7 +535,7 @@ export default function StringsTable({
           setApplicant("all");
           setContestedOnly(false);
           setIssuesOnly(false);
-          setMark(null);
+          setMarkFilter(null);
           setPage(0);
           revealResults();
         }}
@@ -538,11 +611,11 @@ export default function StringsTable({
             }}
           />
         )}
-        {mark && (
+        {markFilter && (
           <FilterChip
-            label={MARK_LABEL[mark]}
+            label={MARK_LABEL[markFilter]}
             onClear={() => {
-              setMark(null);
+              setMarkFilter(null);
               setPage(0);
             }}
           />
@@ -552,9 +625,9 @@ export default function StringsTable({
 
       <Legend
         present={presentMarks}
-        active={mark}
+        active={markFilter}
         onToggle={(m) => {
-          setMark((v) => (v === m ? null : m));
+          setMarkFilter((v) => (v === m ? null : m));
           setPage(0);
         }}
       />
@@ -664,36 +737,45 @@ export default function StringsTable({
                 <td className="py-2 pr-4">
                   <span className="flex items-baseline gap-2">
                   <span>
-                  {r.applicants.map(({ name, mark }, i) => {
-                    // keep the marker glued to the last word so it can't
-                    // wrap onto a line of its own on narrow screens
+                  {r.applicants.map(({ name, mark, sourceIds }, i) => {
+                    // keep the block and cite glued to the last word so they
+                    // can't wrap onto a line of their own on narrow screens
                     const cut = name.lastIndexOf(" ");
                     const head = cut === -1 ? "" : name.slice(0, cut + 1);
                     const tail = cut === -1 ? name : name.slice(cut + 1);
                     return (
                       <span key={name}>
                         {i > 0 && <span className="text-ink-soft"> · </span>}
-                        <button
-                          type="button"
-                          aria-pressed={applicant === name}
-                          title={
-                            applicant === name ? "Clear filter" : `Only ${name}`
-                          }
-                          onClick={() => {
-                            setApplicant(applicant === name ? "all" : name);
-                            setPage(0);
-                            revealResults();
-                          }}
-                          className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
-                            applicant === name ? "text-gold decoration-gold" : ""
-                          }`}
-                        >
-                          {head}
-                          <span className="whitespace-nowrap">
-                            {tail}
-                            <Marker mark={mark} />
-                          </span>
-                        </button>
+                        <span className="whitespace-nowrap">
+                          <button
+                            type="button"
+                            aria-pressed={applicant === name}
+                            title={
+                              applicant === name ? "Clear filter" : `Only ${name}`
+                            }
+                            onClick={() => {
+                              setApplicant(applicant === name ? "all" : name);
+                              setPage(0);
+                              revealResults();
+                            }}
+                            className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
+                              applicant === name ? "text-gold decoration-gold" : ""
+                            }`}
+                          >
+                            {head}
+                            <span className="whitespace-nowrap">{tail}</span>
+                          </button>
+                          <Marker
+                            mark={mark}
+                            active={markFilter === mark}
+                            onFilter={(m) => {
+                              setMarkFilter((v) => (v === m ? null : m));
+                              setPage(0);
+                              revealResults();
+                            }}
+                          />
+                          <Cite ids={sourceIds} />
+                        </span>
                       </span>
                     );
                   })}

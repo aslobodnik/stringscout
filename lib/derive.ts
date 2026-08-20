@@ -117,18 +117,23 @@ function markOf(kind: Claim["kind"]): Mark {
 // more than once keeps its strongest marker.
 export function applicantMarks(
   rows: Claim[]
-): { name: string; mark: Mark; backers?: string }[] {
+): { name: string; mark: Mark; backers?: string; sourceIds: string[] }[] {
   const best = new Map<string, Mark>();
+  const srcs = new Map<string, Set<string>>();
   for (const c of rows) {
     const m = markOf(c.kind);
     const prev = best.get(c.applicantSlug);
     if (!prev || RANK[m] < RANK[prev]) best.set(c.applicantSlug, m);
+    const set = srcs.get(c.applicantSlug) ?? new Set<string>();
+    for (const id of c.sourceIds) set.add(id);
+    srcs.set(c.applicantSlug, set);
   }
   return [...best]
     .map(([slug, mark]) => ({
       name: applicantName.get(slug) ?? slug,
       mark,
       backers: applicantBackers.get(slug),
+      sourceIds: [...(srcs.get(slug) ?? [])],
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }

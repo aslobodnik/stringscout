@@ -1,9 +1,37 @@
+// Where a claim came from, in descending order of authority. "applicant" is
+// the applicant speaking for itself, wire releases included; "trade" is the
+// domain-industry press; "press" is everyone else reporting it secondhand;
+// "reference" is not a reveal source at all.
+export type SourceKind = "applicant" | "trade" | "press" | "reference";
+
 export type Source = {
   id: string;
   outlet: string;
   title: string;
   url: string;
   date: string;
+  kind: SourceKind;
+};
+
+export const KIND_ORDER: SourceKind[] = [
+  "applicant",
+  "trade",
+  "press",
+  "reference",
+];
+
+export const KIND_LABEL: Record<SourceKind, string> = {
+  applicant: "Applicant statements",
+  trade: "Trade press",
+  press: "General press",
+  reference: "Reference",
+};
+
+export const KIND_NOTE: Record<SourceKind, string> = {
+  applicant: "The applicant speaking for itself: its own site, post, filing or release.",
+  trade: "Domain-industry press. Cited when it is the only record of a reveal.",
+  press: "Reported secondhand by outlets outside the industry.",
+  reference: "Not a reveal. Used to check disclosed strings against the root zone.",
 };
 
 // One source per applicant. Program facts cite the Applicant Guidebook
@@ -17,6 +45,7 @@ const handSources: Source[] = [
     title: "Oinkadot reveals its 25 new TLD applications",
     url: "https://domainnamewire.com/2026/08/15/oinkadot-tlds/",
     date: "2026-08-15",
+    kind: "trade",
   },
   {
     id: "lfg",
@@ -24,6 +53,7 @@ const handSources: Source[] = [
     title: "lfg.link — full list of its 316 applied-for strings",
     url: "https://lfg.link/",
     date: "2026",
+    kind: "applicant",
   },
   {
     id: "tld1",
@@ -31,6 +61,7 @@ const handSources: Source[] = [
     title: "tld1.llc — four applied-for strings",
     url: "https://tld1.llc/",
     date: "2026-08-15",
+    kind: "applicant",
   },
   {
     id: "ibest",
@@ -38,6 +69,7 @@ const handSources: Source[] = [
     title: "internet.best/icann2026 — ten applied-for strings",
     url: "https://internet.best/icann2026",
     date: "2026-08-15",
+    kind: "applicant",
   },
   {
     id: "endpoint",
@@ -45,6 +77,7 @@ const handSources: Source[] = [
     title: "endpointdomains.com — eight primary applications revealed, more to come",
     url: "https://endpointdomains.com/",
     date: "2026-08-16",
+    kind: "applicant",
   },
   {
     id: "cb",
@@ -52,6 +85,7 @@ const handSources: Source[] = [
     title: "Wiz submits community application for .bitcoin ahead of the deadline",
     url: "https://cryptobriefing.com/wiz-bitcoin-domain-icann-application/",
     date: "2026-08-05",
+    kind: "press",
   },
   {
     id: "tomx",
@@ -60,6 +94,7 @@ const handSources: Source[] = [
       "Founder post — suffix.domains applied at ICANN for 13 primary strings",
     url: "https://x.com/T0M_3D/status/2089070697025057081",
     date: "2026-08-16",
+    kind: "applicant",
   },
   {
     id: "xiyou",
@@ -67,6 +102,7 @@ const handSources: Source[] = [
     title: "xiyou.domains — 323 applied-for strings",
     url: "https://xiyou.domains/",
     date: "2026-08-17",
+    kind: "applicant",
   },
   {
     id: "dnw-sp",
@@ -74,6 +110,7 @@ const handSources: Source[] = [
     title: "Two more applicants disclose their top level domain strings",
     url: "https://domainnamewire.com/2026/08/17/suffix-phoenix/",
     date: "2026-08-17",
+    kind: "trade",
   },
   {
     id: "kasmi-x",
@@ -81,6 +118,7 @@ const handSources: Source[] = [
     title: "We have applied for .bit and .ion",
     url: "https://x.com/kasmiyouness1/status/2089299017314316687",
     date: "2026-08-17",
+    kind: "applicant",
   },
   {
     id: "suins-x",
@@ -88,6 +126,7 @@ const handSources: Source[] = [
     title: "Sui Naming Limited submitted its application for the .sui TLD",
     url: "https://x.com/SuiNSdapp/status/2089269077747355832",
     date: "2026-08-17",
+    kind: "applicant",
   },
   {
     id: "gnw-factory",
@@ -95,6 +134,7 @@ const handSources: Source[] = [
     title: "USA Made in America announces application for .factory",
     url: "https://www.globenewswire.com/news-release/2026/08/14/3345503/0/en/usa-made-in-america-announces-application-for-factory-generic-top-level-domain.html",
     date: "2026-08-14",
+    kind: "applicant",
   },
   {
     id: "dnw-ns",
@@ -102,6 +142,7 @@ const handSources: Source[] = [
     title: "Name Space applies for 10 top level domains",
     url: "https://domainnamewire.com/2026/08/18/name-space/",
     date: "2026-08-18",
+    kind: "trade",
   },
   {
     id: "durov-x",
@@ -109,6 +150,7 @@ const handSources: Source[] = [
     title: "Founder post — Telegram has applied for the .gram domain zone",
     url: "https://x.com/durov/status/2089770867576172804",
     date: "2026-08-18",
+    kind: "applicant",
   },
   {
     id: "easy-rns",
@@ -116,6 +158,7 @@ const handSources: Source[] = [
     title: "easyGroup Ltd submits application for .easy domain",
     url: "https://investing.thisismoney.co.uk/rns/news/36148225",
     date: "2026-08-18",
+    kind: "applicant",
   },
   {
     id: "dnw-starlight",
@@ -123,6 +166,7 @@ const handSources: Source[] = [
     title: "Namecheap applies for 40 top level domains",
     url: "https://domainnamewire.com/2026/08/19/namecheap-starlight/",
     date: "2026-08-19",
+    kind: "trade",
   },
   {
     id: "di",
@@ -130,6 +174,7 @@ const handSources: Source[] = [
     title: "Second new gTLD contention set revealed",
     url: "https://domainincite.com/30812-second-new-gtld-contention-set-revealed",
     date: "2025-02-27",
+    kind: "trade",
   },
   {
     id: "iana",
@@ -137,9 +182,14 @@ const handSources: Source[] = [
     title: "Root Zone Database — every delegated TLD, checked against every string here",
     url: "https://www.iana.org/domains/root/db",
     date: "2026-08-19",
+    kind: "reference",
   },
 ];
 
-export const sources: Source[] = [...handSources, ...announcedSources];
+// Numbered in bucket order so a superscript resolves to exactly one entry and
+// the numbering matches the order they are printed on /sources.
+export const sources: Source[] = [...handSources, ...announcedSources].sort(
+  (a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
+);
 
 export const sourceIndex = new Map(sources.map((s, i) => [s.id, i + 1]));

@@ -1,7 +1,7 @@
 import { announced, type Announced } from "./announced";
 import type { Applicant } from "./applicants";
 import type { Claim } from "./claims";
-import type { Source } from "./sources";
+import type { Source, SourceKind } from "./sources";
 
 // Turns the scraped announced-intentions table into applicants, claims and
 // sources. Done here rather than by hand so re-running the scraper picks up
@@ -52,10 +52,24 @@ const OUTLETS: Record<string, string> = {
   "news.google.com": "Google News (syndicated)",
 };
 
-const outletOf = (url: string) => {
-  const h = new URL(url).hostname.replace(/^www\./, "");
-  return OUTLETS[h] ?? h;
+// A wire release is the applicant's own words, so it counts as a statement.
+// Anything not listed is an applicant's own domain by default — the table only
+// ever links to a reveal's own site or to a publication named here.
+const KINDS: Record<string, SourceKind> = {
+  "domainincite.com": "trade",
+  "domainnamewire.com": "trade",
+  "circleid.com": "trade",
+  "globenewswire.com": "applicant",
+  "prnewswire.com": "applicant",
+  "businesswire.com": "applicant",
+  "coinspeaker.com": "press",
+  "cryptobriefing.com": "press",
+  "news.google.com": "press",
 };
+
+const hostOf = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+const outletOf = (url: string) => OUTLETS[hostOf(url)] ?? hostOf(url);
+const kindOf = (url: string): SourceKind => KINDS[hostOf(url)] ?? "applicant";
 
 const urlIds = new Map<string, string>();
 export const announcedSources: Source[] = [];
@@ -69,6 +83,7 @@ for (const r of announced) {
     title: r.sourceTitle.replace(/^[^:]+:\s*/, ""),
     url: r.sourceUrl,
     date: r.date,
+    kind: kindOf(r.sourceUrl),
   });
 }
 

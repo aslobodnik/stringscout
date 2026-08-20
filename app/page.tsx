@@ -63,30 +63,6 @@ export default function Home() {
         />
       </section>
 
-      {/* Sources */}
-      <section className="mb-14">
-        <SectionHead n="II" title="Sources" />
-        <ol className="text-sm space-y-2">
-          {sources.map((src, i) => (
-            <li key={src.id} id={`src-${i + 1}`} className="flex gap-3">
-              <span className="text-gold w-5 shrink-0 text-right">{i + 1}.</span>
-              <span>
-                <span className="font-medium">{src.outlet}</span>
-                <span className="text-ink-soft"> · {src.date} · </span>
-                <a
-                  href={src.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-rule hover:decoration-ink transition-colors duration-200 ease-in-out [overflow-wrap:anywhere]"
-                >
-                  {src.title}
-                </a>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       <Footer />
     </div>
   );
