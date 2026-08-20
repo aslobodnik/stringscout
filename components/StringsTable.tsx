@@ -25,12 +25,15 @@ export type UiStringRow = {
 
 const PAGE = 25;
 
+// applicants, markers and sources stay parallel: index n of each describes
+// the same applicant on that string.
 const CSV_COLS = [
   "string",
   "punycode",
   "english",
   "applicants",
   "markers",
+  "sources",
   "applicant_count",
   "overlap",
   "existing_tld",
@@ -48,6 +51,14 @@ function toCsv(rows: UiStringRow[]): string {
       r.gloss ?? "",
       r.applicants.map((a) => a.name).join("; "),
       r.applicants.map((a) => a.mark).join("; "),
+      r.applicants
+        .map((a) =>
+          a.sourceIds
+            .map((id) => sourceIndex.get(id))
+            .filter(Boolean)
+            .join("+")
+        )
+        .join("; "),
       String(r.count),
       r.overlap ? "yes" : "no",
       r.existing ? "yes" : "no",
@@ -60,14 +71,14 @@ function toCsv(rows: UiStringRow[]): string {
   return `\uFEFF${CSV_COLS.join(",")}\n${lines.join("\n")}\n`;
 }
 
-function downloadCsv(rows: UiStringRow[]) {
+function downloadCsv(rows: UiStringRow[], scope: string) {
   const stamp = new Date().toISOString().slice(0, 10);
   const url = URL.createObjectURL(
     new Blob([toCsv(rows)], { type: "text/csv;charset=utf-8" })
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = `stringscout-${stamp}.csv`;
+  a.download = `stringscout-${scope}-${stamp}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -216,8 +227,11 @@ const ISSUE_TIP: Record<Issue["kind"], string> = {
   similar: "Singular or plural of another applicant's string",
 };
 
+// The string column is a fixed 128px below sm, so an inline tag has nowhere
+// to go and spills under the applicants column. Stack it under the string
+// there and only sit it alongside once there is room.
 const TAG =
-  "group relative label text-oxblood ml-2 !text-[9px] whitespace-nowrap";
+  "group relative label text-oxblood !text-[9px] block mt-1 w-fit sm:inline sm:mt-0 sm:ml-2 sm:whitespace-nowrap";
 
 function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
   const tip = (
@@ -512,6 +526,20 @@ export default function StringsTable({
   const current = Math.min(page, pageCount - 1);
   const visible = sorted.slice(current * PAGE, (current + 1) * PAGE);
 
+  // the filename should say which slice of the table it holds
+  const csvScope =
+    filtered.length === rows.length
+      ? "all"
+      : [
+          contestedOnly && "overlapping",
+          issuesOnly && "issues",
+          markFilter && MARK_LABEL[markFilter].split(" ")[0],
+          applicant !== "all" && applicant.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+          q.trim() && "search",
+        ]
+          .filter(Boolean)
+          .join("-") || "filtered";
+
   const countLabel =
     filtered.length === rows.length
       ? `${rows.length} strings`
@@ -574,7 +602,7 @@ export default function StringsTable({
         />
         <button
           type="button"
-          onClick={() => downloadCsv(sorted)}
+          onClick={() => downloadCsv(sorted, csvScope)}
           title="Download the strings below as CSV, punycode included"
           className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
         >

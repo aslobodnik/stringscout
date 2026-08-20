@@ -179,7 +179,7 @@ const handSources: Source[] = [
   {
     id: "iana",
     outlet: "IANA",
-    title: "Root Zone Database — every delegated TLD, checked against every string here",
+    title: "Root Zone Database",
     url: "https://www.iana.org/domains/root/db",
     date: "2026-08-19",
     kind: "reference",
