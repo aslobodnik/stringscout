@@ -167,6 +167,7 @@ const handSources: Source[] = [
     title: "Brian Harbin hopes to spread grit with .grit top level domain name",
     url: "https://domainnamewire.com/2026/08/20/brian-harbin-hopes-to-spread-grit-with-grit-top-level-domain-name/",
     date: "2026-08-20",
+    kind: "trade",
   },
   {
     id: "di",
