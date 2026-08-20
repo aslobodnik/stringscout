@@ -52,7 +52,7 @@ const handSources: Source[] = [
     outlet: "Link Freedom Group",
     title: "lfg.link — full list of its 316 applied-for strings",
     url: "https://lfg.link/",
-    date: "2026",
+    date: "2026-08-13",
     kind: "applicant",
   },
   {
