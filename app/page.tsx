@@ -11,15 +11,12 @@ export default function Home() {
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
       {/* Header */}
       <TopBar current="/" />
-      <header className="pt-8 pb-8">
-        <div className="double-rule" />
-        <h1 className="mt-5 flex uppercase font-medium leading-[0.85] tracking-[0.14em] text-[clamp(1.75rem,4.5vw,2.75rem)]">
-          <span>String</span>
-          <span className="text-gold">scout</span>
-        </h1>
-        <p className="serif italic mt-5 text-base sm:text-lg text-ink max-w-2xl">
+      {/* The wordmark is in the top bar a few lines up; repeating it larger
+          here said the same thing twice. */}
+      <header className="pt-7 pb-7">
+        <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
           Self-revealed strings in the 2026 gTLD round.
-        </p>
+        </h1>
         <p className="mt-2 text-sm text-ink-soft">
           Created by the team behind{" "}
           <a
