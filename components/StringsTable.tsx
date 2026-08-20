@@ -9,7 +9,7 @@ export type UiStringRow = {
   gloss?: string; // English translation, shown on hover for non-Latin strings
   existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
-  applicants: { name: string; mark: Mark }[];
+  applicants: { name: string; mark: Mark; backers?: string }[];
   overlap: boolean;
   count: number;
 };
@@ -59,8 +59,11 @@ function downloadCsv(rows: UiStringRow[]) {
   const a = document.createElement("a");
   a.href = url;
   a.download = `stringscout-${stamp}.csv`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  // revoking synchronously cancels the download in Safari and Firefox
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function ApplicantSelect({
@@ -246,7 +249,7 @@ const collator = new Intl.Collator();
 
 export type UiStats = {
   applicants: number;
-  claims: number;
+  strings: number;
   contested: number;
   issues: number;
 };
@@ -272,7 +275,7 @@ function StatTiles({
     "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem]";
   const tiles = [
     { v: s.applicants, l: "Applicants revealed" },
-    { v: s.claims, l: "Strings disclosed" },
+    { v: s.strings, l: "Strings disclosed" },
     {
       v: s.contested,
       l: "Overlapping strings",
@@ -362,7 +365,8 @@ export default function StringsTable({
   );
 
   const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
+    // ".anime" should find anime; the table prints every string with its dot
+    const needle = q.trim().toLowerCase().replace(/^\./, "");
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
       if (issuesOnly && !r.issues.length) return false;
@@ -371,7 +375,12 @@ export default function StringsTable({
       if (
         needle &&
         !r.tld.includes(needle) &&
-        !r.applicants.some((a) => a.name.toLowerCase().includes(needle))
+        !r.gloss?.toLowerCase().includes(needle) &&
+        !r.applicants.some(
+          (a) =>
+            a.name.toLowerCase().includes(needle) ||
+            a.backers?.toLowerCase().includes(needle)
+        )
       )
         return false;
       return true;
@@ -399,7 +408,7 @@ export default function StringsTable({
   const countLabel =
     filtered.length === rows.length
       ? `${rows.length} strings`
-      : `${filtered.length} match`;
+      : `${filtered.length} of ${rows.length} strings`;
 
   return (
     <div>
@@ -485,7 +494,7 @@ export default function StringsTable({
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
       {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
-      <div className="overflow-x-auto sm:overflow-visible sm:min-h-[970px]">
+      <div className="overflow-x-auto sm:overflow-visible">
         <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
           {/* fixed layout so column widths don't shift with sort/page/filter */}
           <colgroup>
@@ -581,28 +590,39 @@ export default function StringsTable({
                   ))}
                 </td>
                 <td className="py-2 pr-4">
-                  {r.applicants.map(({ name, mark }, i) => (
-                    <span key={name}>
-                      {i > 0 && <span className="text-ink-soft"> · </span>}
-                      <button
-                        type="button"
-                        aria-pressed={applicant === name}
-                        title={
-                          applicant === name ? "Clear filter" : `Only ${name}`
-                        }
-                        onClick={() => {
-                          setApplicant(applicant === name ? "all" : name);
-                          setPage(0);
-                        }}
-                        className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
-                          applicant === name ? "text-gold decoration-gold" : ""
-                        }`}
-                      >
-                        {name}
-                      </button>
-                      <Marker mark={mark} />
-                    </span>
-                  ))}
+                  {r.applicants.map(({ name, mark }, i) => {
+                    // keep the marker glued to the last word so it can't
+                    // wrap onto a line of its own on narrow screens
+                    const cut = name.lastIndexOf(" ");
+                    const head = cut === -1 ? "" : name.slice(0, cut + 1);
+                    const tail = cut === -1 ? name : name.slice(cut + 1);
+                    return (
+                      <span key={name}>
+                        {i > 0 && <span className="text-ink-soft"> · </span>}
+                        <button
+                          type="button"
+                          aria-pressed={applicant === name}
+                          title={
+                            applicant === name ? "Clear filter" : `Only ${name}`
+                          }
+                          onClick={() => {
+                            setApplicant(applicant === name ? "all" : name);
+                            setPage(0);
+                            revealResults();
+                          }}
+                          className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
+                            applicant === name ? "text-gold decoration-gold" : ""
+                          }`}
+                        >
+                          {head}
+                          <span className="whitespace-nowrap">
+                            {tail}
+                            <Marker mark={mark} />
+                          </span>
+                        </button>
+                      </span>
+                    );
+                  })}
                 </td>
                 <td className="py-2 whitespace-nowrap text-right">
                   {r.overlap && (
@@ -624,7 +644,7 @@ export default function StringsTable({
 
       <Legend present={presentMarks} />
 
-      {rows.length > PAGE && (
+      {sorted.length > PAGE && (
         <div className="flex flex-wrap items-center gap-3 mt-4">
           <button
             type="button"

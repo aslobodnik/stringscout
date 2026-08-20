@@ -94,6 +94,8 @@ export function contestedRows(): StringRow[] {
 
 export const applicantName = new Map(applicants.map((a) => [a.slug, a.name]));
 
+const applicantBackers = new Map(applicants.map((a) => [a.slug, a.backers]));
+
 // Per-string marker shown as a superscript next to an applicant's name.
 export type Mark = "p" | "u" | "i";
 
@@ -115,17 +117,20 @@ function markOf(kind: Claim["kind"]): Mark {
 // more than once keeps its strongest marker.
 export function applicantMarks(
   rows: Claim[]
-): { name: string; mark: Mark }[] {
+): { name: string; mark: Mark; backers?: string }[] {
   const best = new Map<string, Mark>();
   for (const c of rows) {
     const m = markOf(c.kind);
     const prev = best.get(c.applicantSlug);
     if (!prev || RANK[m] < RANK[prev]) best.set(c.applicantSlug, m);
   }
-  return [...best].map(([slug, mark]) => ({
-    name: applicantName.get(slug) ?? slug,
-    mark,
-  }));
+  return [...best]
+    .map(([slug, mark]) => ({
+      name: applicantName.get(slug) ?? slug,
+      mark,
+      backers: applicantBackers.get(slug),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function stats() {
