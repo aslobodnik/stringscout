@@ -2,6 +2,9 @@ import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
+import Globe from "@/components/Globe";
+import Marginalia from "@/components/Marginalia";
+import ContentionArcs from "@/components/ContentionArcs";
 
 export default function Home() {
   const s = stats();
@@ -9,12 +12,15 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
+      <Marginalia />
       {/* Header */}
       <TopBar current="/" />
       {/* The wordmark is in the top bar a few lines up; repeating it larger
           here said the same thing twice. */}
-      <header className="pt-7 pb-7">
-        <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
+      <header className="relative pt-7 pb-7">
+        {/* no room for it beside the tagline at phone widths */}
+        <Globe className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 hidden sm:block sm:w-28 sm:h-28" />
+        <h1 className="relative serif italic text-lg sm:text-xl text-ink max-w-2xl">
           Self-revealed strings in the 2026 gTLD round.
         </h1>
         <p className="mt-2 text-sm text-ink-soft">
@@ -48,6 +54,15 @@ export default function Home() {
             })
           )}
         />
+      </section>
+
+      {/* Contention */}
+      <section className="mb-14">
+        <div className="double-rule pt-4 mb-6 flex items-baseline justify-between">
+          <h2 className="label !text-sm text-ink">Who Wants The Same String</h2>
+          <span className="label text-ink-soft">II</span>
+        </div>
+        <ContentionArcs />
       </section>
 
       <Footer />
