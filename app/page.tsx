@@ -1,16 +1,8 @@
 import { sources } from "@/data/sources";
-import { withdrawnClaims } from "@/data/announcedAdapter";
-import { lastUpdated } from "@/data/meta";
 import { applicantMarks, stats, stringRows } from "@/lib/derive";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
-import RootZoneBand from "@/components/RootZoneBand";
-
-// keep the reveal-day countdown current
-export const revalidate = 86400;
-
-const REVEAL_DAY = Date.UTC(2026, 9, 14);
 
 function SectionHead({ n, title }: { n: string; title: string }) {
   return (
@@ -24,7 +16,6 @@ function SectionHead({ n, title }: { n: string; title: string }) {
 export default function Home() {
   const s = stats();
   const rows = stringRows();
-  const days = Math.max(0, Math.ceil((REVEAL_DAY - Date.now()) / 86400000));
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8 pb-20">
@@ -39,9 +30,6 @@ export default function Home() {
         <p className="serif italic mt-5 text-base sm:text-lg text-ink max-w-2xl">
           Self-revealed strings in the 2026 gTLD round.
         </p>
-        <div className="label text-ink-soft mt-3">
-          Reveal day · 14 Oct 2026 · {days} days · Updated {lastUpdated}
-        </div>
         <p className="mt-2 text-sm text-ink-soft">
           Created by the team behind{" "}
           <a
@@ -54,7 +42,6 @@ export default function Home() {
           </a>
           .
         </p>
-        <RootZoneBand className="mt-6" />
       </header>
 
       {/* All strings */}
@@ -76,33 +63,9 @@ export default function Home() {
         />
       </section>
 
-      {/* Withdrawn */}
-      <section className="mb-14">
-        <SectionHead n="II" title="Withdrawn Before Filing" />
-        <p className="text-sm text-ink-soft mb-4 max-w-2xl">
-          Announced, then pulled before the application went to ICANN. Counted
-          nowhere above; kept because a collapsed announcement still tells you
-          who wanted the string.
-        </p>
-        <ul className="text-sm grid gap-x-8 gap-y-2 sm:grid-cols-2">
-          {withdrawnClaims.map((w) => (
-            <li key={`${w.tld}-${w.applicant}`} className="flex items-baseline gap-2">
-              <span className="font-medium whitespace-nowrap">
-                <span className="text-gold">.</span>
-                <span className="line-through decoration-oxblood/70">{w.tld}</span>
-              </span>
-              <span className="text-ink-soft [overflow-wrap:anywhere]">
-                {w.applicant}
-                {w.partners.length ? ` + ${w.partners.join(", ")}` : ""}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       {/* Sources */}
       <section className="mb-14">
-        <SectionHead n="III" title="Sources" />
+        <SectionHead n="II" title="Sources" />
         <ol className="text-sm space-y-2">
           {sources.map((src, i) => (
             <li key={src.id} id={`src-${i + 1}`} className="flex gap-3">

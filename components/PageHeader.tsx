@@ -3,6 +3,7 @@ import Link from "next/link";
 const NAV = [
   { href: "/", label: "Strings" },
   { href: "/applicants", label: "Applicants" },
+  { href: "/withdrawn", label: "Withdrawn" },
 ];
 
 export function TopBar({ current }: { current: string }) {

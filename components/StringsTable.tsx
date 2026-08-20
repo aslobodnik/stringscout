@@ -135,7 +135,9 @@ const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
 // to this string.
 function Marker({ mark }: { mark: Mark }) {
   return (
-    <span className="group relative">
+    // inline-block keeps the applicant button's underline from running beneath
+    // the superscript: decorations are not drawn through an atomic inline
+    <span className="group relative inline-block no-underline">
       <sup className="ml-px text-[9px] text-gold cursor-help">{mark}</sup>
       <span role="tooltip" className={TIP_BOX}>
         {MARK_LABEL[mark]}
@@ -210,20 +212,47 @@ function FilterChip({
   );
 }
 
-function Legend({ present }: { present: Mark[] }) {
+// The legend doubles as a filter: the markers are the only way to separate a
+// confirmed application from an announcement, so the definition and the way to
+// isolate it belong in the same control.
+function Legend({
+  present,
+  active,
+  onToggle,
+}: {
+  present: Mark[];
+  active: Mark | null;
+  onToggle: (m: Mark) => void;
+}) {
   return (
-    <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1">
-      {MARKS.filter((m) => present.includes(m.mark)).map(({ mark, label }) => (
-        <div key={mark} className="flex items-baseline gap-1.5">
-          <dt className="text-gold text-[11px]">
-            <sup>{mark}</sup>
-          </dt>
-          <dd className="label text-ink-soft !text-[10px] !tracking-[0.08em]">
-            {label}
-          </dd>
-        </div>
-      ))}
-    </dl>
+    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+      {MARKS.filter((m) => present.includes(m.mark)).map(({ mark, label }) => {
+        const on = active === mark;
+        return (
+          <button
+            key={mark}
+            type="button"
+            aria-pressed={on}
+            title={on ? "Show every marker" : `Show only ${label}`}
+            onClick={() => onToggle(mark)}
+            className={`flex items-baseline gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-0.5 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+              on ? "bg-ink text-paper" : "hover:bg-paper-deep"
+            }`}
+          >
+            <span className={`text-[11px] ${on ? "text-paper" : "text-gold"}`}>
+              <sup>{mark}</sup>
+            </span>
+            <span
+              className={`label !text-[10px] !tracking-[0.08em] ${
+                on ? "text-paper" : "text-ink-soft"
+              }`}
+            >
+              {label}
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -343,6 +372,7 @@ export default function StringsTable({
   });
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
+  const [mark, setMark] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
   const [pinned, setPinned] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
@@ -381,6 +411,7 @@ export default function StringsTable({
     return rows.filter((r) => {
       if (contestedOnly && !r.overlap) return false;
       if (issuesOnly && !r.issues.length) return false;
+      if (mark && !r.applicants.some((a) => a.mark === mark)) return false;
       if (applicant !== "all" && !r.applicants.some((a) => a.name === applicant))
         return false;
       if (!needle) return true;
@@ -395,7 +426,7 @@ export default function StringsTable({
         )
       );
     });
-  }, [rows, q, applicant, contestedOnly, issuesOnly]);
+  }, [rows, q, applicant, contestedOnly, issuesOnly, mark]);
 
   const sorted = useMemo(() => {
     const { key, dir } = sort;
@@ -431,6 +462,7 @@ export default function StringsTable({
           setApplicant("all");
           setContestedOnly(false);
           setIssuesOnly(false);
+          setMark(null);
           setPage(0);
           revealResults();
         }}
@@ -506,8 +538,26 @@ export default function StringsTable({
             }}
           />
         )}
+        {mark && (
+          <FilterChip
+            label={MARK_LABEL[mark]}
+            onClear={() => {
+              setMark(null);
+              setPage(0);
+            }}
+          />
+        )}
         <span className="label text-ink-soft ml-auto">{countLabel}</span>
       </div>
+
+      <Legend
+        present={presentMarks}
+        active={mark}
+        onToggle={(m) => {
+          setMark((v) => (v === m ? null : m));
+          setPage(0);
+        }}
+      />
 
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
@@ -686,7 +736,6 @@ export default function StringsTable({
         </table>
       </div>
 
-      <Legend present={presentMarks} />
 
       {sorted.length > PAGE && (
         <div className="flex flex-wrap items-center gap-3 mt-4">
