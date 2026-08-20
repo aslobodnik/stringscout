@@ -1,4 +1,5 @@
 import { applicantMarks, stats, stringRows } from "@/lib/derive";
+import { Suspense } from "react";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import { TopBar } from "@/components/PageHeader";
 import Footer from "@/components/Footer";
@@ -33,6 +34,7 @@ export default function Home() {
 
       {/* All strings */}
       <section className="relative mb-14">
+        <Suspense>
         <StringsTable
           stats={s}
           rows={rows.map(
@@ -48,6 +50,7 @@ export default function Home() {
             })
           )}
         />
+        </Suspense>
       </section>
 
       <Footer />

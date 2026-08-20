@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MARKS, type Issue, type Mark } from "@/lib/derive";
 import { sourceIndex, sources, type Source } from "@/data/sources";
 import { matches } from "@/lib/search";
@@ -446,7 +447,12 @@ export default function StringsTable({
   stats: UiStats;
 }) {
   const [q, setQ] = useState("");
-  const [applicant, setApplicant] = useState("all");
+  // /?applicant=Name — how the applicants page hands off to this table.
+  // useSearchParams opts this subtree out of static prerendering, so the value
+  // survives hydration; reading window.location in a useState initializer does
+  // not, because the prerendered HTML says "all".
+  const fromUrl = useSearchParams().get("applicant");
+  const [applicant, setApplicant] = useState(fromUrl ?? "all");
   const [contestedOnly, setContestedOnly] = useState(false);
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
@@ -457,14 +463,6 @@ export default function StringsTable({
     dir: 1,
   });
   const toolbarRef = useRef<HTMLDivElement>(null);
-
-  // /?applicant=Name — how the applicants page hands off to this table. This
-  // has to run after hydration: the page is prerendered with "all", so a
-  // useState initializer reading the URL is thrown away on hydrate.
-  useEffect(() => {
-    const name = new URLSearchParams(window.location.search).get("applicant");
-    if (name) setApplicant(name);
-  }, []);
 
   // A tile sits above the fold and the rows it filters sit below it, so the
   // filtering is invisible without this.
