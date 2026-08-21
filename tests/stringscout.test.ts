@@ -3,7 +3,7 @@ import { claims } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { sources, sourceIndex, KIND_ORDER } from "@/data/sources";
 import { announced } from "@/data/announced";
-import { ALIASES, leadSlug, withdrawnClaims } from "@/data/announcedAdapter";
+import { ALIASES, announcedClaims, leadSlug, withdrawnClaims } from "@/data/announcedAdapter";
 import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
 import { matches, type Searchable } from "@/lib/search";
 import { formatDate } from "@/lib/format";
@@ -19,8 +19,7 @@ const ui = (r: (typeof rows)[number]): Searchable => ({
 const NONE = {
   q: "",
   applicant: "all",
-  contestedOnly: false,
-  issuesOnly: false,
+  scope: "all",
   mark: null,
 } as const;
 const find = (q: string) =>
@@ -116,8 +115,28 @@ describe("scraped announcements", () => {
       names.add(a.lead);
       bySlug.set(slug, names);
     }
-    const slugs = [...new Set(announced.map((a) => leadSlug(a.lead)))];
-    expect(slugs.length).toBe(bySlug.size);
+    for (const [slug, names] of bySlug)
+      expect([...names], `${slug} covers more than one entity`).toHaveLength(1);
+  });
+
+  it("records where every withdrawal is written down", () => {
+    const pulled = announced.filter((r) => r.withdrawnStrings.length);
+    expect(pulled.length).toBeGreaterThan(0);
+    for (const r of pulled) {
+      expect(r.withdrawnUrl, `${r.lead} withdrew with no citation`).toBeTruthy();
+      expect(() => new URL(r.withdrawnUrl!)).not.toThrow();
+      for (const t of r.withdrawnStrings)
+        expect(r.strings, `.${t} withdrawn but not in the row`).toContain(t);
+    }
+  });
+
+  it("keeps a part-withdrawn row's live strings", () => {
+    // Unstoppable/Kintsugi pulled .manga and kept .anime; a row-level flag
+    // would either lose the withdrawal or take .anime down with it.
+    const row = announced.find((r) => r.strings.includes("manga"));
+    expect(row?.withdrawnStrings).toEqual(["manga"]);
+    expect(announcedClaims.some((c) => c.tld === "anime")).toBe(true);
+    expect(announcedClaims.some((c) => c.tld === "manga")).toBe(false);
   });
 
   it("never emits a withdrawn announcement as a claim by that applicant", () => {

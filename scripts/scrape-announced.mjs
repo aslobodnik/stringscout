@@ -35,6 +35,30 @@ function splitParties(raw) {
   return { lead: parts[0], partners: parts.slice(1) };
 }
 
+// The badge reads "Withdrawn" for a whole row and ".manga withdrawn" when only
+// some of the row's strings were pulled. It renders in caps via CSS, so the
+// text itself is mixed case and matching must be case-insensitive.
+function withdrawnIn(rawCompany, strings) {
+  if (!/withdrawn/i.test(rawCompany)) return [];
+  const named = [...rawCompany.matchAll(/\.([a-z0-9-]+)(?=[\s,]+(?:and\s+)?(?:\.[a-z0-9-]+[\s,]+)*withdrawn\b)/gi)]
+    .map((m) => m[1].toLowerCase())
+    .filter((t) => strings.includes(t));
+  // a bare "Withdrawn" names nothing, so it covers the row
+  return named.length ? [...new Set(named)] : [...strings];
+}
+
+// anchored on the badge rather than the first link in the cell: upstream links
+// company names in other columns and will eventually link them here too
+function withdrawnHref(rawTd) {
+  const m = rawTd.match(/<a[^>]*href=["']([^"']+)["'][^>]*>[^<]*withdrawn/i);
+  if (!m) return null;
+  try {
+    return new URL(strip(m[1]), URL_).href;
+  } catch {
+    return null;
+  }
+}
+
 const res = await fetch(URL_, {
   headers: { "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" },
 });
@@ -68,11 +92,11 @@ const records = rows.map((r) => {
     partners,
     strings,
     note: strings.length ? null : rawStrings,
-    withdrawn: /\bWithdrawn\b/.test(rawCompany),
-    // the "Withdrawn" badge carries its own link — the page showing the
-    // string never went to ICANN. The Source column is the announcement.
-    withdrawnUrl: /\bWithdrawn\b/.test(rawCompany)
-      ? (tds[0].match(/href="([^"]+)"/)?.[1] ?? null)
+    withdrawnStrings: withdrawnIn(rawCompany, strings),
+    // the badge carries its own link — the page showing the string never went
+    // to ICANN. The Source column is the announcement, a different document.
+    withdrawnUrl: withdrawnIn(rawCompany, strings).length
+      ? withdrawnHref(tds[0])
       : null,
     sourceUrl: tds[2].match(/href="([^"]+)"/)?.[1] ?? null,
     sourceTitle: strip(tds[2]),
@@ -89,7 +113,7 @@ export type Announced = {
   partners: string[];
   strings: string[];
   note: string | null; // set when the row names no concrete string
-  withdrawn: boolean;
+  withdrawnStrings: string[]; // subset of strings; empty when none were pulled
   withdrawnUrl: string | null; // where the withdrawal is recorded
   sourceUrl: string | null;
   sourceTitle: string;
@@ -110,9 +134,28 @@ if (existsSync(OUT)) {
   ));
   const added = [...now].filter((s) => !old.has(s));
   const gone = [...old].filter((s) => !now.has(s));
-  console.log(`rows ${records.length} | +${added.length} strings, -${gone.length}`);
+  // withdrawals are the point of the file, so a silent rewrite of them is the
+  // one diff that must not be possible
+  const oldPulled = new Set(
+    [...prev.matchAll(/"withdrawnStrings":\s*\[([^\]]*)\]/g)].flatMap((m) =>
+      [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1])
+    )
+  );
+  const nowPulled = new Set(records.flatMap((r) => r.withdrawnStrings));
+  const pulled = [...nowPulled].filter((s) => !oldPulled.has(s));
+  const restored = [...oldPulled].filter((s) => !nowPulled.has(s));
+  const oldUrls = new Set([...prev.matchAll(/"withdrawnUrl":\s*"([^"]+)"/g)].map((m) => m[1]));
+  const newUrls = new Set(records.map((r) => r.withdrawnUrl).filter(Boolean));
+  const urlsMoved =
+    oldUrls.size !== newUrls.size || [...newUrls].some((u) => !oldUrls.has(u));
+  console.log(
+    `rows ${records.length} | +${added.length} strings, -${gone.length} | ${nowPulled.size} withdrawn`
+  );
   if (added.length) console.log("  added:", added.map((s) => "." + s).join(", "));
   if (gone.length) console.log("  gone: ", gone.map((s) => "." + s).join(", "));
+  if (pulled.length) console.log("  withdrawn:", pulled.map((s) => "." + s).join(", "));
+  if (restored.length) console.log("  un-withdrawn:", restored.map((s) => "." + s).join(", "));
+  if (urlsMoved) console.log("  withdrawal URLs changed");
 } else {
   console.log(`rows ${records.length} | ${now.size} strings (first run)`);
 }

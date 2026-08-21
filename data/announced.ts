@@ -7,7 +7,7 @@ export type Announced = {
   partners: string[];
   strings: string[];
   note: string | null; // set when the row names no concrete string
-  withdrawn: boolean;
+  withdrawnStrings: string[]; // subset of strings; empty when none were pulled
   withdrawnUrl: string | null; // where the withdrawal is recorded
   sourceUrl: string | null;
   sourceTitle: string;
@@ -22,7 +22,7 @@ export const announced: Announced[] = [
     "partners": [],
     "strings": [],
     "note": "dot-brand (exact string not stated)",
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31448-salesforce-to-apply-for-a-dot-brand",
     "sourceTitle": "Domain Incite: Salesforce to apply for a dot-brand",
@@ -33,7 +33,7 @@ export const announced: Announced[] = [
     "partners": [],
     "strings": [],
     "note": "200 new gTLDs (strings not disclosed)",
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30879-nova-announces-45-million-of-new-gtld-applications",
     "sourceTitle": "Domain Incite: Nova announces $45 million of new gTLD applications",
@@ -48,7 +48,7 @@ export const announced: Announced[] = [
       "shib"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29281-shiba-inu-outs-itself-as-crypto-new-gtld-applicant",
     "sourceTitle": "Domain Incite: Shiba Inu outs itself as crypto new gTLD applicant",
@@ -63,7 +63,7 @@ export const announced: Announced[] = [
       "gate"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29423-another-crypto-firm-to-apply-for-a-new-gtld",
     "sourceTitle": "Domain Incite: Another crypto firm to apply for a new gTLD",
@@ -78,7 +78,7 @@ export const announced: Announced[] = [
       "near"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29467-d3-announces-fourth-crypto-new-gtld-client",
     "sourceTitle": "Domain Incite: D3 announces fourth crypto new gTLD client",
@@ -93,7 +93,7 @@ export const announced: Announced[] = [
       "core"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29511-d3-signs-up-crypto-gtld-client-number-five",
     "sourceTitle": "Domain Incite: D3 signs up crypto gTLD client number five",
@@ -108,7 +108,7 @@ export const announced: Announced[] = [
       "ape"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29736-d3-to-get-5-million-in-crypto-to-apply-for-ape-gtld",
     "sourceTitle": "Domain Incite: D3 to get $5 million in crypto to apply for .ape gTLD",
@@ -124,7 +124,7 @@ export const announced: Announced[] = [
       "cspr"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29827-d3-announces-seventh-blockchain-gtld-client",
     "sourceTitle": "Domain Incite: D3 announces seventh blockchain gTLD client",
@@ -139,7 +139,7 @@ export const announced: Announced[] = [
       "doge"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30754-could-musks-doge-kill-off-d3s-doge",
     "sourceTitle": "Domain Incite: Could Musk’s DOGE kill off D3’s .doge?",
@@ -155,7 +155,7 @@ export const announced: Announced[] = [
       "anime"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30812-second-new-gtld-contention-set-revealed",
     "sourceTitle": "Domain Incite: Second new gTLD contention set revealed",
@@ -170,7 +170,7 @@ export const announced: Announced[] = [
       "vic"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29281-shiba-inu-outs-itself-as-crypto-new-gtld-applicant",
     "sourceTitle": "Domain Incite: Shiba Inu outs itself as crypto new gTLD applicant",
@@ -185,7 +185,9 @@ export const announced: Announced[] = [
       "witg"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "witg"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29859-unstoppable-to-apply-for-women-in-tech-gtld",
     "sourceTitle": "Domain Incite: Unstoppable to apply for Women in Tech gTLD",
@@ -200,7 +202,9 @@ export const announced: Announced[] = [
       "pog"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "pog"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29859-unstoppable-to-apply-for-women-in-tech-gtld",
     "sourceTitle": "Domain Incite: Unstoppable to apply for Women in Tech gTLD",
@@ -215,7 +219,9 @@ export const announced: Announced[] = [
       "clay"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "clay"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29859-unstoppable-to-apply-for-women-in-tech-gtld",
     "sourceTitle": "Domain Incite: Unstoppable to apply for Women in Tech gTLD",
@@ -230,7 +236,9 @@ export const announced: Announced[] = [
       "pudgy"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "pudgy"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29859-unstoppable-to-apply-for-women-in-tech-gtld",
     "sourceTitle": "Domain Incite: Unstoppable to apply for Women in Tech gTLD",
@@ -246,8 +254,10 @@ export const announced: Announced[] = [
       "anime"
     ],
     "note": null,
-    "withdrawn": false,
-    "withdrawnUrl": null,
+    "withdrawnStrings": [
+      "manga"
+    ],
+    "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29952-unstoppable-plotting-manga-themed-gtlds",
     "sourceTitle": "Domain Incite: Unstoppable plotting manga-themed gTLDs",
     "date": "2026-06-30"
@@ -261,7 +271,9 @@ export const announced: Announced[] = [
       "raiin"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "raiin"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29993-unstoppable-announces-another-new-gtld-bid",
     "sourceTitle": "Domain Incite: Unstoppable announces another new gTLD bid",
@@ -276,7 +288,7 @@ export const announced: Announced[] = [
       "farms"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30152-unstoppable-reveals-gtld-bid-doomed-to-fail",
     "sourceTitle": "Domain Incite: Unstoppable reveals gTLD bid doomed to fail",
@@ -291,7 +303,9 @@ export const announced: Announced[] = [
       "secret"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "secret"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29926-secret-new-gtld-application-revealed",
     "sourceTitle": "Domain Incite: Secret new gTLD application revealed",
@@ -306,7 +320,7 @@ export const announced: Announced[] = [
       "agi"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31315-ai-rival-lines-up-gtld-bid",
     "sourceTitle": "Domain Incite: .ai rival lines up gTLD bid",
@@ -321,7 +335,9 @@ export const announced: Announced[] = [
       "metropolis"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "metropolis"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://domainincite.com/29907-first-metaverse-gtld-is-announced",
     "sourceTitle": "Domain Incite: First metaverse gTLD is announced",
@@ -336,7 +352,7 @@ export const announced: Announced[] = [
       "metaverse"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30290-is-this-the-first-next-round-new-gtld-contention-battle",
     "sourceTitle": "Domain Incite: Is this the first Next Round new gTLD contention battle?",
@@ -350,7 +366,7 @@ export const announced: Announced[] = [
       "super"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/30290-is-this-the-first-next-round-new-gtld-contention-battle",
     "sourceTitle": "Domain Incite: Is this the first Next Round new gTLD contention battle?",
@@ -363,7 +379,7 @@ export const announced: Announced[] = [
       "haven"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31654-kid-friendly-domains-could-be-reborn",
     "sourceTitle": "Domain Incite: Kid-friendly domains could be reborn",
@@ -376,7 +392,7 @@ export const announced: Announced[] = [
       "tree"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31665-is-a-tree-gtld-very-cool-or-very-silly",
     "sourceTitle": "Domain Incite: Is a .tree gTLD very cool or very silly?",
@@ -390,7 +406,7 @@ export const announced: Announced[] = [
       "bharat"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31285-nixi-planning-doomed-new-gtld-bids",
     "sourceTitle": "Domain Incite: NIXI planning doomed new gTLD bids",
@@ -403,7 +419,7 @@ export const announced: Announced[] = [
       "dao"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/28109-group-crowdfunding-crypto-to-apply-to-icann-for-blockchain-gtld",
     "sourceTitle": "Domain Incite: Group crowdfunding crypto to apply to ICANN for blockchain gTLD",
@@ -414,7 +430,7 @@ export const announced: Announced[] = [
     "partners": [],
     "strings": [],
     "note": "multiple traditional TLDs (initially unspecified)",
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/29040-blockchain-startup-gets-5-million-to-apply-for-gtlds",
     "sourceTitle": "Domain Incite: Blockchain startup gets $5 million to apply for gTLDs",
@@ -427,7 +443,7 @@ export const announced: Announced[] = [
       "self"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31779-a-free-ethical-new-gtld-shurely-shome-mishtake",
     "sourceTitle": "Domain Incite: A free, ethical new gTLD? Shurely shome mishtake",
@@ -440,7 +456,7 @@ export const announced: Announced[] = [
       "ens"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainnamewire.com/2026/03/18/ethereum-name-service-to-apply-for-ens-in-icann-top-level-domain-expansion/",
     "sourceTitle": "Domain Name Wire: Ethereum Name Service to apply for .ENS in ICANN top level domain expansion",
@@ -453,7 +469,7 @@ export const announced: Announced[] = [
       "meow"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainnamewire.com/2026/06/26/meow-core/",
     "sourceTitle": "Domain Name Wire: .Meow selects CORE, deals with new TLD headaches",
@@ -468,7 +484,7 @@ export const announced: Announced[] = [
       "blockchain"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainnamewire.com/2024/06/07/first-blockchain-applicant-steps-forward/",
     "sourceTitle": "Domain Name Wire: First .blockchain applicant steps forward",
@@ -481,7 +497,7 @@ export const announced: Announced[] = [
       "twin"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://news.google.com/rss/articles/CBMihgJBVV95cUxPV0JNblA1WTFlV0w3ZXoxX0swWTVFZThPSzlUaGJMTUVsSFVPbTRUdkdWMzh1NHBmSTFHWjc5cFllcEtJb0pWZW9JSmVMbEJnTENVWndpTFd6aUROUjJ4aC04NXQtXzZVM3Q2cGJuYVk3SFBnVElNMWpFcmZVOEpLZC1LSzFzSEphZzJQWmhpTDNpWTJLSEFUdUpQZkJRenpHZ2RLMk9XcHBaS0FyZWliM3F6VmJMMFplMDZaRXIzQ2txNWJqMHkzN1J6V1NNZmM5dHRoQTNmNjB6UlR1dGJYVEx4QjVUMWhrOVd6NmdtMi1jdDZfM0VYLW9SY0pnUFd5cnJLTWp3?oc=5",
     "sourceTitle": "GlobeNewswire: .twin to Enter ICANN’s 2026 gTLD Application Round as Digital Twins Become Core to Global Infrastructure",
@@ -496,7 +512,7 @@ export const announced: Announced[] = [
       "agent"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.globenewswire.com/news-release/2025/12/09/3202433/0/en/agent-intends-to-officially-enter-the-icann-application-process-with-unstoppable-domains-and-sentient-foundation.html",
     "sourceTitle": "GlobeNewswire: .agent Intends to Officially Enter the ICANN Application Process with Unstoppable Domains and Sentient Foundation",
@@ -511,7 +527,7 @@ export const announced: Announced[] = [
       "hub"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.globenewswire.com/news-release/2026/01/05/3212830/0/en/unstoppable-domains-and-hub-culture-today-announced-their-intent-to-submit-hub-for-icann-s-upcoming-generic-top-level-domain-gtld-application-round.html",
     "sourceTitle": "GlobeNewswire: Unstoppable Domains and Hub Culture announced intent to submit .hub for ICANN's upcoming gTLD application round",
@@ -526,7 +542,7 @@ export const announced: Announced[] = [
       "xmr"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.globenewswire.com/news-release/2026/03/17/3257578/0/en/unstoppable-domains-announces-cake-wallet-s-intent-to-apply-for-xmr-top-level-domain-in-icann-s-next-gtld-round.html",
     "sourceTitle": "GlobeNewswire: Unstoppable Domains Announces Cake Wallet’s Intent to Apply for .XMR Top-Level Domain in ICANN’s Next gTLD Round",
@@ -541,7 +557,7 @@ export const announced: Announced[] = [
       "privacy"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.globenewswire.com/news-release/2025/10/14/3166287/0/en/privacy-announces-intent-to-officially-enter-the-icann-application-process-with-unstoppable-domains.html",
     "sourceTitle": "GlobeNewswire: .Privacy Announces Intent to Officially enter the ICANN Application Process with Unstoppable Domains",
@@ -556,7 +572,7 @@ export const announced: Announced[] = [
       "brave"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.globenewswire.com/news-release/2025/05/20/3084964/0/en/brave-becomes-first-browser-to-launch-onchain-naming-service-unlocking-brave-for-over-85m-users.html",
     "sourceTitle": "GlobeNewswire: Brave Becomes First Browser to Launch Onchain Naming Service, Unlocking .brave for Over 85M Users",
@@ -571,7 +587,9 @@ export const announced: Announced[] = [
       "ath"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "ath"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://www.globenewswire.com/news-release/2025/05/27/3088861/0/en/ath-vodka-and-unstoppable-domains-launch-ath-domain-merging-luxury-spirits-with-web3-innovation.html",
     "sourceTitle": "GlobeNewswire: ATH Vodka and Unstoppable Domains Launch .ATH Domain, Merging Luxury Spirits with Web3 Innovation",
@@ -587,7 +605,10 @@ export const announced: Announced[] = [
       "xyo"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "depin",
+      "xyo"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://www.globenewswire.com/news-release/2025/05/06/3075116/0/en/depin-and-xyo-domains-launch-to-anchor-18-8b-market-and-first-depin-operating-system.html",
     "sourceTitle": "GlobeNewswire: .DEPIN and .XYO Domains Launch to Anchor $18.8B Market and First DePIN Operating System",
@@ -600,7 +621,7 @@ export const announced: Announced[] = [
       "abion"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://abion.com/abion-to-apply-for-abion-top-level-domain/",
     "sourceTitle": "Abion: Abion to Apply for .abion Top-Level Domain",
@@ -615,7 +636,7 @@ export const announced: Announced[] = [
       "fwb"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.prnewswire.com/news-releases/friends-with-benefits-partners-with-d3-to-apply-for-fwb-top-level-domain-302212843.html",
     "sourceTitle": "PR Newswire: Friends With Benefits Partners With D3 To Apply For .fwb Top-Level Domain",
@@ -630,7 +651,7 @@ export const announced: Announced[] = [
       "magic"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.prnewswire.com/news-releases/magic-eden-partners-with-d3-to-apply-for-magic-top-level-domain-302206122.html",
     "sourceTitle": "PR Newswire: Magic Eden Partners With D3 To Apply For .magic Top-Level Domain",
@@ -646,7 +667,7 @@ export const announced: Announced[] = [
       "solana"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.prnewswire.com/news-releases/d3-raises-25m-series-a-led-by-paradigm-announces-the-first-blockchain-for-internets-362m-domain-names-302362780.html",
     "sourceTitle": "PR Newswire: D3 Raises $25M Series A Led by Paradigm, Announces The First Blockchain for Internet's 362M+ Domain Names",
@@ -661,7 +682,7 @@ export const announced: Announced[] = [
       "avax"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.prnewswire.com/news-releases/d3-raises-25m-series-a-led-by-paradigm-announces-the-first-blockchain-for-internets-362m-domain-names-302362780.html",
     "sourceTitle": "PR Newswire: D3 Raises $25M Series A Led by Paradigm, Announces The First Blockchain for Internet's 362M+ Domain Names",
@@ -674,7 +695,7 @@ export const announced: Announced[] = [
       "ape"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainnamewire.com/2024/07/08/d3-applies-for-ape-and-magic-trademarks/",
     "sourceTitle": "Domain Name Wire: D3 applies for .ape and .magic trademarks",
@@ -685,7 +706,7 @@ export const announced: Announced[] = [
     "partners": [],
     "strings": [],
     "note": "multiple gTLDs (strings not disclosed)",
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainnamewire.com/2026/05/11/acquiring-and-building-tlds-dnw-podcast-586/",
     "sourceTitle": "Domain Name Wire: Acquiring and building TLDs – DNW Podcast #586",
@@ -699,7 +720,7 @@ export const announced: Announced[] = [
       "cardano"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://www.coinspeaker.com/cardano-foundation-gtld-ada-cardano/",
     "sourceTitle": "Coinspeaker: Cardano Foundation Applies for .ada & .cardano gTLDs",
@@ -714,7 +735,9 @@ export const announced: Announced[] = [
       "podcast"
     ],
     "note": null,
-    "withdrawn": true,
+    "withdrawnStrings": [
+      "podcast"
+    ],
     "withdrawnUrl": "https://support.unstoppabledomains.com/support/solutions/articles/48001275818-tld-s-not-going-to-icann-and-valid-for-refund",
     "sourceUrl": "https://unstoppabledomains.com/blog/categories/announcements/article/podcast-tld",
     "sourceTitle": "Unstoppable Domains: Amplify Your Voice and Contribute to the Conversation with .podcast",
@@ -729,7 +752,7 @@ export const announced: Announced[] = [
       "bali"
     ],
     "note": null,
-    "withdrawn": false,
+    "withdrawnStrings": [],
     "withdrawnUrl": null,
     "sourceUrl": "https://domainincite.com/31847-bali-to-apply-for-bali-and-the-dot-is-delightful",
     "sourceTitle": "Domain Incite: Bali to apply for .bali, and the dot is delightful",

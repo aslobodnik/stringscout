@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
-import { matches } from "@/lib/search";
+import { matches, type Scope } from "@/lib/search";
 import { formatDate, slugify } from "@/lib/format";
 
 // Passed in from the server rather than imported: this is the only client
@@ -25,7 +25,8 @@ export type UiStringRow = {
   count: number;
 };
 
-const PAGE = 25;
+const PAGE_SIZES = [25, 100] as const;
+const PAGE = PAGE_SIZES[0]; // default
 const MIN_ROWS = 12; // floor, so typing never collapses the page under the reader
 const DEBOUNCE_MS = 180;
 
@@ -369,6 +370,55 @@ const SORT_COLS: {
 
 const collator = new Intl.Collator();
 
+type Sort = { key: SortKey; dir: 1 | -1 };
+
+// Sits in the table's <thead> in rows view and in a bar above the columns in
+// index view. The index obeys the same sort, so the control has to follow it
+// out of the table rather than be rebuilt beside it.
+function SortButton({
+  col,
+  sort,
+  onSort,
+}: {
+  col: (typeof SORT_COLS)[number];
+  sort: Sort;
+  onSort: (s: Sort) => void;
+}) {
+  const active = sort.key === col.key;
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        onSort(
+          active
+            ? { key: col.key, dir: sort.dir === 1 ? -1 : 1 }
+            : { key: col.key, dir: col.dir ?? 1 }
+        )
+      }
+      className={`label cursor-pointer transition-colors duration-200 ease-in-out ${
+        active ? "text-ink" : "text-ink-soft hover:text-ink"
+      }`}
+    >
+      {col.short ? (
+        <>
+          <span className="hidden sm:inline">{col.label}</span>
+          <span className="sm:hidden">{col.short}</span>
+        </>
+      ) : (
+        col.label
+      )}
+      <span
+        aria-hidden
+        className={`text-[8px] ml-1.5 transition-colors duration-200 ease-in-out ${
+          active ? "text-gold" : "text-rule"
+        }`}
+      >
+        {active && sort.dir === -1 ? "▼" : "▲"}
+      </span>
+    </button>
+  );
+}
+
 export type UiStats = {
   applicants: number;
   strings: number;
@@ -381,18 +431,16 @@ export type UiStats = {
 // same place.
 function StatTiles({
   s,
-  contestedOnly,
-  issuesOnly,
+  scope,
+  clean,
   onAll,
-  onContested,
-  onIssues,
+  onScope,
 }: {
   s: UiStats;
-  contestedOnly: boolean;
-  issuesOnly: boolean;
+  scope: Scope;
+  clean: boolean; // nothing filtered at all, which is what tile two names
   onAll: () => void;
-  onContested: () => void;
-  onIssues: () => void;
+  onScope: (next: Scope) => void;
 }) {
   const cell = "p-3 sm:p-4 text-left w-full";
   const num = "text-2xl sm:text-3xl font-light";
@@ -400,18 +448,31 @@ function StatTiles({
     "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
   const tiles = [
     { v: s.applicants, l: "Applicants", href: "/applicants" },
-    { v: s.strings, l: "Strings disclosed", act: onAll, title: "Show every string" },
+    {
+      v: s.strings,
+      l: "Strings disclosed",
+      on: clean,
+      act: onAll,
+      title: "Show every string",
+    },
     {
       v: s.contested,
       l: "Overlapping strings",
-      on: contestedOnly,
-      act: onContested,
+      on: scope === "overlap",
+      accent: true,
+      act: () => onScope("overlap"),
     },
-    { v: s.issues, l: "Potential issues", on: issuesOnly, act: onIssues },
+    {
+      v: s.issues,
+      l: "Potential issues",
+      on: scope === "issues",
+      accent: true,
+      act: () => onScope("issues"),
+    },
   ];
   return (
     <section className="grid grid-cols-2 sm:grid-cols-4 border border-ink mb-10">
-      {tiles.map(({ v, l, on, act, href, title }, i) => {
+      {tiles.map(({ v, l, on, accent, act, href, title }, i) => {
         const divider = [
           i % 2 === 1 ? "border-l border-rule" : "",
           i > 1 ? "border-t border-rule sm:border-t-0" : "",
@@ -419,8 +480,14 @@ function StatTiles({
         ].join(" ");
         const inner = (
           <>
-            <div className={`${num} ${on ? "text-oxblood" : ""}`}>{v}</div>
-            <div className={`${cap} ${on ? "!text-oxblood" : ""}`}>{l}</div>
+            {/* shading says which view you are in; oxblood is kept for a
+                filter being on, so the default does not load looking filtered */}
+            <div className={`${num} ${on && accent ? "text-oxblood" : ""}`}>
+              {v}
+            </div>
+            <div className={`${cap} ${on && accent ? "!text-oxblood" : ""}`}>
+              {l}
+            </div>
           </>
         );
         const shell = `${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
@@ -449,6 +516,147 @@ function StatTiles({
   );
 }
 
+// "u" sits on 651 of the 722 strings and says only that nobody stated which,
+// so at index density it is a wall of boxes the two informative marks have to
+// be read through. The legend above still defines all three.
+const INDEX_MARKS: Mark[] = ["p", "i"];
+
+// A reader meets the 29 pages at the foot of page one, so the way out of them
+// belongs there as well as in the toolbar. Both carry the count: "show all" on
+// its own is a mode switch, "show all 722" answers how many there are.
+function ShowAll({
+  all,
+  total,
+  onToggle,
+}: {
+  all: boolean;
+  total: number;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`label px-3 h-10 cursor-pointer border transition-colors duration-200 ease-in-out ${
+        all
+          ? "border-ink text-ink hover:bg-paper-deep hover:border-gold"
+          : "border-gold text-gold hover:bg-gold hover:text-paper"
+      }`}
+    >
+      {all ? "Back to table" : `Show all ${total}`}
+    </button>
+  );
+}
+
+function PageSize({
+  size,
+  onPick,
+}: {
+  size: number;
+  onPick: (n: number) => void;
+}) {
+  return (
+    <span className="flex items-center gap-2">
+      <span className="label text-ink-soft">Per page</span>
+      <span className="flex border border-ink h-10">
+        {PAGE_SIZES.map((n, i) => (
+          <button
+            key={n}
+            type="button"
+            aria-pressed={size === n}
+            onClick={() => onPick(n)}
+            className={`label px-3 cursor-pointer transition-colors duration-200 ease-in-out ${
+              i ? "border-l border-ink" : ""
+            } ${size === n ? "bg-ink text-paper" : "text-ink hover:bg-paper-deep"}`}
+          >
+            {n}
+          </button>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function IndexEntry({
+  r,
+  onJump,
+}: {
+  r: UiStringRow;
+  onJump: (tld: string) => void;
+}) {
+  const marks = INDEX_MARKS.filter((m) =>
+    r.applicants.some((a) => a.mark === m)
+  );
+  const title = [
+    r.gloss && `“${r.gloss}”`,
+    r.overlap && `${r.count} applicants`,
+    ...r.issues.map((i) => ISSUE_TIP[i.kind]),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <li className="break-inside-avoid">
+      <button
+        type="button"
+        title={title || undefined}
+        onClick={() => onJump(r.tld)}
+        className="block w-full truncate text-left py-[3px] cursor-pointer hover:text-gold transition-colors duration-200 ease-in-out"
+      >
+        <span className="text-gold">.</span>
+        {r.tld}
+        {r.overlap && (
+          <sup className="ml-0.5 text-[9px] text-oxblood">{r.count}</sup>
+        )}
+        {r.issues.length > 0 && (
+          <sup className="ml-0.5 text-[9px] text-oxblood">†</sup>
+        )}
+        {marks.map((m) => (
+          <span key={m} className="ml-1 align-[0.1em]">
+            <MarkBlock mark={m} />
+          </span>
+        ))}
+      </button>
+    </li>
+  );
+}
+
+// Every string on one page. Columns flow down before across, so the alphabet
+// still reads top-to-bottom the way it does in a book index; a grid would lay
+// it out in rows and scatter the sort.
+function IndexView({
+  rows,
+  onJump,
+}: {
+  rows: UiStringRow[];
+  onJump: (tld: string) => void;
+}) {
+  return (
+    <ul className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-6 text-sm">
+      {rows.map((r) => (
+        <IndexEntry key={r.tld} r={r} onJump={onJump} />
+      ))}
+    </ul>
+  );
+}
+
+// Search, applicant and marker still intersect, so an empty table is still
+// reachable. It should not be a dead end: the chips that would clear it are
+// above the fold the reader just scrolled past.
+function NoMatch({ onClear }: { onClear: () => void }) {
+  return (
+    <span className="text-ink-soft serif italic">
+      No strings match.{" "}
+      <button
+        type="button"
+        onClick={onClear}
+        className="cursor-pointer underline decoration-rule underline-offset-2 hover:decoration-gold hover:text-ink transition-colors duration-200 ease-in-out"
+      >
+        Clear filters
+      </button>
+    </span>
+  );
+}
+
 export default function StringsTable({
   rows,
   stats,
@@ -470,15 +678,16 @@ export default function StringsTable({
   // not, because the prerendered HTML says "all".
   const fromUrl = useSearchParams().get("applicant");
   const [applicant, setApplicant] = useState(fromUrl ?? "all");
-  const [contestedOnly, setContestedOnly] = useState(false);
-  const [issuesOnly, setIssuesOnly] = useState(false);
+  const [scope, setScope] = useState<Scope>("all");
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState<number>(PAGE);
   const [pinned, setPinned] = useState<string | null>(null);
-  const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
-    key: "tld",
-    dir: 1,
-  });
+  const [view, setView] = useState<"paged" | "all">("paged");
+  // the string an index entry sent the reader to, held so it is findable on a
+  // page of 25 it has no other reason to stand out on
+  const [focused, setFocused] = useState<string | null>(null);
+  const [sort, setSort] = useState<Sort>({ key: "tld", dir: 1 });
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   // A tile sits above the fold and the rows it filters sit below it, so the
@@ -497,6 +706,35 @@ export default function StringsTable({
     revealResults();
   };
 
+  const toggleScope = (next: Scope) => {
+    setScope((v) => (v === next ? "all" : next));
+    setPage(0);
+    revealResults();
+  };
+
+  const resize = (n: number) => {
+    // keep the reader on the page holding the rows they were reading
+    setPage((p) => Math.floor((p * pageSize) / n));
+    setPageSize(n);
+    revealResults();
+  };
+
+  const toggleView = () => {
+    setView((v) => (v === "all" ? "paged" : "all"));
+    setFocused(null);
+    revealResults();
+  };
+
+  const clearAll = () => {
+    setQ("");
+    setQuery("");
+    setApplicant("all");
+    setScope("all");
+    setMarkFilter(null);
+    setFocused(null);
+    setPage(0);
+  };
+
   const presentMarks = useMemo(
     () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.mark)))],
     [rows]
@@ -510,13 +748,9 @@ export default function StringsTable({
   const filtered = useMemo(
     () =>
       rows.filter((r) =>
-        matches(
-          r,
-          { q: query, applicant, contestedOnly, issuesOnly, mark: markFilter },
-          backerMap
-        )
+        matches(r, { q: query, applicant, scope, mark: markFilter }, backerMap)
       ),
-    [rows, query, applicant, contestedOnly, issuesOnly, markFilter, backerMap]
+    [rows, query, applicant, scope, markFilter, backerMap]
   );
 
   const sorted = useMemo(() => {
@@ -533,22 +767,34 @@ export default function StringsTable({
     );
   }, [filtered, sort]);
 
-  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE));
+  const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize));
   const current = Math.min(page, pageCount - 1);
-  const visible = sorted.slice(current * PAGE, (current + 1) * PAGE);
+  const visible = sorted.slice(current * pageSize, (current + 1) * pageSize);
   // hold a full page while paging, and a floor under short result sets
   const padRows = Math.max(
     0,
-    Math.max(MIN_ROWS, Math.min(sorted.length, PAGE)) - visible.length
+    Math.max(MIN_ROWS, Math.min(sorted.length, pageSize)) - visible.length
   );
 
+  // an index entry names a string, not a page: find where the sort put it
+  const jumpTo = (tld: string) => {
+    const i = sorted.findIndex((r) => r.tld === tld);
+    if (i < 0) return;
+    setPage(Math.floor(i / pageSize));
+    setFocused(tld);
+    setView("paged");
+    revealResults();
+  };
+
+  const clean =
+    !query.trim() && applicant === "all" && scope === "all" && !markFilter;
+
   // the filename should say which slice of the table it holds
-  const csvScope =
-    filtered.length === rows.length
+  const csvScope = clean
       ? "all"
       : [
-          contestedOnly && "overlapping",
-          issuesOnly && "issues",
+          scope === "overlap" && "overlapping",
+          scope === "issues" && "issues",
           markFilter && MARK_LABEL[markFilter].split(" ")[0],
           applicant !== "all" && slugify(applicant),
           query.trim() && "search",
@@ -565,38 +811,21 @@ export default function StringsTable({
     <div>
       <StatTiles
         s={stats}
-        contestedOnly={contestedOnly}
-        issuesOnly={issuesOnly}
+        scope={scope}
+        clean={clean}
         onAll={() => {
-          setQ("");
-          setQuery("");
-          setApplicant("all");
-          setContestedOnly(false);
-          setIssuesOnly(false);
-          setMarkFilter(null);
-          setPage(0);
+          clearAll();
           revealResults();
         }}
-        onContested={() => {
-          setContestedOnly((v) => !v);
-          setPage(0);
-          revealResults();
-        }}
-        onIssues={() => {
-          setIssuesOnly((v) => !v);
-          setPage(0);
-          revealResults();
-        }}
+        onScope={toggleScope}
       />
 
       {/* separates the summary from the table's own controls — the rule the
           removed section heading used to carry */}
       <div className="double-rule mb-5" />
 
-      <div
-        ref={toolbarRef}
-        className="flex flex-wrap items-center gap-3 mb-5 scroll-mt-14"
-      >
+      <div ref={toolbarRef} className="mb-5 scroll-mt-14">
+        <div className="flex flex-wrap items-center gap-3">
         <input
           type="search"
           value={q}
@@ -621,6 +850,9 @@ export default function StringsTable({
             setPage(0);
           }}
         />
+        {(sorted.length > pageSize || view === "all") && (
+          <ShowAll all={view === "all"} total={sorted.length} onToggle={toggleView} />
+        )}
         <button
           type="button"
           onClick={() => downloadCsv(sorted, csvScope, cites)}
@@ -635,25 +867,25 @@ export default function StringsTable({
             ↓
           </span>
         </button>
-        {contestedOnly && (
-          <FilterChip
-            label="Overlapping strings"
-            onClear={() => {
-              setContestedOnly(false);
-              setPage(0);
-            }}
-          />
-        )}
-        {issuesOnly && (
-          <FilterChip
-            label="Potential issues"
-            onClear={() => {
-              setIssuesOnly(false);
-              setPage(0);
-            }}
-          />
-        )}
-        <span className="label text-ink-soft ml-auto">{countLabel}</span>
+        </div>
+
+        {/* What the table is currently showing, rather than a control acting on
+            it. Right-aligned it wrapped to a line of its own and read as
+            unattached; set flush left it lines up with the strings it counts. */}
+        <div className="flex flex-wrap items-center gap-3 mt-3">
+          {scope !== "all" && (
+            <FilterChip
+              label={
+                scope === "overlap" ? "Overlapping strings" : "Potential issues"
+              }
+              onClear={() => {
+                setScope("all");
+                setPage(0);
+              }}
+            />
+          )}
+          <span className="label text-ink-soft">{countLabel}</span>
+        </div>
       </div>
 
       <Legend
@@ -664,191 +896,211 @@ export default function StringsTable({
 
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
 
-      {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
-      {/* While paging, every page holds the same height so Prev/Next does not
-          move the footer, and a short result set keeps a floor under it so
-          typing does not collapse the page. Filler rows rather than a pixel
-          constant, so this tracks whatever padding a real row has. */}
-      <div className="overflow-x-auto sm:overflow-visible">
-        <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
-          {/* fixed layout so column widths don't shift with sort/page/filter */}
-          <colgroup>
-            <col className="w-32 sm:w-44" />
-            <col />
-            <col className="w-14 sm:w-24" />
-          </colgroup>
-          <thead>
-            <tr className="text-left">
-              {SORT_COLS.map(({ key, label, short, right, dir }) => {
-                const active = sort.key === key;
-                return (
-                  <th
-                    key={key}
-                    aria-sort={
-                      active
-                        ? sort.dir === 1
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
-                    className={`pb-2 font-medium whitespace-nowrap ${
-                      right ? "text-right" : "pr-4"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSort((s) =>
-                          s.key === key
-                            ? { key, dir: s.dir === 1 ? -1 : 1 }
-                            : { key, dir: dir ?? 1 }
-                        );
-                        setPage(0);
-                      }}
-                      className={`label cursor-pointer transition-colors duration-200 ease-in-out ${
-                        active ? "text-ink" : "text-ink-soft hover:text-ink"
+      {view === "all" ? (
+        sorted.length === 0 ? (
+          <div className="py-6">
+            <NoMatch onClear={clearAll} />
+          </div>
+        ) : (
+          <>
+            {/* the sort control lives in <thead> in rows view; the index obeys
+                the same sort, so it needs its own handle on it */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-2 mb-4 border-b border-rule">
+              {SORT_COLS.map((col) => (
+                <SortButton
+                  key={col.key}
+                  col={col}
+                  sort={sort}
+                  onSort={(v) => {
+                    setSort(v);
+                    setPage(0);
+                  }}
+                />
+              ))}
+              <span className="label !text-[10px] text-ink-soft ml-auto">
+                <sup className="text-oxblood">n</sup> applicants
+                <span className="text-rule mx-2">·</span>
+                <span className="text-oxblood">†</span> potential issue
+              </span>
+            </div>
+            <IndexView rows={sorted} onJump={jumpTo} />
+            <div className="flex flex-wrap items-center gap-3 mt-6">
+              <ShowAll all total={sorted.length} onToggle={toggleView} />
+              <span className="label text-ink-soft">{countLabel}</span>
+            </div>
+          </>
+        )
+      ) : (
+        <>
+        {/* overflow-visible on sm+ so hover tooltips aren't clipped; tooltips are hidden below sm */}
+        {/* While paging, every page holds the same height so Prev/Next does not
+            move the footer, and a short result set keeps a floor under it so
+            typing does not collapse the page. Filler rows rather than a pixel
+            constant, so this tracks whatever padding a real row has. */}
+        <div className="overflow-x-auto sm:overflow-visible">
+          <table className="w-full table-fixed text-sm border-collapse sm:min-w-[420px]">
+            {/* fixed layout so column widths don't shift with sort/page/filter */}
+            <colgroup>
+              <col className="w-32 sm:w-44" />
+              <col />
+              <col className="w-14 sm:w-24" />
+            </colgroup>
+            <thead>
+              <tr className="text-left">
+                {SORT_COLS.map((col) => {
+                  const active = sort.key === col.key;
+                  return (
+                    <th
+                      key={col.key}
+                      aria-sort={
+                        active
+                          ? sort.dir === 1
+                            ? "ascending"
+                            : "descending"
+                          : undefined
+                      }
+                      className={`pb-2 font-medium whitespace-nowrap ${
+                        col.right ? "text-right" : "pr-4"
                       }`}
                     >
-                      {short ? (
-                        <>
-                          <span className="hidden sm:inline">{label}</span>
-                          <span className="sm:hidden">{short}</span>
-                        </>
-                      ) : (
-                        label
-                      )}
-                      <span
-                        aria-hidden
-                        className={`text-[8px] ml-1.5 transition-colors duration-200 ease-in-out ${
-                          active ? "text-gold" : "text-rule"
-                        }`}
-                      >
-                        {active && sort.dir === -1 ? "▼" : "▲"}
-                      </span>
-                    </button>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((r) => (
-              <tr key={r.tld} className="border-t border-rule-faint align-top">
-                <td className="py-2 pr-4 font-medium">
-                  {r.gloss ? (
-                    <>
-                      <button
-                        type="button"
-                        aria-expanded={pinned === r.tld}
-                        aria-label={`.${r.tld}, English: ${r.gloss}`}
-                        onClick={() =>
-                          setPinned(pinned === r.tld ? null : r.tld)
-                        }
-                        className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
-                      >
+                      <SortButton
+                        col={col}
+                        sort={sort}
+                        onSort={(v) => {
+                          setSort(v);
+                          setPage(0);
+                        }}
+                      />
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((r) => (
+                <tr
+                  key={r.tld}
+                  className={`border-t border-rule-faint align-top ${
+                    focused === r.tld ? "bg-paper-deep" : ""
+                  }`}
+                >
+                  <td className="py-2 pr-4 font-medium">
+                    {r.gloss ? (
+                      <>
+                        <button
+                          type="button"
+                          aria-expanded={pinned === r.tld}
+                          aria-label={`.${r.tld}, English: ${r.gloss}`}
+                          onClick={() =>
+                            setPinned(pinned === r.tld ? null : r.tld)
+                          }
+                          className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
+                        >
+                          <span className="text-gold">.</span>
+                          {r.tld}
+                          <span role="tooltip" className={`${TIP_BOX} serif italic`}>
+                            “{r.gloss}”
+                          </span>
+                        </button>
+                        {pinned === r.tld && (
+                          <span className="serif italic text-ink-soft ml-2">
+                            “{r.gloss}”
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <>
                         <span className="text-gold">.</span>
                         {r.tld}
-                        <span role="tooltip" className={`${TIP_BOX} serif italic`}>
-                          “{r.gloss}”
+                      </>
+                    )}
+                    {r.issues.map((issue) => (
+                      <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
+                    ))}
+                  </td>
+                  <td className="py-2 pr-4">
+                    <span className="flex items-baseline gap-2">
+                    <span>
+                    {r.applicants.map(({ name, mark, sourceIds }, i) => {
+                      return (
+                        <span key={name}>
+                          {i > 0 && <span className="text-ink-soft"> · </span>}
+                          <span className="whitespace-nowrap">
+                            <button
+                              type="button"
+                              aria-pressed={applicant === name}
+                              title={
+                                applicant === name ? "Clear filter" : `Only ${name}`
+                              }
+                              onClick={() => {
+                                setApplicant(applicant === name ? "all" : name);
+                                setPage(0);
+                                revealResults();
+                              }}
+                              className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
+                                applicant === name ? "text-gold decoration-gold" : ""
+                              }`}
+                            >
+                              {name}
+                            </button>
+                            <Marker
+                              mark={mark}
+                              onFilter={toggleMark}
+                            />
+                            <Cite ids={sourceIds} cites={cites} />
+                          </span>
                         </span>
-                      </button>
-                      {pinned === r.tld && (
-                        <span className="serif italic text-ink-soft ml-2">
-                          “{r.gloss}”
+                      );
+                    })}
+                    </span>
+                    {/* dot leader binds the row to its overlap tally, index-style */}
+                    <span
+                      aria-hidden
+                      className={`flex-1 min-w-4 -translate-y-[3px] border-b border-dotted ${
+                        r.overlap ? "border-oxblood/40" : "border-rule-faint"
+                      }`}
+                    />
+                    </span>
+                  </td>
+                  <td className="py-2 whitespace-nowrap text-right">
+                    {r.overlap && (
+                      <>
+                        {/* ledger tally: one stroke per applicant */}
+                        <span
+                          aria-hidden
+                          className="inline-flex items-baseline gap-[3px]"
+                        >
+                          {Array.from({ length: r.count }, (_, i) => (
+                            <i key={i} className="inline-block w-px h-3.5 bg-oxblood" />
+                          ))}
                         </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-gold">.</span>
-                      {r.tld}
-                    </>
-                  )}
-                  {r.issues.map((issue) => (
-                    <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
-                  ))}
-                </td>
-                <td className="py-2 pr-4">
-                  <span className="flex items-baseline gap-2">
-                  <span>
-                  {r.applicants.map(({ name, mark, sourceIds }, i) => {
-                    return (
-                      <span key={name}>
-                        {i > 0 && <span className="text-ink-soft"> · </span>}
-                        <span className="whitespace-nowrap">
-                          <button
-                            type="button"
-                            aria-pressed={applicant === name}
-                            title={
-                              applicant === name ? "Clear filter" : `Only ${name}`
-                            }
-                            onClick={() => {
-                              setApplicant(applicant === name ? "all" : name);
-                              setPage(0);
-                              revealResults();
-                            }}
-                            className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
-                              applicant === name ? "text-gold decoration-gold" : ""
-                            }`}
-                          >
-                            {name}
-                          </button>
-                          <Marker
-                            mark={mark}
-                            onFilter={toggleMark}
-                          />
-                          <Cite ids={sourceIds} cites={cites} />
-                        </span>
-                      </span>
-                    );
-                  })}
-                  </span>
-                  {/* dot leader binds the row to its overlap tally, index-style */}
-                  <span
-                    aria-hidden
-                    className={`flex-1 min-w-4 -translate-y-[3px] border-b border-dotted ${
-                      r.overlap ? "border-oxblood/40" : "border-rule-faint"
-                    }`}
-                  />
-                  </span>
-                </td>
-                <td className="py-2 whitespace-nowrap text-right">
-                  {r.overlap && (
-                    <>
-                      {/* ledger tally: one stroke per applicant */}
-                      <span
-                        aria-hidden
-                        className="inline-flex items-baseline gap-[3px]"
-                      >
-                        {Array.from({ length: r.count }, (_, i) => (
-                          <i key={i} className="inline-block w-px h-3.5 bg-oxblood" />
-                        ))}
-                      </span>
-                      <span className="sr-only">{r.count} applicants</span>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {Array.from({ length: padRows }, (_, i) => (
-              <tr key={`pad-${i}`} className="border-t border-rule-faint" aria-hidden>
-                <td className="py-2" colSpan={3}>
-                  &nbsp;
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr className="border-t border-rule-faint">
-                <td colSpan={3} className="py-6 text-ink-soft serif italic">
-                  No strings match.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                        <span className="sr-only">{r.count} applicants</span>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {Array.from({ length: padRows }, (_, i) => (
+                <tr key={`pad-${i}`} className="border-t border-rule-faint" aria-hidden>
+                  <td className="py-2" colSpan={3}>
+                    &nbsp;
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr className="border-t border-rule-faint">
+                  <td colSpan={3} className="py-6">
+                    <NoMatch onClear={clearAll} />
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        </>
+      )}
 
-      {sorted.length > PAGE && (
+      {view === "paged" && sorted.length > pageSize && (
         <div className="flex flex-wrap items-center gap-3 mt-4">
           <button
             type="button"
@@ -875,7 +1127,8 @@ export default function StringsTable({
           <span className="label text-ink-soft">
             Page {current + 1} of {pageCount}
           </span>
-          <span className="label text-ink-soft ml-auto">{countLabel}</span>
+          <PageSize size={pageSize} onPick={resize} />
+          <ShowAll all={false} total={sorted.length} onToggle={toggleView} />
         </div>
       )}
     </div>

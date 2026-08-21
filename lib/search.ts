@@ -8,11 +8,15 @@ export type Searchable = {
   applicants: { name: string; mark: Mark }[];
 };
 
+// The two tile filters are one scope, not two flags: no string is both
+// overlapping and flagged, so holding them as independent booleans let a
+// reader turn both on and get an empty table with no way to read why.
+export type Scope = "all" | "overlap" | "issues";
+
 export type Filters = {
   q: string;
   applicant: string;
-  contestedOnly: boolean;
-  issuesOnly: boolean;
+  scope: Scope;
   mark: Mark | null;
 };
 
@@ -25,8 +29,8 @@ export function matches(
   // name -> the people behind that applicant, looked up rather than carried
   backers: Map<string, string> = new Map()
 ): boolean {
-  if (f.contestedOnly && !r.overlap) return false;
-  if (f.issuesOnly && !r.issues.length) return false;
+  if (f.scope === "overlap" && !r.overlap) return false;
+  if (f.scope === "issues" && !r.issues.length) return false;
   if (f.mark && !r.applicants.some((a) => a.mark === f.mark)) return false;
   if (f.applicant !== "all" && !r.applicants.some((a) => a.name === f.applicant))
     return false;

@@ -123,7 +123,7 @@ const handSources: Source[] = [
   },
   {
     id: "gnw-factory",
-    outlet: "GlobeNewswire (press release)",
+    outlet: "GlobeNewswire",
     title: "USA Made in America announces application for .factory",
     url: "https://www.globenewswire.com/news-release/2026/08/14/3345503/0/en/usa-made-in-america-announces-application-for-factory-generic-top-level-domain.html",
     date: "2026-08-14",

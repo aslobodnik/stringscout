@@ -143,7 +143,10 @@ const harbin = expand(["grit"], "harbin", ["dnw-grit"]);
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
 const intents = [
-  ...expand(["anime", "manga"], "unstoppable", ["di"], "intent"),
+  // .anime only. Unstoppable's own refund page lists .manga as not proceeding
+  // to ICANN and does not list .anime, so .manga is carried on /withdrawn and
+  // claimed here by nobody.
+  ...expand(["anime"], "unstoppable", ["di"], "intent"),
   ...expand(["anime"], "d3", ["di"], "intent"),
   ...expand(["chain"], "freename", ["di"], "intent"),
   ...expand(["chain"], "3dns", ["di"], "intent"),

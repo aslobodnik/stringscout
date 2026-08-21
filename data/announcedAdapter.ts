@@ -42,16 +42,18 @@ const OUTLETS: Record<string, string> = {
   "domainincite.com": "Domain Incite",
   "domainnamewire.com": "Domain Name Wire",
   "unstoppabledomains.com": "Unstoppable Domains",
-  "globenewswire.com": "GlobeNewswire (press release)",
-  "prnewswire.com": "PR Newswire (press release)",
-  "businesswire.com": "Business Wire (press release)",
+  "globenewswire.com": "GlobeNewswire",
+  "prnewswire.com": "PR Newswire",
+  "businesswire.com": "Business Wire",
   "coinspeaker.com": "Coinspeaker",
   "circleid.com": "CircleID",
   "abion.com": "Abion",
   "news.google.com": "Google News (syndicated)",
 };
 
-// A wire release is the applicant's own words, so it counts as a statement.
+// A wire release is the applicant's own words, so it counts as a statement —
+// which is what the "Applicant statements" heading on /sources already says,
+// so the outlet name does not repeat it.
 // Anything not listed is an applicant's own domain by default — the table only
 // ever links to a reveal's own site or to a publication named here.
 const KINDS: Record<string, SourceKind> = {
@@ -86,10 +88,16 @@ for (const r of announced) {
   });
 }
 
+// Upstream marks withdrawal per string: the Unstoppable/Kintsugi row pulled
+// .manga and kept .anime, so a row filter would either lose the withdrawal or
+// take the live string down with it.
+const liveStrings = (r: Announced) =>
+  r.strings.filter((t) => !r.withdrawnStrings.includes(t));
+
 export const announcedApplicants: Applicant[] = [...byLead]
   .filter(([, rows]) => !(rows[0].lead.toLowerCase() in ALIASES))
   .map(([slug, rows]) => {
-    const live = rows.filter((r) => !r.withdrawn);
+    const live = rows.map((r) => liveStrings(r)).flat();
     const partners = [...new Set(rows.flatMap((r) => r.partners))];
     const noted = rows.find((r) => r.note)?.note ?? null;
     return {
@@ -97,9 +105,7 @@ export const announcedApplicants: Applicant[] = [...byLead]
       status: "intent" as const,
       name: rows[0].lead,
       backers: partners.length ? `With ${partners.join(", ")}` : "People undisclosed",
-      applicationCount: String(
-        new Set(live.flatMap((r) => r.strings)).size
-      ),
+      applicationCount: String(new Set(live).size),
       feesPaid: null,
       revealedOn: rows.map((r) => r.date).sort()[0],
       note: noted,
@@ -114,10 +120,8 @@ export const announcedApplicants: Applicant[] = [...byLead]
   });
 
 // Extra strings for applicants we already track by hand.
-export const announcedClaims: Claim[] = announced
-  .filter((r) => !r.withdrawn)
-  .flatMap((r) =>
-    r.strings.map((tld) => ({
+export const announcedClaims: Claim[] = announced.flatMap((r) =>
+    liveStrings(r).map((tld) => ({
       tld,
       applicantSlug: leadSlug(r.lead),
       kind: "intent" as const,
@@ -126,10 +130,8 @@ export const announcedClaims: Claim[] = announced
   );
 
 // Announced and then pulled before filing. Shown on its own, counted nowhere.
-export const withdrawnClaims = announced
-  .filter((r) => r.withdrawn)
-  .flatMap((r) =>
-    r.strings.map((tld) => ({
+export const withdrawnClaims = announced.flatMap((r) =>
+    r.withdrawnStrings.map((tld) => ({
       tld,
       applicant: r.lead,
       partners: r.partners,
