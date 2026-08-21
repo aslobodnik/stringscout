@@ -25,6 +25,15 @@ export const ALIASES: Record<string, string> = {
   "3dns": "3dns",
 };
 
+// Scraped source URL -> the hand-written source that already cites it. Upstream
+// lists articles we cite by hand, and minting a second Source for the same URL
+// prints one article twice on /sources under two numbers and two dates — the
+// scraped one carrying Applicant Auction's listing date rather than the
+// article's. `tests/` asserts no two sources share a URL.
+const SOURCE_ALIASES: Record<string, string> = {
+  "https://domainincite.com/30812-second-new-gtld-contention-set-revealed": "di",
+};
+
 export const leadSlug = (lead: string) =>
   ALIASES[lead.toLowerCase()] ?? `aa-${slugify(lead)}`;
 
@@ -76,6 +85,12 @@ const urlIds = new Map<string, string>();
 export const announcedSources: Source[] = [];
 for (const r of announced) {
   if (!r.sourceUrl || urlIds.has(r.sourceUrl)) continue;
+  const hand = SOURCE_ALIASES[r.sourceUrl];
+  if (hand) {
+    // cite the hand-written entry; do not mint a second one for the same URL
+    urlIds.set(r.sourceUrl, hand);
+    continue;
+  }
   const id = `aa-${urlIds.size + 1}`;
   urlIds.set(r.sourceUrl, id);
   announcedSources.push({

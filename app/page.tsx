@@ -1,7 +1,7 @@
 import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
 import { sourceIndex, sources } from "@/data/sources";
-import { Suspense } from "react";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
+import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 
 export default function Home() {
@@ -41,7 +41,7 @@ export default function Home() {
 
       {/* All strings */}
       <section className="relative mb-14">
-        <Suspense>
+        <SectionHead n="I" title="All Applied Strings" count={s.strings} />
         <StringsTable
           stats={s}
           cites={cites}
@@ -59,7 +59,6 @@ export default function Home() {
             })
           )}
         />
-        </Suspense>
       </section>
 
     </>

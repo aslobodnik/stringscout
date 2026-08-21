@@ -56,6 +56,15 @@ describe("claims and applicants", () => {
     expect(orphans).toEqual([]);
   });
 
+  it("records one string, applicant and source once", () => {
+    const seen = new Map<string, number>();
+    for (const c of claims) {
+      const k = `.${c.tld} ${c.applicantSlug} ${[...c.sourceIds].sort().join(",")}`;
+      seen.set(k, (seen.get(k) ?? 0) + 1);
+    }
+    for (const [k, n] of seen) expect(n, `${k} recorded ${n} times`).toBe(1);
+  });
+
   it("every claim cites a source that exists", () => {
     const ids = new Set(sources.map((s) => s.id));
     const missing = [
@@ -152,6 +161,13 @@ describe("scraped announcements", () => {
 });
 
 describe("sources", () => {
+  it("registers each URL once, so one article is not two numbered sources", () => {
+    const byUrl = new Map<string, string[]>();
+    for (const s of sources) byUrl.set(s.url, [...(byUrl.get(s.url) ?? []), s.id]);
+    for (const [url, ids] of byUrl)
+      expect(ids, `${url} is cited under ${ids.join(" and ")}`).toHaveLength(1);
+  });
+
   it("numbers every source exactly once, in bucket order", () => {
     expect(sourceIndex.size).toBe(sources.length);
     const order = sources.map((s) => KIND_ORDER.indexOf(s.kind));

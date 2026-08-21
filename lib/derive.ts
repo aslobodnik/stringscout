@@ -91,7 +91,12 @@ export function contestedRows(): StringRow[] {
   return stringRows()
     .filter((r) => r.contested)
     .sort(
-      (a, b) => b.claims.length - a.claims.length || a.tld.localeCompare(b.tld)
+      // most contested first, counted by distinct applicant: one applicant
+      // cited by two sources is one contender, not two
+      (a, b) =>
+        new Set(b.claims.map((c) => c.applicantSlug)).size -
+          new Set(a.claims.map((c) => c.applicantSlug)).size ||
+        a.tld.localeCompare(b.tld)
     );
 }
 

@@ -152,7 +152,22 @@ const intents = [
   ...expand(["chain"], "3dns", ["di"], "intent"),
 ];
 
-export const claims: Claim[] = [
+// A hand-written claim and a scraped one can land on the same string, the same
+// applicant and the same URL — one fact recorded twice. Two claims citing the
+// same string and applicant from *different* sources are two corroborations
+// and both stay. Hand entries come first, so they win the tie and keep their
+// kind, which the scraper can only ever record as "intent".
+const dedupe = (all: Claim[]): Claim[] => {
+  const seen = new Set<string>();
+  return all.filter((c) => {
+    const k = `${c.tld}|${c.applicantSlug}|${[...c.sourceIds].sort().join(",")}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+};
+
+export const claims: Claim[] = dedupe([
   ...oinkadot,
   ...lfg,
   ...tld1,
@@ -172,4 +187,4 @@ export const claims: Claim[] = [
   ...harbin,
   ...intents,
   ...announcedClaims,
-];
+]);

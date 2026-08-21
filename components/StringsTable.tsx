@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
 import { matches, type Scope } from "@/lib/search";
@@ -370,6 +369,31 @@ const SORT_COLS: {
 
 const collator = new Intl.Collator();
 
+const applicantParam = () =>
+  new URLSearchParams(window.location.search).get("applicant");
+
+// history.pushState does not emit an event, so a client-side navigation from
+// /applicants to /?applicant=Name has to be caught by patching it. Next routes
+// through pushState, and back/forward arrive as popstate.
+const subscribeToUrl = (onChange: () => void) => {
+  const push = history.pushState;
+  const replace = history.replaceState;
+  history.pushState = function (...args: Parameters<typeof push>) {
+    push.apply(this, args);
+    onChange();
+  };
+  history.replaceState = function (...args: Parameters<typeof replace>) {
+    replace.apply(this, args);
+    onChange();
+  };
+  window.addEventListener("popstate", onChange);
+  return () => {
+    history.pushState = push;
+    history.replaceState = replace;
+    window.removeEventListener("popstate", onChange);
+  };
+};
+
 type Sort = { key: SortKey; dir: 1 | -1 };
 
 // Sits in the table's <thead> in rows view and in a bar above the columns in
@@ -672,12 +696,17 @@ export default function StringsTable({
   const [q, setQ] = useState(""); // what the input shows
   const [query, setQuery] = useState(""); // what the table filters on
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // /?applicant=Name — how the applicants page hands off to this table.
-  // useSearchParams opts this subtree out of static prerendering, so the value
-  // survives hydration; reading window.location in a useState initializer does
-  // not, because the prerendered HTML says "all".
-  const fromUrl = useSearchParams().get("applicant");
-  const [applicant, setApplicant] = useState(fromUrl ?? "all");
+  // /?applicant=Name — how the applicants page hands off to this table. Read
+  // from the URL rather than through useSearchParams: that hook client-renders
+  // everything up to the nearest Suspense boundary, which is this whole table,
+  // so all 722 rows would be absent from the prerendered HTML for the sake of
+  // one deep link. The server snapshot is null, so the prerender says "all"
+  // and React swaps in the real value after hydration without a mismatch.
+  const fromUrl = useSyncExternalStore(subscribeToUrl, applicantParam, () => null);
+  // the URL supplies the opening value; touching any control takes over from it
+  const [picked, setPicked] = useState<string | null>(null);
+  const applicant = picked ?? fromUrl ?? "all";
+  const setApplicant = setPicked;
   const [scope, setScope] = useState<Scope>("all");
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
