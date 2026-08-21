@@ -3,10 +3,36 @@ import { sourceIndex, sources } from "@/data/sources";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
+import { SITE, lastUpdated } from "@/data/meta";
 
 export default function Home() {
   const s = stats();
   const rows = stringRows();
+  // Dataset rather than WebSite: what this page is, is a compiled record with
+  // a count and a licence, which is the shape a crawler can actually use.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: "Stringscout",
+    description:
+      "Self-revealed strings in ICANN's 2026 gTLD round: which applicant disclosed which string, where each disclosure is recorded, and which strings more than one applicant named.",
+    url: SITE,
+    license: "https://opensource.org/licenses/MIT",
+    isAccessibleForFree: true,
+    dateModified: lastUpdated,
+    keywords: ["gTLD", "ICANN", "2026 round", "top-level domain", "new gTLD"],
+    creator: { "@type": "Organization", name: "earlywarning.report", url: "https://earlywarning.report" },
+    distribution: {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `${SITE}/strings.json`,
+    },
+    variableMeasured: [
+      { "@type": "PropertyValue", name: "Strings disclosed", value: s.strings },
+      { "@type": "PropertyValue", name: "Applicants", value: s.applicants },
+      { "@type": "PropertyValue", name: "Overlapping strings", value: s.contested },
+    ],
+  };
   // only what the table renders, so the client bundle stays free of the data
   const cites = Object.fromEntries(
     sources.map((src) => [
@@ -17,6 +43,10 @@ export default function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <TopBar current="/" />
       {/* The wordmark is in the top bar a few lines up; repeating it larger

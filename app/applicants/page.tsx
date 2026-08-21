@@ -7,7 +7,10 @@ import SectionHead from "@/components/SectionHead";
 import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "Applicants — Stringscout",
+  title: "Applicants",
+  description:
+    "Every entity that has publicly named a string in ICANN's 2026 gTLD round, the people behind it, and how many strings it has disclosed.",
+  alternates: { canonical: "/applicants" },
 };
 
 // What each applicant has actually named. The stored applicationCount goes

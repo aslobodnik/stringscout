@@ -10,7 +10,8 @@ import {
 } from "@/data/sources";
 
 export const metadata: Metadata = {
-  title: "Sources — Stringscout",
+  title: "Sources",
+  alternates: { canonical: "/sources" },
   description:
     "Every source behind the strings and applicants on Stringscout, grouped by how close it is to the applicant.",
 };

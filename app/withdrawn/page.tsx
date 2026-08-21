@@ -6,7 +6,8 @@ import { withdrawnClaims } from "@/data/announcedAdapter";
 import { sourceById, sourceIndex } from "@/data/sources";
 
 export const metadata: Metadata = {
-  title: "Withdrawn — Stringscout",
+  title: "Withdrawn",
+  alternates: { canonical: "/withdrawn" },
   description:
     "Strings announced for the 2026 gTLD round and then pulled before the application reached ICANN.",
 };

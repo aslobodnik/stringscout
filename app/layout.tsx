@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import { SITE } from "@/data/meta";
 import type { Metadata } from "next";
 import { Jost, Old_Standard_TT } from "next/font/google";
 import "./globals.css";
@@ -16,15 +17,17 @@ const oldStandard = Old_Standard_TT({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stringscout.com"),
-  title: "Stringscout",
+  metadataBase: new URL(SITE),
+  // every page title ends the same way, rather than each repeating the suffix
+  title: { default: "Stringscout", template: "%s — Stringscout" },
+  alternates: { canonical: "/" },
   description:
     "Self-revealed applicants in ICANN's 2026 gTLD round: tracked strings, overlapping strings, key dates. Cited.",
   openGraph: {
     title: "Stringscout",
     description:
       "Self-revealed applicants and applied strings in ICANN's 2026 gTLD round.",
-    url: "https://stringscout.com",
+    url: SITE,
     siteName: "Stringscout",
     type: "website",
   },
