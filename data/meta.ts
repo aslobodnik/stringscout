@@ -1,5 +1,5 @@
 // bump on every data edit
-export const lastUpdated = "2026-08-20";
+export const lastUpdated = "2026-08-21";
 
 // One place for the origin: metadata, the sitemap, robots and the JSON feed
 // all have to agree, and a mismatch silently splits a page's canonical from

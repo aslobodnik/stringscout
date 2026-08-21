@@ -139,6 +139,14 @@ const starlight = expand(
 // Brian Harbin — .grit, via Domain Name Wire (only record of the reveal).
 const harbin = expand(["grit"], "harbin", ["dnw-grit"]);
 
+// Human-Centered Computing Foundation — .self, submission confirmed in its own
+// X post with an ICANN portal screenshot. Single-string applicant, so primary.
+// The Applicant Auction row for the same entity joins via ALIASES.
+const hccf = expand(["self"], "hccf", ["hccf-x"], "primary");
+
+// Gate Naming Limited — .gate, announced by D3 on X (only record of the reveal).
+const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -185,6 +193,8 @@ export const claims: Claim[] = dedupe([
   ...easygroup,
   ...starlight,
   ...harbin,
+  ...hccf,
+  ...gatenaming,
   ...intents,
   ...announcedClaims,
 ]);

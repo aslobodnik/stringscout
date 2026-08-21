@@ -170,6 +170,22 @@ const handSources: Source[] = [
     kind: "trade",
   },
   {
+    id: "hccf-x",
+    outlet: "X (@humanccf)",
+    title: "The ICANN submission deadline is today, and our application is in (portal screenshot: submitted 12 Aug 2026)",
+    url: "https://x.com/humanccf/status/2087692172824911977",
+    date: "2026-08-13",
+    kind: "applicant",
+  },
+  {
+    id: "d3-gate-x",
+    outlet: "X (@D3inc)",
+    title: "Gate Naming Limited have applied to ICANN for the .gate Top-Level Domain",
+    url: "https://x.com/D3inc/status/2090832875218415649",
+    date: "2026-08-21",
+    kind: "press",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",

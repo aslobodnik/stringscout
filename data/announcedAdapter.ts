@@ -23,6 +23,7 @@ export const ALIASES: Record<string, string> = {
   "d3 global": "d3",
   "freename.io": "freename",
   "3dns": "3dns",
+  "human-centered computing foundation": "hccf",
 };
 
 // Scraped source URL -> the hand-written source that already cites it. Upstream
