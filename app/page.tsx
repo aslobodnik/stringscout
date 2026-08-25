@@ -4,6 +4,9 @@ import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import { SITE, lastUpdated } from "@/data/meta";
+import type { CSSProperties } from "react";
+
+const PRESS_HEAD = { "--press-delay": "0.05s" } as CSSProperties;
 
 export default function Home() {
   const s = stats();
@@ -52,6 +55,7 @@ export default function Home() {
       {/* The wordmark is in the top bar a few lines up; repeating it larger
           here said the same thing twice. */}
       <header className="pt-7 pb-7">
+        <div className="press-word" style={PRESS_HEAD}>
         <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
           Self-revealed strings in the 2026 gTLD round.
         </h1>
@@ -67,6 +71,7 @@ export default function Home() {
           </a>
           .
         </p>
+        </div>
       </header>
 
       {/* All strings */}

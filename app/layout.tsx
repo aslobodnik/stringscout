@@ -42,11 +42,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${jost.variable} ${oldStandard.variable}`}>
       <body>
-        {/* One shell for every page: Footer's mt-auto only pins inside this
-            exact flex column, so it cannot live in the pages. */}
-        <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 sm:px-8 pb-20">
-          {children}
-          <Footer />
+        {/* The plate frame wraps the whole document once and scrolls with it,
+            so the shell it sits in has to be the full page, not the column. */}
+        <div className="relative min-h-screen">
+          <div aria-hidden className="paper-plate" />
+          {/* One shell for every page: Footer's mt-auto only pins inside this
+              exact flex column, so it cannot live in the pages. The top padding
+              keeps the wordmark clear of the frame. */}
+          <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 sm:px-8 pt-[26px] pb-20">
+            {children}
+            <Footer />
+          </div>
         </div>
       </body>
     </html>

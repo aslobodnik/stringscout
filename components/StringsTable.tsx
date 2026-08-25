@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  type CSSProperties,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
 import { matches, type Scope } from "@/lib/search";
@@ -23,6 +30,10 @@ export type UiStringRow = {
   overlap: boolean;
   count: number;
 };
+
+// Stagger for the press flourishes in globals.css, read there as a variable.
+type PressStyle = CSSProperties & { "--press-delay": string };
+const pressDelay = (ms: number): PressStyle => ({ "--press-delay": `${ms}ms` });
 
 const PAGE_SIZES = [25, 100] as const;
 const PAGE = PAGE_SIZES[0]; // default
@@ -506,7 +517,10 @@ function StatTiles({
           <>
             {/* shading says which view you are in; oxblood is kept for a
                 filter being on, so the default does not load looking filtered */}
-            <div className={`${num} ${on && accent ? "text-oxblood" : ""}`}>
+            <div
+              className={`${num} press-word ${on && accent ? "text-oxblood" : ""}`}
+              style={pressDelay(150 + i * 120)}
+            >
               {v}
             </div>
             <div className={`${cap} ${on && accent ? "!text-oxblood" : ""}`}>
@@ -619,7 +633,7 @@ function IndexEntry({
     .filter(Boolean)
     .join(" · ");
   return (
-    <li className="break-inside-avoid">
+    <li className="break-inside-avoid row-press">
       <button
         type="button"
         title={title || undefined}
@@ -654,8 +668,26 @@ function IndexView({
   rows: UiStringRow[];
   onJump: (tld: string) => void;
 }) {
+  // The entries flow down each column, so staggering by list position fills
+  // column one before the others exist. Stagger by the visual row instead,
+  // measured after layout and before paint, at the table's own pace: 22ms a
+  // row, everything past the first 23 rows together. Arithmetic on rows per
+  // column drifts, since the browser balances the columns a row unevenly.
+  const list = useRef<HTMLUListElement>(null);
+  useLayoutEffect(() => {
+    const ul = list.current;
+    if (!ul) return;
+    const top = ul.getBoundingClientRect().top;
+    const items = [...ul.children] as HTMLElement[];
+    const tops = items.map((li) => li.getBoundingClientRect().top - top);
+    const rowHeight = Math.max(1, ...tops.slice(0, 2).map((t, i) => (i ? t - tops[0] : 0)));
+    items.forEach((li, i) => {
+      const row = Math.round(tops[i] / rowHeight);
+      li.style.setProperty("--press-delay", `${Math.min(row * 22, 500)}ms`);
+    });
+  }, [rows]);
   return (
-    <ul className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-6 text-sm">
+    <ul ref={list} className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-6 text-sm">
       {rows.map((r) => (
         <IndexEntry key={r.tld} r={r} onJump={onJump} />
       ))}
@@ -836,6 +868,13 @@ export default function StringsTable({
       ? `${rows.length} strings`
       : `${filtered.length} of ${rows.length} strings`;
 
+  // Re-press: the rows are keyed on the slice they show, so a new page, filter,
+  // sort or view remounts them and the press flourish runs again, in either
+  // direction of Show all / Back to table.
+  const slice = [
+    current, query, applicant, scope, markFilter, sort.key, sort.dir, pageSize, view,
+  ].join("|");
+
   return (
     <div>
       <StatTiles
@@ -853,7 +892,7 @@ export default function StringsTable({
           removed section heading used to carry */}
       <div className="double-rule mb-5" />
 
-      <div ref={toolbarRef} className="mb-5 scroll-mt-14">
+      <div ref={toolbarRef} className="mb-5 scroll-mt-4">
         <div className="flex flex-wrap items-center gap-3">
         <input
           type="search"
@@ -952,7 +991,7 @@ export default function StringsTable({
                 <span className="text-oxblood">†</span> potential issue
               </span>
             </div>
-            <IndexView rows={sorted} onJump={jumpTo} />
+            <IndexView key={slice} rows={sorted} onJump={jumpTo} />
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <ShowAll all total={sorted.length} onToggle={toggleView} />
               <span className="label text-ink-soft">{countLabel}</span>
@@ -1005,13 +1044,14 @@ export default function StringsTable({
                 })}
               </tr>
             </thead>
-            <tbody>
-              {visible.map((r) => (
+            <tbody key={slice}>
+              {visible.map((r, vi) => (
                 <tr
                   key={r.tld}
-                  className={`border-t border-rule-faint align-top ${
+                  className={`border-t border-rule-faint align-top row-press ${
                     focused === r.tld ? "bg-paper-deep" : ""
                   }`}
+                  style={pressDelay(Math.min(vi * 22, 500))}
                 >
                   <td className="py-2 pr-4 font-medium">
                     {r.gloss ? (
@@ -1023,7 +1063,9 @@ export default function StringsTable({
                           onClick={() =>
                             setPinned(pinned === r.tld ? null : r.tld)
                           }
-                          className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
+                          className={`group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out ${
+                            r.overlap ? "press-echo" : ""
+                          }`}
                         >
                           <span className="text-gold">.</span>
                           {r.tld}
@@ -1038,10 +1080,10 @@ export default function StringsTable({
                         )}
                       </>
                     ) : (
-                      <>
+                      <span className={r.overlap ? "press-echo" : undefined}>
                         <span className="text-gold">.</span>
                         {r.tld}
-                      </>
+                      </span>
                     )}
                     {r.issues.map((issue) => (
                       <IssueTag key={issue.kind + issue.other} issue={issue} punycode={r.punycode} />
@@ -1100,7 +1142,11 @@ export default function StringsTable({
                           className="inline-flex items-baseline gap-[3px]"
                         >
                           {Array.from({ length: r.count }, (_, i) => (
-                            <i key={i} className="inline-block w-px h-3.5 bg-oxblood" />
+                            <i
+                              key={i}
+                              className="inline-block w-px h-3.5 bg-oxblood tally-ink"
+                              style={pressDelay(Math.min(vi * 22, 500) + 120 + i * 55)}
+                            />
                           ))}
                         </span>
                         <span className="sr-only">{r.count} applicants</span>
