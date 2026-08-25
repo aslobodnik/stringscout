@@ -3,7 +3,14 @@ import { claims } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { sources, sourceIndex, KIND_ORDER } from "@/data/sources";
 import { announced } from "@/data/announced";
-import { ALIASES, announcedClaims, leadSlug, withdrawnClaims } from "@/data/announcedAdapter";
+import {
+  ALIASES,
+  announcedClaims,
+  leadSlug,
+  liveStrings,
+  withdrawnClaims,
+} from "@/data/announcedAdapter";
+import { handWithdrawn } from "@/data/withdrawn";
 import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
 import { matches, type Searchable } from "@/lib/search";
 import { formatDate } from "@/lib/format";
@@ -140,12 +147,53 @@ describe("scraped announcements", () => {
   });
 
   it("keeps a part-withdrawn row's live strings", () => {
-    // Unstoppable/Kintsugi pulled .manga and kept .anime; a row-level flag
-    // would either lose the withdrawal or take .anime down with it.
-    const row = announced.find((r) => r.strings.includes("manga"));
-    expect(row?.withdrawnStrings).toEqual(["manga"]);
-    expect(announcedClaims.some((c) => c.tld === "anime")).toBe(true);
-    expect(announcedClaims.some((c) => c.tld === "manga")).toBe(false);
+    // A row-level flag would either lose the withdrawal or take the live
+    // string down with it.
+    const row = {
+      lead: "x",
+      partners: [],
+      strings: ["a", "b"],
+      note: null,
+      withdrawnStrings: ["a"],
+      withdrawnUrl: "https://example.com/",
+      sourceUrl: null,
+      sourceTitle: "",
+      date: "2026-01-01",
+    };
+    expect(liveStrings(row)).toEqual(["b"]);
+  });
+
+  it("lays a hand withdrawal over the scraped row without touching it", () => {
+    // Unstoppable/Kintsugi: upstream pulled .manga, Unstoppable's own filing
+    // post later pulled .anime. The generated row still says .manga only.
+    const row = announced.find((r) => r.strings.includes("manga"))!;
+    expect(row.withdrawnStrings).toEqual(["manga"]);
+    expect(liveStrings(row)).toEqual([]);
+    const pulled = withdrawnClaims.filter((w) => w.applicant === row.lead);
+    expect(pulled.map((w) => w.tld)).toEqual(expect.arrayContaining(["manga", "anime"]));
+    expect(announcedClaims.some((c) => c.tld === "anime" && c.applicantSlug === "d3")).toBe(true);
+    expect(
+      announcedClaims.some((c) => c.applicantSlug === "unstoppable" && ["anime", "manga"].includes(c.tld))
+    ).toBe(false);
+  });
+
+  it("points every hand withdrawal at a row that exists upstream", () => {
+    // If Applicant Auction rewords a lead, the overlay misses and the string
+    // silently comes back to life. Fail here instead.
+    for (const w of handWithdrawn) {
+      const rows = announced.filter((r) => r.lead.toLowerCase() === w.lead.toLowerCase());
+      expect(rows.length, `"${w.lead}" no longer appears upstream`).toBeGreaterThan(0);
+      for (const t of w.strings)
+        expect(rows.some((r) => r.strings.includes(t)), `.${t} is not on a "${w.lead}" row`).toBe(true);
+      expect(() => new URL(w.url)).not.toThrow();
+    }
+  });
+
+  it("names where every withdrawal is recorded", () => {
+    for (const w of withdrawnClaims) {
+      expect(w.withdrawnUrl, `.${w.tld} withdrawn with no citation`).toBeTruthy();
+      expect(w.withdrawnLabel, `.${w.tld} withdrawal has no label`).toBeTruthy();
+    }
   });
 
   it("never emits a withdrawn announcement as a claim by that applicant", () => {

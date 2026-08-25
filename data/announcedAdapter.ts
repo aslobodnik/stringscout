@@ -1,4 +1,5 @@
 import { announced, type Announced } from "./announced";
+import { handWithdrawn } from "./withdrawn";
 import { slugify } from "@/lib/format";
 import type { Applicant } from "./applicants";
 import type { Claim } from "./claims";
@@ -104,11 +105,24 @@ for (const r of announced) {
   });
 }
 
-// Upstream marks withdrawal per string: the Unstoppable/Kintsugi row pulled
-// .manga and kept .anime, so a row filter would either lose the withdrawal or
-// take the live string down with it.
-const liveStrings = (r: Announced) =>
-  r.strings.filter((t) => !r.withdrawnStrings.includes(t));
+// Withdrawals recorded by hand, keyed "lead|string" with the lead as upstream
+// prints it, and laid over the scraped rows: a string pulled after the last
+// scrape leaves the table without hand-editing the generated file.
+const handPulled = new Map<string, string>();
+for (const w of handWithdrawn)
+  for (const t of w.strings) handPulled.set(`${w.lead.toLowerCase()}|${t}`, w.url);
+
+// Where a given string's withdrawal is written down, whichever side recorded it.
+const pulledAt = (r: Announced, t: string) =>
+  r.withdrawnStrings.includes(t)
+    ? r.withdrawnUrl
+    : (handPulled.get(`${r.lead.toLowerCase()}|${t}`) ?? null);
+
+// Withdrawal is per string, upstream and here: the Unstoppable/Kintsugi row
+// pulled .manga first and .anime later, so a row filter would either lose the
+// withdrawal or take a live string down with it.
+export const liveStrings = (r: Announced) =>
+  r.strings.filter((t) => pulledAt(r, t) === null);
 
 export const announcedApplicants: Applicant[] = [...byLead]
   .filter(([, rows]) => !(rows[0].lead.toLowerCase() in ALIASES))
@@ -145,14 +159,28 @@ export const announcedClaims: Claim[] = announced.flatMap((r) =>
     }))
   );
 
+// How the /withdrawn table names the document recording a withdrawal.
+export function withdrawnLabel(url: string): string {
+  const host = hostOf(url);
+  if (host === "support.unstoppabledomains.com") return "Unstoppable refund list";
+  if (host === "unstoppabledomains.com") return "Unstoppable announcement";
+  return outletOf(url);
+}
+
 // Announced and then pulled before filing. Shown on its own, counted nowhere.
 export const withdrawnClaims = announced.flatMap((r) =>
-    r.withdrawnStrings.map((tld) => ({
-      tld,
-      applicant: r.lead,
-      partners: r.partners,
-      withdrawnUrl: r.withdrawnUrl,
-      sourceId: r.sourceUrl ? urlIds.get(r.sourceUrl)! : null,
-      date: r.date,
-    }))
+    r.strings
+      .filter((t) => pulledAt(r, t) !== null)
+      .map((tld) => {
+        const withdrawnUrl = pulledAt(r, tld);
+        return {
+          tld,
+          applicant: r.lead,
+          partners: r.partners,
+          withdrawnUrl,
+          withdrawnLabel: withdrawnUrl ? withdrawnLabel(withdrawnUrl) : null,
+          sourceId: r.sourceUrl ? urlIds.get(r.sourceUrl)! : null,
+          date: r.date,
+        };
+      })
   );

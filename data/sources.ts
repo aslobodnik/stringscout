@@ -178,6 +178,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "ud-filed",
+    outlet: "Unstoppable Domains",
+    title: "ICANN Applications are in! Some TLDs are eligible for a refund.",
+    url: "https://unstoppabledomains.com/blog/categories/announcements/article/icann-applications-are-in",
+    date: "2026-08-25",
+    kind: "applicant",
+  },
+  {
     id: "d3-gate-x",
     outlet: "X (@D3inc)",
     title: "Gate Naming Limited have applied to ICANN for the .gate Top-Level Domain",

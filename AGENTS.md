@@ -17,7 +17,9 @@ Everything the site renders comes from `data/`. Overlap counts, punycode, and ma
 to refresh it from Applicant Auction's announced-intentions table; it prints a diff of
 what changed. `data/announcedAdapter.ts` turns those rows into applicants, claims and
 sources, all as `intent`. A row marked withdrawn is carried for the record on `/withdrawn`
-and counted nowhere else.
+and counted nowhere else. A withdrawal the applicant records after the last
+scrape goes in `data/withdrawn.ts`, keyed by the lead name upstream prints, and is
+laid over the scraped row.
 
 ## House rules
 

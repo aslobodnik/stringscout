@@ -91,7 +91,7 @@ export default function WithdrawnPage() {
                         rel="noopener noreferrer"
                         className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out"
                       >
-                        Unstoppable refund list
+                        {w.withdrawnLabel}
                       </a>
                     ) : (
                       <span className="text-ink-soft">—</span>

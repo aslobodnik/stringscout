@@ -115,8 +115,11 @@ const namespace = expand(
   "primary"
 );
 
-// Telegram — .gram per Pavel Durov's X post.
-const telegram = expand(["gram"], "telegram", ["durov-x"], "primary");
+// Telegram — .gram per Pavel Durov's X post. Unstoppable's filing post names
+// .gram as its own fifth filing, made as registry service provider to
+// Telegram: one application, so it corroborates this claim rather than adding
+// an applicant.
+const telegram = expand(["gram"], "telegram", ["durov-x", "ud-filed"], "primary");
 
 // easyGroup Ltd — .easy dotBrand per its RNS announcement.
 const easygroup = expand(["easy"], "easygroup", ["easy-rns"], "primary");
@@ -147,14 +150,19 @@ const hccf = expand(["self"], "hccf", ["hccf-x"], "primary");
 // Gate Naming Limited — .gate, announced by D3 on X (only record of the reveal).
 const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
 
+// Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
+// (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
+// not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
+// same post lists as not proceeding are in data/withdrawn.ts.
+const unstoppable = expand(["agi", "robot", "hub", "xmr"], "unstoppable", ["ud-filed"]);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
 const intents = [
-  // .anime only. Unstoppable's own refund page lists .manga as not proceeding
-  // to ICANN and does not list .anime, so .manga is carried on /withdrawn and
-  // claimed here by nobody.
-  ...expand(["anime"], "unstoppable", ["di"], "intent"),
+  // .anime by D3 only. Unstoppable's refund page pulled .manga and its filing
+  // post pulled .anime, so both are carried on /withdrawn and claimed here by
+  // neither Unstoppable nor Kintsugi.
   ...expand(["anime"], "d3", ["di"], "intent"),
   ...expand(["chain"], "freename", ["di"], "intent"),
   ...expand(["chain"], "3dns", ["di"], "intent"),
@@ -195,6 +203,7 @@ export const claims: Claim[] = dedupe([
   ...harbin,
   ...hccf,
   ...gatenaming,
+  ...unstoppable,
   ...intents,
   ...announcedClaims,
 ]);
