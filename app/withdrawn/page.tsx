@@ -26,9 +26,7 @@ export default function WithdrawnPage() {
 
       <p className="text-sm text-ink-soft mb-8 max-w-2xl">
         Announced for the 2026 round, then pulled before the application reached
-        ICANN. Counted nowhere else on this site. Kept because a collapsed
-        announcement still records who wanted the string. Announced is the piece
-        that reported the string; Withdrawn is where the retraction is recorded.
+        ICANN.
       </p>
 
       <div className="overflow-x-auto">

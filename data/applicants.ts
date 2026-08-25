@@ -234,7 +234,7 @@ export const handApplicants: Applicant[] = [
     applicationCount: "5",
     feesPaid: null,
     revealedOn: "2026-08-25",
-    note: "Its fifth string, .gram, is Telegram's application; Unstoppable is the registry service provider.",
+    note: null,
     sourceIds: ["ud-filed"],
   },
   {
