@@ -107,6 +107,18 @@ export const applicantBackers = new Map(
   applicants.map((a) => [a.name, a.backers])
 );
 
+// Distinct strings each applicant has named, every claim kind: the count the
+// applicants column, its sort and the dateline all print, so the number in a
+// link equals the number where it lands. The stored applicationCount goes
+// stale the moment a scrape adds strings, so nothing reads that field.
+const namedStrings = new Map<string, Set<string>>();
+for (const c of claims) {
+  const set = namedStrings.get(c.applicantSlug) ?? new Set<string>();
+  set.add(c.tld);
+  namedStrings.set(c.applicantSlug, set);
+}
+export const stringCount = (slug: string) => namedStrings.get(slug)?.size ?? 0;
+
 
 const RANK: Record<Mark, number> = { p: 0, u: 1, i: 2 };
 
@@ -145,10 +157,7 @@ export function applicantMarks(
 // qualify. Derived, so nothing stores "latest".
 export function latestReveal(list: Applicant[] = applicants): Applicant[] {
   const disclosed = list.filter((a) => a.status === "disclosed");
-  const max = disclosed.reduce(
-    (m, a) => (a.revealedOn > m ? a.revealedOn : m),
-    ""
-  );
+  const max = disclosed.map((a) => a.revealedOn).sort().at(-1);
   return disclosed.filter((a) => a.revealedOn === max);
 }
 

@@ -1,8 +1,8 @@
 "use client";
 
+import { pressDelay } from "@/lib/press";
 import Link from "next/link";
 import {
-  type CSSProperties,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -30,10 +30,6 @@ export type UiStringRow = {
   overlap: boolean;
   count: number;
 };
-
-// Stagger for the press flourishes in globals.css, read there as a variable.
-type PressStyle = CSSProperties & { "--press-delay": string };
-const pressDelay = (ms: number): PressStyle => ({ "--press-delay": `${ms}ms` });
 
 const PAGE_SIZES = [25, 100] as const;
 const PAGE = PAGE_SIZES[0]; // default

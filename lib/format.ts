@@ -23,3 +23,8 @@ export const slugify = (s: string, max = 32) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, max);
+
+// The strings table filtered to one applicant: how the applicants page and
+// the dateline hand a reader to its rows. StringsTable reads the same key.
+export const applicantHref = (name: string) =>
+  `/?applicant=${encodeURIComponent(name)}`;

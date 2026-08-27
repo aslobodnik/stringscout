@@ -5,9 +5,9 @@ import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import Dateline from "@/components/Dateline";
 import { SITE, lastUpdated } from "@/data/meta";
-import type { CSSProperties } from "react";
+import { pressDelay } from "@/lib/press";
 
-const PRESS_HEAD = { "--press-delay": "0.05s" } as CSSProperties;
+const PRESS_HEAD = pressDelay(50);
 
 export default function Home() {
   const s = stats();
@@ -72,7 +72,7 @@ export default function Home() {
           </a>
           .
         </p>
-        <Dateline latestHref="filter" className="mt-4" />
+        <Dateline />
         </div>
       </header>
 
