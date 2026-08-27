@@ -237,6 +237,19 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["ud-filed"],
   },
+  // deux.radix.website carries no date; its sitemap lastmod and first capture
+  // are both 2026-08-27.
+  {
+    slug: "radix",
+    status: "disclosed",
+    name: "Radix",
+    backers: "Sandeep Ramchandani, CEO",
+    applicationCount: "46",
+    feesPaid: null,
+    revealedOn: "2026-08-27",
+    note: null,
+    sourceIds: ["radix"],
+  },
   {
     slug: "d3",
     status: "intent",

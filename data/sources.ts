@@ -194,6 +194,14 @@ const handSources: Source[] = [
     kind: "press",
   },
   {
+    id: "radix",
+    outlet: "Radix",
+    title: "deux.radix.website — 46 primary applications",
+    url: "https://deux.radix.website/",
+    date: "2026-08-27",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
@@ -206,7 +214,7 @@ const handSources: Source[] = [
     outlet: "IANA",
     title: "Root Zone Database",
     url: "https://www.iana.org/domains/root/db",
-    date: "2026-08-19",
+    date: "2026-08-27",
     kind: "reference",
   },
 ];

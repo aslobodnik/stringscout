@@ -156,6 +156,23 @@ const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
 // same post lists as not proceeding are in data/withdrawn.ts.
 const unstoppable = expand(["agi", "robot", "hub", "xmr"], "unstoppable", ["ud-filed"]);
 
+// Radix — 46 strings, stated as its primary applications on deux.radix.website.
+const radix = expand(
+  [
+    "agi", "asi", "agent", "agentic", "intelligence", "mcp", "mind", "robotics",
+    "bit", "hub", "stack", "platform", "quantum", "labs", "flow", "neo",
+    "therapy", "wellness", "biotech", "pharma",
+    "fintech", "wealth", "invest", "wallet", "coin", "crypto",
+    "founder", "firm", "brand", "official", "advisory", "project", "research",
+    "mart", "etc", "fix",
+    "creator", "profile", "portfolio", "podcast", "pod", "merch",
+    "collective", "vibe", "zen", "atelier",
+  ],
+  "radix",
+  ["radix"],
+  "primary"
+);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -204,6 +221,7 @@ export const claims: Claim[] = dedupe([
   ...hccf,
   ...gatenaming,
   ...unstoppable,
+  ...radix,
   ...intents,
   ...announcedClaims,
 ]);
