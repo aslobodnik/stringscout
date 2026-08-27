@@ -1063,9 +1063,7 @@ export default function StringsTable({
                           onClick={() =>
                             setPinned(pinned === r.tld ? null : r.tld)
                           }
-                          className={`group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out ${
-                            r.overlap ? "press-echo" : ""
-                          }`}
+                          className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
                         >
                           <span className="text-gold">.</span>
                           {r.tld}
@@ -1080,7 +1078,7 @@ export default function StringsTable({
                         )}
                       </>
                     ) : (
-                      <span className={r.overlap ? "press-echo" : undefined}>
+                      <span>
                         <span className="text-gold">.</span>
                         {r.tld}
                       </span>

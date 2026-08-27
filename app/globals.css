@@ -170,9 +170,3 @@ input[type="search"]::-webkit-search-cancel-button {
     animation-delay: var(--press-delay, 0s);
   }
 }
-
-/* An overlapping string is pressed twice: a second impression, a hair off,
-   in oxblood. */
-.press-echo {
-  text-shadow: 0.7px 0.6px 0 rgba(110, 42, 36, 0.38);
-}
