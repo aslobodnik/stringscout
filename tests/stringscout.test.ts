@@ -12,6 +12,7 @@ import {
 } from "@/data/announcedAdapter";
 import { handWithdrawn } from "@/data/withdrawn";
 import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
+import * as derive from "@/lib/derive";
 import { matches, type Searchable } from "@/lib/search";
 import { formatDate } from "@/lib/format";
 
@@ -205,6 +206,34 @@ describe("scraped announcements", () => {
       );
       expect(claimed, `${w.applicant} should not claim .${w.tld}`).toBe(false);
     }
+  });
+});
+
+describe("latest reveal", () => {
+  const row = (
+    slug: string,
+    status: "disclosed" | "intent",
+    revealedOn: string
+  ) => ({
+    slug,
+    status,
+    name: slug,
+    backers: "",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn,
+    note: null,
+    sourceIds: [],
+  });
+
+  it("returns every disclosed applicant on the newest date, and no intent row", () => {
+    const latest = derive.latestReveal([
+      row("older", "disclosed", "2026-08-20"),
+      row("a", "disclosed", "2026-08-27"),
+      row("announced", "intent", "2026-08-30"),
+      row("b", "disclosed", "2026-08-27"),
+    ]);
+    expect(latest.map((a) => a.slug)).toEqual(["a", "b"]);
   });
 });
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 // /withdrawn is deliberately absent: it exists for the record, reachable by
 // typing the path, but it is not something to send a reader to.
@@ -52,9 +53,11 @@ export function TopBar({ current }: { current: string }) {
 export default function PageHeader({
   title,
   current,
+  children,
 }: {
   title: string;
   current: string;
+  children?: ReactNode;
 }) {
   return (
     <>
@@ -63,6 +66,7 @@ export default function PageHeader({
         <h1 className="mt-5 text-3xl font-medium tracking-[0.14em] uppercase leading-none">
           {title}
         </h1>
+        {children}
       </header>
     </>
   );

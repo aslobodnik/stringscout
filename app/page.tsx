@@ -3,6 +3,7 @@ import { sourceIndex, sources } from "@/data/sources";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
+import Dateline from "@/components/Dateline";
 import { SITE, lastUpdated } from "@/data/meta";
 import type { CSSProperties } from "react";
 
@@ -71,6 +72,7 @@ export default function Home() {
           </a>
           .
         </p>
+        <Dateline latestHref="filter" className="mt-4" />
         </div>
       </header>
 

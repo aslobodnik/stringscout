@@ -1,5 +1,5 @@
 import { claims, type Claim } from "@/data/claims";
-import { applicants } from "@/data/applicants";
+import { applicants, type Applicant } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
 import { MARKS, type Mark } from "./marks";
@@ -138,6 +138,18 @@ export function applicantMarks(
       sourceIds: [...(srcs.get(slug) ?? [])],
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// The newest disclosure: every disclosed applicant on the latest revealedOn,
+// in list order. Intent rows are announcements, not reveals, so they never
+// qualify. Derived, so nothing stores "latest".
+export function latestReveal(list: Applicant[] = applicants): Applicant[] {
+  const disclosed = list.filter((a) => a.status === "disclosed");
+  const max = disclosed.reduce(
+    (m, a) => (a.revealedOn > m ? a.revealedOn : m),
+    ""
+  );
+  return disclosed.filter((a) => a.revealedOn === max);
 }
 
 export function stats() {

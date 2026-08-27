@@ -4,7 +4,10 @@ import PageHeader from "@/components/PageHeader";
 import { applicants, type Applicant } from "@/data/applicants";
 import { claims } from "@/data/claims";
 import SectionHead from "@/components/SectionHead";
+import Dateline from "@/components/Dateline";
+import { latestReveal } from "@/lib/derive";
 import { formatDate } from "@/lib/format";
+import type { CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Applicants",
@@ -26,6 +29,11 @@ const countFor = (slug: string) => named.get(slug)?.size ?? 0;
 
 const byCount = (a: Applicant, b: Applicant) =>
   countFor(b.slug) - countFor(a.slug);
+
+// The newest disclosure keeps its place in the count order and carries a
+// marginal stroke beside its date instead.
+const latest = new Set(latestReveal().map((a) => a.slug));
+const STROKE = { "--press-delay": "0.25s" } as CSSProperties;
 
 function Table({
   rows,
@@ -52,9 +60,21 @@ function Table({
         <tbody>
           {rows.map((a) => {
             const count = countFor(a.slug);
+            const isLatest = latest.has(a.slug);
             return (
-            <tr key={a.slug} className="border-t border-rule-faint align-top">
-              <td className="py-3 pr-4 font-medium">{a.name}</td>
+            <tr
+              key={a.slug}
+              id={a.slug}
+              className="border-t border-rule-faint align-top scroll-mt-6"
+            >
+              <td className="py-3 pr-4 font-medium">
+                {a.name}
+                {isLatest && (
+                  <span className="label text-oxblood ml-2 !text-[10px] align-[2px]">
+                    Latest
+                  </span>
+                )}
+              </td>
               <td className="py-3 pr-4 text-ink-soft max-w-xs">
                 {a.backers}
                 {a.note && (
@@ -75,7 +95,20 @@ function Table({
                   <span className="text-ink-soft">—</span>
                 )}
               </td>
-              <td className="py-3 pr-4 whitespace-nowrap">{formatDate(a.revealedOn)}</td>
+              <td
+                className={`py-3 pr-4 whitespace-nowrap relative ${
+                  isLatest ? "text-oxblood" : ""
+                }`}
+              >
+                {isLatest && (
+                  <span
+                    aria-hidden="true"
+                    className="tally-ink absolute -left-2 top-3 bottom-3 w-[3px] bg-oxblood"
+                    style={STROKE}
+                  />
+                )}
+                {formatDate(a.revealedOn)}
+              </td>
             </tr>
             );
           })}
@@ -98,7 +131,9 @@ export default function ApplicantsPage() {
 
   return (
     <>
-      <PageHeader title="The Applicants" current="/applicants" />
+      <PageHeader title="The Applicants" current="/applicants">
+        <Dateline latestHref="row" className="mt-4" />
+      </PageHeader>
 
       <section className="mb-14">
         <SectionHead n="I" title="Disclosed" />
