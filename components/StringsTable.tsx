@@ -1094,9 +1094,6 @@ export default function StringsTable({
                             <button
                               type="button"
                               aria-pressed={applicant === name}
-                              title={
-                                applicant === name ? "Clear filter" : `Only ${name}`
-                              }
                               onClick={() => {
                                 setApplicant(applicant === name ? "all" : name);
                                 setPage(0);
