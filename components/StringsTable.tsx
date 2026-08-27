@@ -1,6 +1,7 @@
 "use client";
 
 import { pressDelay } from "@/lib/press";
+import Egg from "@/components/eggs/Egg";
 import Link from "next/link";
 import {
   useLayoutEffect,
@@ -1091,6 +1092,7 @@ export default function StringsTable({
                         <span key={name}>
                           {i > 0 && <span className="text-ink-soft"> · </span>}
                           <span className="whitespace-nowrap">
+                            <Egg name={name}>
                             <button
                               type="button"
                               aria-pressed={applicant === name}
@@ -1105,6 +1107,7 @@ export default function StringsTable({
                             >
                               {name}
                             </button>
+                            </Egg>
                             <Marker
                               mark={mark}
                               onFilter={toggleMark}
