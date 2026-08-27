@@ -234,12 +234,12 @@ function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
       {nums.map(({ id, c }, i) => (
         <span key={id}>
           {i > 0 && <span className="text-rule">,</span>}
-          <a
+          <Link
             href={`/sources#src-${c.n}`}
             title={`${c.outlet} · ${formatDate(c.date)}`}
           >
             {c.n}
-          </a>
+          </Link>
         </span>
       ))}
     </sup>
