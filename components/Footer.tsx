@@ -47,7 +47,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto double-rule pt-5 text-sm text-ink-soft flex flex-wrap items-center gap-x-6 gap-y-3">
       <p className="max-w-xl">
-        Not affiliated with ICANN. All data self- or press-reported.
+        Not affiliated with ICANN.
       </p>
       <div className="flex items-center gap-3 ml-auto">
         <span className="label !text-[10px] !tracking-[0.14em]">Developed by</span>
