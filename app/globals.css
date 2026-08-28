@@ -124,7 +124,10 @@ input[type="search"]::-webkit-search-cancel-button {
    no frame, and stacked under the rows. A negative z-index puts it behind
    the page's content without a stacking context on the section, so the
    table's menus and tooltips keep their place against the plate frame. */
+/* Not on phones: at that width it sat full-bleed under two columns of
+   text, and hidden this way the lazy image is never fetched. */
 .tailpiece {
+  display: none;
   position: absolute;
   right: -1.5rem;
   bottom: -3.5rem;
@@ -139,6 +142,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 @media (min-width: 640px) {
   .tailpiece {
+    display: block;
     right: -2rem;
   }
 }
