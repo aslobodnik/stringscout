@@ -4,11 +4,14 @@ import { pressDelay } from "@/lib/press";
 import Egg from "@/components/eggs/Egg";
 import Link from "next/link";
 import {
+  Fragment,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   useSyncExternalStore,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
@@ -110,14 +113,110 @@ function ApplicantSelect({
   const [open, setOpen] = useState(false);
   const items = ["all", ...options];
   const labelFor = (v: string) => (v === "all" ? "All applicants" : v);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  // the option to land on once the list mounts, when a key rather than a click opened it
+  const landOn = useRef<number | null>(null);
+  // letters typed in a row jump the list, as they do in a native select
+  const typed = useRef("");
+  const typedAt = useRef(0);
+  const selected = Math.max(0, items.indexOf(value));
+
+  const buttons = () =>
+    [...(list.current?.querySelectorAll("button") ?? [])] as HTMLButtonElement[];
+  const focusAt = (i: number) => {
+    const b = buttons();
+    b[Math.max(0, Math.min(b.length - 1, i))]?.focus();
+  };
+
+  useLayoutEffect(() => {
+    if (!open || landOn.current === null) return;
+    const b = list.current?.querySelectorAll("button");
+    b?.[Math.min(b.length - 1, landOn.current)]?.focus();
+    landOn.current = null;
+  }, [open]);
+
+  const close = () => {
+    setOpen(false);
+    typed.current = "";
+    trigger.current?.focus();
+  };
+
+  const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) {
+      // a chord is the page's (Cmd-K reaches the search box); the list gets out of its way
+      if (open) setOpen(false);
+      return;
+    }
+    if (!open) {
+      // Enter and Space press the trigger on their own
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        landOn.current = selected;
+        setOpen(true);
+      }
+      return;
+    }
+    // while the list is open its keys are its own: none reach the page's shortcuts
+    e.stopPropagation();
+    const cur = buttons().indexOf(document.activeElement as HTMLButtonElement);
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        focusAt(cur < 0 ? selected : cur + 1);
+        return;
+      case "ArrowUp":
+        e.preventDefault();
+        focusAt(cur < 0 ? selected : cur - 1);
+        return;
+      case "Home":
+        e.preventDefault();
+        focusAt(0);
+        return;
+      case "End":
+        e.preventDefault();
+        focusAt(items.length - 1);
+        return;
+      case "Escape":
+        e.preventDefault();
+        close();
+        return;
+      case "Tab":
+        setOpen(false);
+        return;
+    }
+    if (e.key.length !== 1) return;
+    const now = e.timeStamp;
+    const running = typed.current !== "" && now - typedAt.current < 600;
+    if (e.key === " " && !running) return; // a bare space presses the focused option
+    e.preventDefault();
+    typed.current = running ? typed.current + e.key : e.key;
+    typedAt.current = now;
+    // one letter, or the same letter again, walks the names that start with it
+    const run = /^(.)\1*$/.test(typed.current) ? typed.current[0] : typed.current;
+    const from = run.length === 1 ? cur + 1 : Math.max(cur, 0);
+    const want = run.toLowerCase();
+    for (let i = 0; i < items.length; i++) {
+      const at = (from + i) % items.length;
+      if (labelFor(items[at]).toLowerCase().startsWith(want)) {
+        focusAt(at);
+        return;
+      }
+    }
+  };
 
   return (
-    <div className="relative">
+    <div className="relative" onKeyDown={onKeyDown}>
       <button
+        ref={trigger}
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          typed.current = "";
+          setOpen((v) => !v);
+        }}
         className="label border border-ink text-ink px-3 h-10 w-56 cursor-pointer hover:bg-paper-deep transition-colors duration-200 ease-in-out flex items-center justify-between gap-2"
       >
         <span className="truncate">{labelFor(value)}</span>
@@ -127,8 +226,9 @@ function ApplicantSelect({
       </button>
       {open && (
         <>
-          <Backdrop onClose={() => setOpen(false)} />
+          <Backdrop onClose={close} />
           <ul
+            ref={list}
             role="listbox"
             className="paper-scroll absolute left-0 top-full z-20 mt-1 min-w-full w-max max-h-[50vh] overflow-y-auto border border-ink bg-paper"
           >
@@ -141,11 +241,12 @@ function ApplicantSelect({
               >
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => {
                     onChange(v);
-                    setOpen(false);
+                    close();
                   }}
-                  className={`label block w-full text-left px-3 py-3 cursor-pointer transition-colors duration-200 ease-in-out ${
+                  className={`label block w-full text-left px-3 py-3 cursor-pointer focus:outline-none focus:[box-shadow:inset_3px_0_0_var(--gold)] transition-colors duration-200 ease-in-out ${
                     v === value
                       ? "bg-ink text-paper"
                       : "text-ink hover:bg-paper-deep"
@@ -364,6 +465,70 @@ function Legend({
 
 function Backdrop({ onClose }: { onClose: () => void }) {
   return <div className="fixed inset-0 z-10" aria-hidden onClick={onClose} />;
+}
+
+// A key cap: a square box with a heavier foot, in the site's mono because it
+// names a key rather than a word.
+const KBD =
+  "min-w-[1.75em] border border-ink border-b-2 bg-paper-deep px-1.5 text-center text-[11px] font-medium leading-5 text-ink";
+
+const isMac = () => /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+const never = () => () => {};
+
+// The list a reader gets by pressing ? anywhere on the page. Reached only by
+// key, so it only ever opens for someone with a keyboard.
+function ShortcutSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const box = useRef<HTMLDialogElement>(null);
+  // the server does not know the platform; the client fills it in after hydration
+  const mac = useSyncExternalStore(never, isMac, () => false);
+  // Always mounted, opened and closed in place: showModal puts the rest of the
+  // page out of reach, and close() on an element still in the document hands
+  // focus back to wherever it was.
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    if (open && !el.open) el.showModal();
+    else if (!open && el.open) el.close();
+  }, [open]);
+  const rows: { keys: string[]; or?: boolean; what: string }[] = [
+    { keys: ["/", mac ? "⌘ K" : "Ctrl K"], or: true, what: "Search" },
+    { keys: ["←", "→"], what: "Previous page, next page" },
+    { keys: ["Esc"], what: "Clear the search and filters, or close this" },
+    { keys: ["↑", "↓"], what: "Move through the applicant menu; a letter jumps to it" },
+    { keys: ["?"], what: "This list" },
+  ];
+  return (
+    <dialog
+      ref={box}
+      aria-label="Keyboard shortcuts"
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose(); // the backdrop is the dialog's own margin
+      }}
+      className="m-auto w-[min(92vw,24rem)] border border-ink bg-paper px-6 py-5 text-ink focus:outline-none backdrop:bg-ink/20"
+    >
+        <div className="label">Keyboard</div>
+        <div className="double-rule mt-2 mb-4" />
+        <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-5 gap-y-3 text-sm">
+          {rows.map(({ keys, or, what }) => (
+            <Fragment key={what}>
+              <dt className="flex items-baseline gap-1.5 whitespace-nowrap">
+                {keys.map((k, i) => (
+                  <Fragment key={k}>
+                    {i > 0 && or && <span className="text-xs text-ink-soft">or</span>}
+                    <kbd className={`inline-block ${KBD}`}>{k}</kbd>
+                  </Fragment>
+                ))}
+              </dt>
+              <dd>{what}</dd>
+            </Fragment>
+          ))}
+        </dl>
+    </dialog>
+  );
 }
 
 type SortKey = "tld" | "applicants" | "overlap";
@@ -758,6 +923,7 @@ export default function StringsTable({
   // the strings its dotted search also matches (.con reaches .concert too)
   const [focused, setFocused] = useState<string | null>(null);
   const [sort, setSort] = useState<Sort>({ key: "tld", dir: 1 });
+  const [sheet, setSheet] = useState(false);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   // the foot of the table in either view: whichever footer is mounted
@@ -844,7 +1010,10 @@ export default function StringsTable({
   );
 
   const applicantOptions = useMemo(
-    () => [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.name)))].sort(),
+    () =>
+      [...new Set(rows.flatMap((r) => r.applicants.map((a) => a.name)))].sort(
+        collator.compare
+      ),
     [rows]
   );
 
@@ -894,6 +1063,89 @@ export default function StringsTable({
       box.setSelectionRange(box.value.length, box.value.length);
     }
   };
+
+  // Keys, for the reader who has them: / and Cmd-K (Ctrl-K elsewhere) reach
+  // the search box from anywhere on the page, Esc clears everything from
+  // anywhere, the arrows turn the page, and ? lists all of it. Nothing else
+  // fires while a box is being typed in, and nothing fires under a held
+  // modifier, so the browser keeps its own keys. Nothing is drawn for any of
+  // it: the sheet is the only place they are named.
+  const focusSearch = () => {
+    revealResults(true);
+    const box = searchRef.current;
+    if (!box) return;
+    box.focus({ preventScroll: true });
+    box.select();
+  };
+  const turnPage = (p: number) => {
+    setPage(p);
+    // a reader still above the table is taken to it; at its foot the new
+    // rows replace the old where they stand, as they do for Prev and Next
+    const el = toolbarRef.current;
+    if (el && el.getBoundingClientRect().top > window.innerHeight) revealResults();
+  };
+  // bound afresh each render, so the handler reads the page it is on
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      const t = e.target as HTMLElement | null;
+      const typing =
+        !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable);
+      const mod = isMac() ? e.metaKey : e.ctrlKey;
+      if (mod && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (sheet) {
+          setSheet(false);
+          setTimeout(focusSearch, 0); // once the dialog has let the page go
+        } else focusSearch();
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (sheet) {
+        if (e.key === "Escape" || e.key === "?") {
+          e.preventDefault();
+          setSheet(false);
+        } else if (e.key === "/") {
+          e.preventDefault();
+          setSheet(false);
+          setTimeout(focusSearch, 0);
+        }
+        return;
+      }
+      if (e.key === "Escape") {
+        // one clear, wherever the reader is: the box, every filter, an open
+        // gloss. With nothing to clear it leaves the box instead.
+        e.preventDefault();
+        const dirty =
+          !!q || applicant !== "all" || scope !== "all" || !!markFilter || !!pinned;
+        if (dirty) {
+          clearAll();
+          setPinned(null);
+        } else if (typing) t?.blur();
+        return;
+      }
+      if (typing) return;
+      switch (e.key) {
+        case "/":
+          e.preventDefault();
+          focusSearch();
+          return;
+        case "?":
+          e.preventDefault();
+          setSheet(true);
+          return;
+        case "ArrowLeft":
+          if (!e.shiftKey && view === "paged" && current > 0) turnPage(current - 1);
+          return;
+        case "ArrowRight":
+          if (!e.shiftKey && view === "paged" && current < pageCount - 1)
+            turnPage(current + 1);
+          return;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   const clean =
     !query.trim() && applicant === "all" && scope === "all" && !markFilter;
@@ -1031,6 +1283,7 @@ export default function StringsTable({
       />
 
       {pinned && <Backdrop onClose={() => setPinned(null)} />}
+      <ShortcutSheet open={sheet} onClose={() => setSheet(false)} />
 
       {view === "all" ? (
         sorted.length === 0 ? (
