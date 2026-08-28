@@ -120,6 +120,34 @@ input[type="search"]::-webkit-search-cancel-button {
   border-color: rgba(138, 95, 26, 0.18);
 }
 
+/* Tailpiece: multiplied into the paper, dissolved at the edges so it has
+   no frame, and stacked under the rows. A negative z-index puts it behind
+   the page's content without a stacking context on the section, so the
+   table's menus and tooltips keep their place against the plate frame. */
+.tailpiece {
+  position: absolute;
+  right: -1.5rem;
+  bottom: -3.5rem;
+  z-index: -1;
+  width: min(460px, 100%);
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 60% 60%, #000 30%, transparent 72%);
+  mask-image: radial-gradient(ellipse 70% 70% at 60% 60%, #000 30%, transparent 72%);
+}
+@media (min-width: 640px) {
+  .tailpiece {
+    right: -2rem;
+  }
+}
+.tailpiece img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Press flourishes. Type settles onto the page once on load and again each
    time the table shows a different slice (the rows are keyed on the slice, so
    they remount). --press-delay staggers a run. Off under reduced motion. */
@@ -175,8 +203,9 @@ input[type="search"]::-webkit-search-cancel-button {
    wrapper would be a stacking context, and the dusk would then multiply
    against the sign instead of the page. The dusk multiplies onto the page,
    which only ever darkens, so the type beneath stays legible; the plates
-   are cut with a transparent ground and composite normally, so the pink
-   occludes its own shadow. Mouse only. */
+   are cut with a transparent ground, the engraving's paper baked to the
+   page's own, and composite normally, so the pig occludes its own shadow.
+   Mouse only. */
 .pig-signal {
   display: none;
 }
@@ -188,8 +217,15 @@ input[type="search"]::-webkit-search-cancel-button {
 .pig-signal-dusk,
 .pig-signal-sign {
   position: fixed;
-  z-index: 24;
   pointer-events: none;
+}
+/* the sign sits under the dusk, so the engraving reads as printed on the
+   page and dimmed with it, not as a cut-out laid on top */
+.pig-signal-dusk {
+  z-index: 24;
+}
+.pig-signal-sign {
+  z-index: 23;
 }
 .pig-signal-dusk {
   inset: 0;
@@ -210,6 +246,16 @@ input[type="search"]::-webkit-search-cancel-button {
 .pig-signal-stamp {
   position: relative;
 }
+/* the caption a plate carries beneath it, in the site's serif */
+.pig-signal-caption {
+  margin-top: 0.6em;
+  text-align: center;
+  font-family: var(--font-oldstandard), serif;
+  font-size: clamp(14px, 1.7vw, 22px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
 /* the same plate cut in ink, offset hard: a drop shadow with an edge */
 .pig-signal-shadow {
   position: absolute;
@@ -229,8 +275,8 @@ input[type="search"]::-webkit-search-cancel-button {
   animation: pig-out 0.5s ease-out both;
 }
 
-/* The lamp: dusk falls, the stamp presses on with a sputter and drops its
-   shadow, then a hum that dips now and then. */
+/* Dusk falls, the plate presses onto the page once, the way the rows do,
+   and drops its shadow. No sputter or hum: a print does not flicker. */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes pig-dusk {
     from {
@@ -240,53 +286,14 @@ input[type="search"]::-webkit-search-cancel-button {
       opacity: 0.2;
     }
   }
-  @keyframes pig-strike {
-    0% {
-      opacity: 0;
-    }
-    12% {
-      opacity: var(--peak, 1);
-    }
-    20% {
-      opacity: 0.1;
-    }
-    30% {
-      opacity: var(--peak, 1);
-    }
-    42% {
-      opacity: 0.3;
-    }
-    50%,
-    100% {
-      opacity: var(--peak, 1);
-    }
-  }
-  @keyframes pig-hum {
-    0%,
-    38% {
-      opacity: var(--peak, 1);
-    }
-    39% {
-      opacity: 0.45;
-    }
-    41%,
-    72% {
-      opacity: var(--peak, 1);
-    }
-    73% {
-      opacity: 0.2;
-    }
-    75%,
-    100% {
-      opacity: var(--peak, 1);
-    }
-  }
   @keyframes pig-press {
     from {
+      opacity: 0;
       transform: translateY(6px) scale(1.06);
       filter: blur(1.4px);
     }
     to {
+      opacity: 1;
       transform: none;
       filter: none;
     }
@@ -303,11 +310,6 @@ input[type="search"]::-webkit-search-cancel-button {
   }
   .pig-signal-dusk {
     animation: pig-dusk 0.35s ease-out both;
-  }
-  .pig-signal-stamp {
-    animation:
-      pig-strike 0.9s steps(1, end) both,
-      pig-hum 3.1s steps(1, end) 0.9s infinite;
   }
   .pig-signal-oink {
     animation: pig-press 0.7s cubic-bezier(0.16, 0.84, 0.28, 1) both;

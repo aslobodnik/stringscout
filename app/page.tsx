@@ -4,6 +4,7 @@ import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import Dateline from "@/components/Dateline";
+import Tailpiece from "@/components/Tailpiece";
 import { SITE, lastUpdated } from "@/data/meta";
 import { pressDelay } from "@/lib/press";
 
@@ -96,6 +97,7 @@ export default function Home() {
             })
           )}
         />
+        <Tailpiece />
       </section>
 
     </>
