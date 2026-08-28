@@ -802,29 +802,41 @@ function IndexEntry({
   onJump: (tld: string) => void;
 }) {
   // no P/U/I here: at index density the boxes read as noise, and the click
-  // opens the table row that carries them
-  const title = [
-    r.gloss && `“${r.gloss}”`,
-    r.overlap && `${r.count} applicants`,
-    ...r.issues.map((i) => ISSUE_TIP[i.kind]),
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  // opens the table row that carries them. The gloss and the issues sit in
+  // the same tip the table draws, over the entry; a dotted rule under a
+  // glossed string says there is one, as it does in the table.
+  const issues = r.issues.map((i) => ISSUE_TIP[i.kind]).join(" · ");
   return (
     <li className="break-inside-avoid row-press">
       <button
         type="button"
-        title={title || undefined}
         onClick={() => onJump(r.tld)}
-        className="block w-full truncate text-left py-[3px] cursor-pointer hover:text-gold transition-colors duration-200 ease-in-out"
+        className="group relative block w-full text-left py-[3px] cursor-pointer hover:text-gold transition-colors duration-200 ease-in-out"
       >
-        <span className="text-gold">.</span>
-        {r.tld}
-        {r.overlap && (
-          <sup className="ml-0.5 text-[9px] text-oxblood">{r.count}</sup>
-        )}
-        {r.issues.length > 0 && (
-          <sup className="ml-0.5 text-[9px] text-oxblood">†</sup>
+        <span className="block truncate">
+          <span
+            className={
+              r.gloss
+                ? "border-b border-dotted border-ink-soft group-hover:border-gold transition-colors duration-200 ease-in-out"
+                : undefined
+            }
+          >
+            <span className="text-gold">.</span>
+            {r.tld}
+          </span>
+          {r.overlap && (
+            <sup className="ml-0.5 text-[9px] text-oxblood">{r.count}</sup>
+          )}
+          {r.issues.length > 0 && (
+            <sup className="ml-0.5 text-[9px] text-oxblood">†</sup>
+          )}
+        </span>
+        {(r.gloss || issues) && (
+          <span role="tooltip" className={TIP_BOX}>
+            {r.gloss && <span className="serif italic">“{r.gloss}”</span>}
+            {r.gloss && issues && " · "}
+            {issues}
+          </span>
         )}
       </button>
     </li>
