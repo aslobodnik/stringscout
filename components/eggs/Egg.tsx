@@ -9,6 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import PigSignal from "./PigSignal";
+import EthSignal from "./EthSignal";
 
 // Names with something behind them. Hold the mouse on one for HOLD_MS and it
 // shows; leave and it lingers LINGER_MS, then fades over FADE_MS. Coming back
@@ -17,6 +18,7 @@ import PigSignal from "./PigSignal";
 export type EggProps = { out: boolean };
 const EGGS: Record<string, ComponentType<EggProps>> = {
   Oinkadot: PigSignal,
+  "Ethereum Name Service (ENS)": EthSignal,
 };
 const HOLD_MS = 2000;
 const LINGER_MS = 700;
