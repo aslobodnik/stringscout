@@ -202,6 +202,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "agentcommunity",
+    outlet: "Agent Community",
+    title: "We Filed the .agent Application. Here Is What It Took.",
+    url: "https://agentcommunity.org/blog/we-filed-the-agent-application",
+    date: "2026-08-29",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",

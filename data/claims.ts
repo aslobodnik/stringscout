@@ -173,6 +173,11 @@ const radix = expand(
   "primary"
 );
 
+// Agent Community — .agent, its own blog post confirming the community
+// application was filed before the window closed. Single-string applicant,
+// so primary.
+const agentcommunity = expand(["agent"], "agentcommunity", ["agentcommunity"], "primary");
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -222,6 +227,7 @@ export const claims: Claim[] = dedupe([
   ...gatenaming,
   ...unstoppable,
   ...radix,
+  ...agentcommunity,
   ...intents,
   ...announcedClaims,
 ]);

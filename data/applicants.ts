@@ -251,6 +251,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["radix"],
   },
   {
+    slug: "agentcommunity",
+    status: "disclosed",
+    name: "Agent Community",
+    backers: "Open Agent Registry, Inc. · Balázs Nemethi, founder",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-08-29",
+    note: null,
+    sourceIds: ["agentcommunity"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",
