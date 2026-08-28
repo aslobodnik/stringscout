@@ -292,9 +292,11 @@ function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
 function FilterChip({
   label,
   onClear,
+  verbatim,
 }: {
   label: string;
   onClear: () => void;
+  verbatim?: boolean; // a string is a string: .grit, not .GRIT
 }) {
   return (
     <button
@@ -304,7 +306,11 @@ function FilterChip({
       title={`Clear the ${label.toLowerCase()} filter`}
       className="label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
     >
-      {label}
+      {verbatim ? (
+        <span className="normal-case tracking-normal text-xs">{label}</span>
+      ) : (
+        label
+      )}
       <span aria-hidden className="text-[11px] leading-none">
         ×
       </span>
@@ -404,9 +410,6 @@ const subscribeToUrl = (onChange: () => void) => {
 
 type Sort = { key: SortKey; dir: 1 | -1 };
 
-// Sits in the table's <thead> in rows view and in a bar above the columns in
-// index view. The index obeys the same sort, so the control has to follow it
-// out of the table rather than be rebuilt beside it.
 function SortButton({
   col,
   sort,
@@ -551,28 +554,29 @@ function StatTiles({
   );
 }
 
-// "u" sits on 651 of the 722 strings and says only that nobody stated which,
-// so at index density it is a wall of boxes the two informative marks have to
-// be read through. The legend above still defines all three.
-const INDEX_MARKS: Mark[] = ["p", "i"];
-
 // A reader meets the 29 pages at the foot of page one, so the way out of them
 // belongs there as well as in the toolbar. Both carry the count: "show all" on
 // its own is a mode switch, "show all 722" answers how many there are.
+// Fixed width, the search box's, so the count changing and the two labels
+// swapping never move the CSV button beside it; disabled rather than absent
+// when the table already fits on one page, for the same reason.
 function ShowAll({
   all,
   total,
   onToggle,
+  disabled,
 }: {
   all: boolean;
   total: number;
   onToggle: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onToggle}
-      className={`label px-3 h-10 cursor-pointer border transition-colors duration-200 ease-in-out ${
+      disabled={disabled}
+      className={`label px-3 h-10 w-44 text-left cursor-pointer border transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gold ${
         all
           ? "border-ink text-ink hover:bg-paper-deep hover:border-gold"
           : "border-gold text-gold hover:bg-gold hover:text-paper"
@@ -583,31 +587,44 @@ function ShowAll({
   );
 }
 
+// 25, 100 or every string: one question, how much sits on the page. "All" is
+// the index view, which has its own footer, so it never reads as selected here.
 function PageSize({
   size,
+  total,
   onPick,
+  onAll,
+  className,
 }: {
   size: number;
+  total: number;
   onPick: (n: number) => void;
+  onAll: () => void;
+  className?: string;
 }) {
+  const seg = "label px-3 cursor-pointer transition-colors duration-200 ease-in-out";
   return (
-    <span className="flex items-center gap-2">
-      <span className="label text-ink-soft">Per page</span>
-      <span className="flex border border-ink h-10">
-        {PAGE_SIZES.map((n, i) => (
-          <button
-            key={n}
-            type="button"
-            aria-pressed={size === n}
-            onClick={() => onPick(n)}
-            className={`label px-3 cursor-pointer transition-colors duration-200 ease-in-out ${
-              i ? "border-l border-ink" : ""
-            } ${size === n ? "bg-ink text-paper" : "text-ink hover:bg-paper-deep"}`}
-          >
-            {n}
-          </button>
-        ))}
-      </span>
+    <span className={`flex border border-ink h-10 ${className ?? ""}`}>
+      {PAGE_SIZES.map((n, i) => (
+        <button
+          key={n}
+          type="button"
+          aria-pressed={size === n}
+          onClick={() => onPick(n)}
+          className={`${seg} ${i ? "border-l border-ink" : ""} ${
+            size === n ? "bg-ink text-paper" : "text-ink hover:bg-paper-deep"
+          }`}
+        >
+          {n}
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={onAll}
+        className={`${seg} border-l border-ink text-ink hover:bg-paper-deep`}
+      >
+        All {total}
+      </button>
     </span>
   );
 }
@@ -619,9 +636,8 @@ function IndexEntry({
   r: UiStringRow;
   onJump: (tld: string) => void;
 }) {
-  const marks = INDEX_MARKS.filter((m) =>
-    r.applicants.some((a) => a.mark === m)
-  );
+  // no P/U/I here: at index density the boxes read as noise, and the click
+  // opens the table row that carries them
   const title = [
     r.gloss && `“${r.gloss}”`,
     r.overlap && `${r.count} applicants`,
@@ -645,19 +661,15 @@ function IndexEntry({
         {r.issues.length > 0 && (
           <sup className="ml-0.5 text-[9px] text-oxblood">†</sup>
         )}
-        {marks.map((m) => (
-          <span key={m} className="ml-1 align-[0.1em]">
-            <MarkBlock mark={m} />
-          </span>
-        ))}
       </button>
     </li>
   );
 }
 
-// Every string on one page. Columns flow down before across, so the alphabet
-// still reads top-to-bottom the way it does in a book index; a grid would lay
-// it out in rows and scatter the sort.
+// Every string on one page, always A–Z: an index is looked up, not sorted.
+// Columns flow down before across, so the alphabet still reads top-to-bottom
+// the way it does in a book index; a grid would lay it out in rows and scatter
+// it.
 function IndexView({
   rows,
   onJump,
@@ -742,26 +754,38 @@ export default function StringsTable({
   const [pageSize, setPageSize] = useState<number>(PAGE);
   const [pinned, setPinned] = useState<string | null>(null);
   const [view, setView] = useState<"paged" | "all">("paged");
-  // the string an index entry sent the reader to, held so it is findable on a
-  // page of 25 it has no other reason to stand out on
+  // the string an index entry sent the reader to, held so it stands out among
+  // the strings its dotted search also matches (.con reaches .concert too)
   const [focused, setFocused] = useState<string | null>(null);
   const [sort, setSort] = useState<Sort>({ key: "tld", dir: 1 });
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  // the foot of the table in either view: whichever footer is mounted
+  const footRef = useRef<HTMLDivElement>(null);
+  const footTop = useRef<number | null>(null);
 
-  // A tile sits above the fold and the rows it filters sit below it, so the
-  // filtering is invisible without this.
-  const revealResults = () =>
-    toolbarRef.current?.scrollIntoView({
+  // A tile sits above the fold and the rows it filters below, so a tile click
+  // scrolls to the toolbar. A filter clicked on the results themselves (the
+  // legend, a marker, an applicant name) scrolls only once the toolbar has
+  // left the window: scrolling a control the reader can see moves it out
+  // from under the cursor.
+  const revealResults = (onlyIfHidden = false) => {
+    const el = toolbarRef.current;
+    if (!el) return;
+    const { top } = el.getBoundingClientRect();
+    if (onlyIfHidden && top >= 0 && top <= window.innerHeight) return;
+    el.scrollIntoView({
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
         : "smooth",
       block: "start",
     });
+  };
 
   const toggleMark = (m: Mark) => {
     setMarkFilter((v) => (v === m ? null : m));
     setPage(0);
-    revealResults();
+    revealResults(true);
   };
 
   const toggleScope = (next: Scope) => {
@@ -770,27 +794,48 @@ export default function StringsTable({
     revealResults();
   };
 
+  // A change made from the foot of the table holds the foot where it is:
+  // the rows above it grow or shrink, and the control the reader just used
+  // stays under the cursor rather than the page leaping to the toolbar.
+  const holdFoot = () => {
+    footTop.current = footRef.current?.getBoundingClientRect().top ?? null;
+  };
+  useLayoutEffect(() => {
+    if (footTop.current === null || !footRef.current) return;
+    const delta = footRef.current.getBoundingClientRect().top - footTop.current;
+    footTop.current = null;
+    if (delta) window.scrollBy(0, delta);
+  }, [pageSize, view]);
+
   const resize = (n: number) => {
+    if (n === pageSize) return;
+    holdFoot();
     // keep the reader on the page holding the rows they were reading
     setPage((p) => Math.floor((p * pageSize) / n));
     setPageSize(n);
-    revealResults();
   };
 
-  const toggleView = () => {
+  const toggleView = (fromFoot = false) => {
+    if (fromFoot) holdFoot();
     setView((v) => (v === "all" ? "paged" : "all"));
     setFocused(null);
-    revealResults();
+    if (!fromFoot) revealResults();
+  };
+
+  // box and filter together, and drop a keystroke still waiting on the debounce
+  const search = (v: string) => {
+    if (debounce.current) clearTimeout(debounce.current);
+    setQ(v);
+    setQuery(v);
+    setPage(0);
   };
 
   const clearAll = () => {
-    setQ("");
-    setQuery("");
+    search("");
     setApplicant("all");
     setScope("all");
     setMarkFilter(null);
     setFocused(null);
-    setPage(0);
   };
 
   const presentMarks = useMemo(
@@ -834,14 +879,20 @@ export default function StringsTable({
     Math.max(MIN_ROWS, Math.min(sorted.length, pageSize)) - visible.length
   );
 
-  // an index entry names a string, not a page: find where the sort put it
+  // an index entry names a string: put it in the search, dotted so only the
+  // string column is read, and open the table on it
   const jumpTo = (tld: string) => {
-    const i = sorted.findIndex((r) => r.tld === tld);
-    if (i < 0) return;
-    setPage(Math.floor(i / pageSize));
+    search(`.${tld}`);
     setFocused(tld);
     setView("paged");
     revealResults();
+    // the gold focus border says where the string went; not on touch, where
+    // focus raises the keyboard
+    const box = searchRef.current;
+    if (box && window.matchMedia("(hover: hover)").matches) {
+      box.focus({ preventScroll: true });
+      box.setSelectionRange(box.value.length, box.value.length);
+    }
   };
 
   const clean =
@@ -892,6 +943,7 @@ export default function StringsTable({
       <div ref={toolbarRef} className="mb-5 scroll-mt-4">
         <div className="flex flex-wrap items-center gap-3">
         <input
+          ref={searchRef}
           type="search"
           value={q}
           onChange={(e) => {
@@ -915,9 +967,12 @@ export default function StringsTable({
             setPage(0);
           }}
         />
-        {(sorted.length > pageSize || view === "all") && (
-          <ShowAll all={view === "all"} total={sorted.length} onToggle={toggleView} />
-        )}
+        <ShowAll
+          all={view === "all"}
+          total={sorted.length}
+          onToggle={() => toggleView()}
+          disabled={view === "paged" && sorted.length <= pageSize}
+        />
         <button
           type="button"
           onClick={() => downloadCsv(sorted, csvScope, cites)}
@@ -936,8 +991,15 @@ export default function StringsTable({
 
         {/* What the table is currently showing, rather than a control acting on
             it. Right-aligned it wrapped to a line of its own and read as
-            unattached; set flush left it lines up with the strings it counts. */}
+            unattached; set flush left it lines up with the strings it counts.
+            The count leads in a slot the width of the search box, so the chips
+            start under the applicant menu and a chip coming or going, or the
+            count changing, moves nothing; tabular figures keep the number
+            changing in place. */}
         <div className="flex flex-wrap items-center gap-3 mt-3">
+          <span className="label text-ink-soft tabular-nums shrink-0 sm:w-44">
+            {countLabel}
+          </span>
           {scope !== "all" && (
             <FilterChip
               label={
@@ -949,7 +1011,16 @@ export default function StringsTable({
               }}
             />
           )}
-          <span className="label text-ink-soft">{countLabel}</span>
+          {query.trim() && (
+            <FilterChip
+              label={query.trim()}
+              verbatim
+              onClear={() => {
+                search("");
+                setFocused(null);
+              }}
+            />
+          )}
         </div>
       </div>
 
@@ -968,30 +1039,19 @@ export default function StringsTable({
           </div>
         ) : (
           <>
-            {/* the sort control lives in <thead> in rows view; the index obeys
-                the same sort, so it needs its own handle on it */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-2 mb-4 border-b border-rule">
-              {SORT_COLS.map((col) => (
-                <SortButton
-                  key={col.key}
-                  col={col}
-                  sort={sort}
-                  onSort={(v) => {
-                    setSort(v);
-                    setPage(0);
-                  }}
-                />
-              ))}
-              <span className="label !text-[10px] text-ink-soft ml-auto">
+            {/* the key to the two superscripts, flush left with the strings it reads on */}
+            <div className="pb-2 mb-4 border-b border-rule">
+              <span className="label !text-[10px] text-ink-soft">
                 <sup className="text-oxblood">n</sup> applicants
                 <span className="text-rule mx-2">·</span>
                 <span className="text-oxblood">†</span> potential issue
               </span>
             </div>
-            <IndexView key={slice} rows={sorted} onJump={jumpTo} />
-            <div className="flex flex-wrap items-center gap-3 mt-6">
-              <ShowAll all total={sorted.length} onToggle={toggleView} />
+            <IndexView key={slice} rows={filtered} onJump={jumpTo} />
+            {/* right, where the page-size box sits in the table's own footer */}
+            <div ref={footRef} className="flex flex-wrap items-center justify-end gap-3 mt-6">
               <span className="label text-ink-soft">{countLabel}</span>
+              <ShowAll all total={sorted.length} onToggle={() => toggleView(true)} />
             </div>
           </>
         )
@@ -1099,7 +1159,7 @@ export default function StringsTable({
                               onClick={() => {
                                 setApplicant(applicant === name ? "all" : name);
                                 setPage(0);
-                                revealResults();
+                                revealResults(true);
                               }}
                               className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
                                 applicant === name ? "text-gold decoration-gold" : ""
@@ -1169,35 +1229,36 @@ export default function StringsTable({
         </>
       )}
 
+      {/* Prev and Next stay put: the reader is at the foot of the table, and
+          the next page's rows replace these where they stand */}
       {view === "paged" && sorted.length > pageSize && (
-        <div className="flex flex-wrap items-center gap-3 mt-4">
+        <div ref={footRef} className="flex flex-wrap items-center gap-3 mt-4">
           <button
             type="button"
             disabled={current === 0}
-            onClick={() => {
-              setPage(current - 1);
-              revealResults();
-            }}
+            onClick={() => setPage(current - 1)}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Prev
           </button>
+          <span className="label text-ink-soft tabular-nums">
+            {current + 1} of {pageCount}
+          </span>
           <button
             type="button"
             disabled={current === pageCount - 1}
-            onClick={() => {
-              setPage(current + 1);
-              revealResults();
-            }}
+            onClick={() => setPage(current + 1)}
             className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Next
           </button>
-          <span className="label text-ink-soft">
-            Page {current + 1} of {pageCount}
-          </span>
-          <PageSize size={pageSize} onPick={resize} />
-          <ShowAll all={false} total={sorted.length} onToggle={toggleView} />
+          <PageSize
+            size={pageSize}
+            total={sorted.length}
+            onPick={resize}
+            onAll={() => toggleView(true)}
+            className="ml-auto"
+          />
         </div>
       )}
     </div>
