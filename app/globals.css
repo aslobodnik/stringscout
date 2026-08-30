@@ -57,6 +57,26 @@ body {
   font-family: var(--font-oldstandard), serif;
 }
 
+/* Engraver's screens for the round rule, ink on paper: one per block, in a
+   fixed order, so a block is told by its cut and never by a shade. */
+.ink-hatch {
+  background: repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 4px);
+}
+.ink-hatch-back {
+  background: repeating-linear-gradient(135deg, var(--ink) 0 1px, transparent 1px 4px);
+}
+.ink-cross {
+  background:
+    repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(135deg, var(--ink) 0 1px, transparent 1px 4px);
+}
+.ink-dots {
+  background: radial-gradient(circle, var(--ink) 0.9px, transparent 1.1px) 0 0 / 3px 3px;
+}
+.ink-rings {
+  background: radial-gradient(circle, transparent 1px, var(--ink) 1.1px 1.8px, transparent 2px) 0 0 / 5px 5px;
+}
+
 sup.src a {
   color: var(--gold);
   text-decoration: none;

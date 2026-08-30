@@ -5,6 +5,7 @@ import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import Dateline from "@/components/Dateline";
 import Tailpiece from "@/components/Tailpiece";
+import RoundRule from "@/components/RoundRule";
 import { SITE, lastUpdated } from "@/data/meta";
 import { pressDelay } from "@/lib/press";
 
@@ -58,22 +59,22 @@ export default function Home() {
           here said the same thing twice. */}
       <header className="pt-7 pb-7">
         <div className="press-word" style={PRESS_HEAD}>
-        <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
-          Self-revealed strings in the 2026 gTLD round.
-        </h1>
-        <p className="mt-2 text-sm text-ink-soft">
-          Created by the team behind{" "}
-          <a
-            href="https://earlywarning.report"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-rule hover:decoration-gold hover:text-ink transition-colors duration-200 ease-in-out"
-          >
-            earlywarning.report
-          </a>
-          .
-        </p>
-        <Dateline />
+          <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
+            Self-revealed strings in the 2026 gTLD round.
+          </h1>
+          <p className="mt-2 text-sm text-ink-soft">
+            Created by the team behind{" "}
+            <a
+              href="https://earlywarning.report"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-rule hover:decoration-gold hover:text-ink transition-colors duration-200 ease-in-out"
+            >
+              earlywarning.report
+            </a>
+            .
+          </p>
+          <Dateline />
         </div>
       </header>
 
@@ -84,6 +85,7 @@ export default function Home() {
           stats={s}
           cites={cites}
           backers={Object.fromEntries(applicantBackers)}
+          underTiles={<RoundRule />}
           rows={rows.map(
             (r): UiStringRow => ({
               tld: r.tld,

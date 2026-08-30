@@ -12,6 +12,7 @@ import {
   useState,
   useSyncExternalStore,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
 } from "react";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
@@ -904,11 +905,15 @@ export default function StringsTable({
   stats,
   cites,
   backers,
+  underTiles,
 }: {
   rows: UiStringRow[];
   stats: UiStats;
   cites: Citations;
   backers: Record<string, string>;
+  // rendered by the server and set straight under the count tiles: the same
+  // numbers against the round, which only the server can derive
+  underTiles?: ReactNode;
 }) {
   const backerMap = useMemo(() => new Map(Object.entries(backers)), [backers]);
   const [q, setQ] = useState(""); // what the input shows
@@ -1199,6 +1204,7 @@ export default function StringsTable({
         }}
         onScope={toggleScope}
       />
+      {underTiles}
 
       {/* separates the summary from the table's own controls — the rule the
           removed section heading used to carry */}

@@ -19,6 +19,8 @@ import {
   applicantBackers,
   applicantMarks,
   latestReveal,
+  roundShares,
+  roundStats,
   stats,
   stringCount,
   stringRows,
@@ -114,6 +116,32 @@ describe("stats", () => {
 
   it("never counts an intent announcement as a disclosed application", () => {
     expect(stats().claims).toBe(claims.filter((c) => c.kind !== "intent").length);
+  });
+});
+
+describe("round", () => {
+  const r = roundStats();
+
+  it("adds up to ICANN's figure, with intent outside it", () => {
+    expect(r.primary + r.unknown + r.undisclosed).toBe(r.received);
+    expect(r.primary + r.unknown).toBe(stats().claims);
+  });
+
+  it("shares out the disclosed total by applicant, largest first", () => {
+    const shares = roundShares();
+    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(r.primary + r.unknown);
+    expect(shares.map((s) => s.count)).toEqual([...shares.map((s) => s.count)].sort((a, b) => b - a));
+    expect(shares.some((s) => s.name === "Journey To The West Corporation")).toBe(true);
+  });
+
+  it("counts an intent the applicant later filed as a filing, not an intent", () => {
+    // Unstoppable announced .agi upstream and then filed it: one unit, filed.
+    const pairs = new Set(
+      claims.filter((c) => c.kind === "intent").map((c) => `${c.applicantSlug}|${c.tld}`)
+    );
+    const filed = claims.filter((c) => c.kind !== "intent" && pairs.has(`${c.applicantSlug}|${c.tld}`));
+    expect(filed.length).toBeGreaterThan(0);
+    expect(r.intent).toBe(pairs.size - new Set(filed.map((c) => `${c.applicantSlug}|${c.tld}`)).size);
   });
 });
 

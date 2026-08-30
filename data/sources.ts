@@ -225,6 +225,15 @@ const handSources: Source[] = [
     date: "2026-08-27",
     kind: "reference",
   },
+  {
+    id: "icann-close",
+    outlet: "ICANN",
+    title:
+      "ICANN 2026 Round Closes with More Than 1,600 New gTLD Applications",
+    url: "https://www.icann.org/en/announcements/details/icann-2026-round-closes-with-more-than-1600-new-gtld-applications-13-08-2026-en",
+    date: "2026-08-13",
+    kind: "reference",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

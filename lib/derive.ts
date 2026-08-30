@@ -2,6 +2,7 @@ import { claims, type Claim } from "@/data/claims";
 import { applicants, type Applicant } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
+import { round } from "@/data/round";
 import { MARKS, type Mark } from "./marks";
 
 export { MARKS, type Mark };
@@ -159,6 +160,51 @@ export function latestReveal(list: Applicant[] = applicants): Applicant[] {
   const disclosed = list.filter((a) => a.status === "disclosed");
   const max = disclosed.map((a) => a.revealedOn).sort().at(-1);
   return disclosed.filter((a) => a.revealedOn === max);
+}
+
+// The disclosed count set against what ICANN said the round holds. One unit
+// per applicant and string, which is what an application is: an overlap is
+// two. ICANN's figure counts primary applications and most disclosures do
+// not say which strings are primary, so the split is carried, not collapsed.
+// An intent that the same applicant later filed is a filing, not an intent.
+export function roundStats() {
+  const best = new Map<string, Mark>();
+  for (const c of claims) {
+    const k = `${c.applicantSlug}|${c.tld}`;
+    const m = markOf(c.kind);
+    const prev = best.get(k);
+    if (!prev || RANK[m] < RANK[prev]) best.set(k, m);
+  }
+  const count = (mark: Mark) => [...best.values()].filter((m) => m === mark).length;
+  const primary = count("p");
+  const unknown = count("u");
+  return {
+    received: round.received,
+    primary,
+    unknown,
+    intent: count("i"),
+    undisclosed: round.received - primary - unknown,
+  };
+}
+
+// Disclosed units per applicant, largest first: what the round rule draws.
+// One unit per applicant and string, applied kinds only, so the counts sum
+// to the disclosed total the rule sets against ICANN's figure.
+export function roundShares(): { slug: string; name: string; count: number }[] {
+  const per = new Map<string, Set<string>>();
+  for (const c of claims) {
+    if (c.kind === "intent") continue;
+    const set = per.get(c.applicantSlug) ?? new Set<string>();
+    set.add(c.tld);
+    per.set(c.applicantSlug, set);
+  }
+  return [...per]
+    .map(([slug, set]) => ({
+      slug,
+      name: applicantName.get(slug) ?? slug,
+      count: set.size,
+    }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
 export function stats() {
