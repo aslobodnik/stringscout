@@ -178,6 +178,14 @@ const radix = expand(
 // so primary.
 const agentcommunity = expand(["agent"], "agentcommunity", ["agentcommunity"], "primary");
 
+// Registered Agents Inc — six applied-for strings per its own press release
+// on astronym.com; primary/replacement split not stated.
+const registeredagents = expand(
+  ["epic", "identity", "mark", "private", "registeredagent", "verified"],
+  "registeredagents",
+  ["astronym"]
+);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -228,6 +236,7 @@ export const claims: Claim[] = dedupe([
   ...unstoppable,
   ...radix,
   ...agentcommunity,
+  ...registeredagents,
   ...intents,
   ...announcedClaims,
 ]);

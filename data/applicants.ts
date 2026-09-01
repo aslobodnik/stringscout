@@ -262,6 +262,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["agentcommunity"],
   },
   {
+    slug: "registeredagents",
+    status: "disclosed",
+    name: "Registered Agents Inc",
+    backers: "Christopher Ambler, Director of Domain Registry",
+    applicationCount: "6",
+    feesPaid: null,
+    revealedOn: "2026-09-01",
+    note: null,
+    sourceIds: ["astronym"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",

@@ -210,6 +210,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "astronym",
+    outlet: "Astronym (Registered Agents Inc)",
+    title: "Registered Agents Inc Is Getting Into the Registry Game",
+    url: "https://www.astronym.com/press/releases/2026-09-01-registered-agents-registry-game/",
+    date: "2026-09-01",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
