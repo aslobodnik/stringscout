@@ -5,7 +5,8 @@ import { applicantHref, formatDate } from "@/lib/format";
 
 // The date the record last changed and who disclosed most recently, under
 // every page title. The name links to that applicant's rows on the strings
-// table; the count is the one printed there and on /applicants.
+// table; the count is the one printed there and on /applicants. Two
+// applicants on one day part with a semicolon, since each carries a comma.
 export default function Dateline() {
   return (
     <p className="label text-ink-soft mt-4">
@@ -19,7 +20,7 @@ export default function Dateline() {
           const n = stringCount(a.slug);
           return (
             <span key={a.slug} className="text-ink">
-              {i > 0 && ", "}
+              {i > 0 && "; "}
               <Link
                 href={applicantHref(a.name)}
                 className="text-oxblood hover:text-ink underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold"
