@@ -186,6 +186,11 @@ const registeredagents = expand(
   ["astronym"]
 );
 
+// World Chess — .chess, a community application filed through a World Chess
+// subsidiary with FIDE as sponsor, per the joint FIDE release. Single-string
+// applicant, so primary.
+const worldchess = expand(["chess"], "worldchess", ["fide"], "primary");
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -237,6 +242,7 @@ export const claims: Claim[] = dedupe([
   ...radix,
   ...agentcommunity,
   ...registeredagents,
+  ...worldchess,
   ...intents,
   ...announcedClaims,
 ]);

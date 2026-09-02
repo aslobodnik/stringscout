@@ -273,6 +273,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["astronym"],
   },
   {
+    slug: "worldchess",
+    status: "disclosed",
+    name: "World Chess",
+    backers: "Ilya Merenzon, CEO · Viswanathan Anand, Interim FIDE President",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-09-01",
+    note: null,
+    sourceIds: ["fide"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",

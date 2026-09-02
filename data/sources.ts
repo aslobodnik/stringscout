@@ -218,6 +218,15 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "fide",
+    outlet: "FIDE (World Chess)",
+    title:
+      "Chess is getting its own home on the internet: FIDE and World Chess apply for the .chess domain extension",
+    url: "https://www.fide.com/chess-is-getting-its-own-home-on-the-internet-fide-and-world-chess-apply-for-the-chess-domain-extension/",
+    date: "2026-09-01",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
