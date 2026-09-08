@@ -191,6 +191,27 @@ const registeredagents = expand(
 // applicant, so primary.
 const worldchess = expand(["chess"], "worldchess", ["fide"], "primary");
 
+// ShortDot — 80 strings across 40 applications, published on shortdot.bond;
+// primary/replacement split not stated.
+const shortdot = expand(
+  [
+    "agi", "api", "bit", "core", "dna", "gen", "hub", "key", "lab", "mcp",
+    "neo", "root", "unit",
+    "aid", "aim", "ask", "dig", "find", "fix", "get", "hit", "let", "mix",
+    "see", "set", "tap", "try", "way",
+    "ace", "big", "bold", "fab", "flex", "gig", "goat", "good", "hero",
+    "icon", "max", "mvp", "tag", "xxl",
+    "bro", "crew", "duo", "fam", "solo", "sub", "uni",
+    "glow", "hip", "lit", "mood", "omg", "pop", "slay", "vibe", "wild",
+    "xoxo", "yay", "yes", "zzz",
+    "air", "gym", "heal", "moon", "zen",
+    "age", "amp", "ego", "era", "eye", "gem", "hey", "inn", "jet", "owl",
+    "pod", "soon", "why",
+  ],
+  "shortdot",
+  ["shortdot"]
+);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -243,6 +264,7 @@ export const claims: Claim[] = dedupe([
   ...agentcommunity,
   ...registeredagents,
   ...worldchess,
+  ...shortdot,
   ...intents,
   ...announcedClaims,
 ]);

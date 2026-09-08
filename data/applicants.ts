@@ -284,6 +284,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["fide"],
   },
   {
+    slug: "shortdot",
+    status: "disclosed",
+    name: "ShortDot",
+    backers: "Lars Jensen, CEO",
+    applicationCount: "80",
+    feesPaid: null,
+    revealedOn: "2026-09-08",
+    note: null,
+    sourceIds: ["shortdot"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",

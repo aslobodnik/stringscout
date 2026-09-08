@@ -227,6 +227,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "shortdot",
+    outlet: "ShortDot",
+    title: "ShortDot 80 — 40 applications, 80 proposed strings",
+    url: "https://www.shortdot.bond/80",
+    date: "2026-09-08",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
