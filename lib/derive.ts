@@ -121,12 +121,13 @@ for (const c of claims) {
 export const stringCount = (slug: string) => namedStrings.get(slug)?.size ?? 0;
 
 
-const RANK: Record<Mark, number> = { p: 0, u: 1, i: 2 };
+const RANK: Record<Mark, number> = { p: 0, r: 1, u: 2, i: 3 };
 
 function markOf(kind: Claim["kind"]): Mark {
   if (kind === "primary") return "p";
+  if (kind === "backup") return "r"; // the designated replacement, AGB §5.1
   if (kind === "intent") return "i";
-  return "u"; // unknown, and backup while no applicant has split the two
+  return "u";
 }
 
 // One entry per applicant on a string. An applicant claiming the same string

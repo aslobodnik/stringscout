@@ -20,7 +20,7 @@ export function GET() {
     ),
     applicants: applicantMarks(r.claims).map((a) => ({
       name: a.name,
-      // p: stated primary, u: unknown if primary or secondary, i: intent only
+      // p: stated primary, r: stated replacement, u: unknown which, i: intent only
       marker: a.mark,
       sources: a.sourceIds
         .map((id) => sourceById.get(id))

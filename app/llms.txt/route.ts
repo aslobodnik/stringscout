@@ -24,8 +24,8 @@ ICANN keeps the applied-for list private until Reveal Day, expected October
   disclosed, never applications or claimed.
 - **Overlap**: two or more applicants disclosed the same string. Not a formal
   ICANN contention set, which does not exist until Reveal Day.
-- **Markers** on every claim: \`p\` stated primary, \`u\` unknown whether primary
-  or secondary, \`i\` announced intent only. An \`i\` is **not** an application
+- **Markers** on every claim: \`p\` stated primary, \`r\` stated replacement
+  (AGB §5.1), \`u\` unknown which, \`i\` announced intent only. An \`i\` is **not** an application
   and is counted separately.
 - **Withdrawn** strings were announced and then pulled before filing. They are
   listed for the record and counted nowhere else.
