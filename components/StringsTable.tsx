@@ -4,6 +4,7 @@ import { pressDelay } from "@/lib/press";
 import Egg from "@/components/eggs/Egg";
 import Link from "next/link";
 import Tip, { TIP_BOX } from "@/components/Tip";
+import RoundRule, { type RoundData } from "@/components/RoundRule";
 import {
   Fragment,
   useEffect,
@@ -13,7 +14,6 @@ import {
   useState,
   useSyncExternalStore,
   type KeyboardEvent as ReactKeyboardEvent,
-  type ReactNode,
 } from "react";
 import { MARKS, type Mark } from "@/lib/marks";
 import type { Issue } from "@/lib/derive";
@@ -906,15 +906,15 @@ export default function StringsTable({
   stats,
   cites,
   backers,
-  underTiles,
+  round,
 }: {
   rows: UiStringRow[];
   stats: UiStats;
   cites: Citations;
   backers: Record<string, string>;
-  // rendered by the server and set straight under the count tiles: the same
-  // numbers against the round, which only the server can derive
-  underTiles?: ReactNode;
+  // the round rule under the count tiles: the server derives the shares,
+  // the table wires its blocks to the applicant filter
+  round?: RoundData;
 }) {
   const backerMap = useMemo(() => new Map(Object.entries(backers)), [backers]);
   const [q, setQ] = useState(""); // what the input shows
@@ -1205,7 +1205,17 @@ export default function StringsTable({
         }}
         onScope={toggleScope}
       />
-      {underTiles}
+      {round && (
+        <RoundRule
+          round={round}
+          active={applicant}
+          onPick={(name) => {
+            setApplicant(applicant === name ? "all" : name);
+            setPage(0);
+            revealResults(true);
+          }}
+        />
+      )}
 
       {/* separates the summary from the table's own controls — the rule the
           removed section heading used to carry */}

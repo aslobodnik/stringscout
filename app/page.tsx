@@ -1,11 +1,11 @@
-import { applicantBackers, applicantMarks, stats, stringRows } from "@/lib/derive";
-import { sourceIndex, sources } from "@/data/sources";
+import { applicantBackers, applicantMarks, roundShares, stats, stringRows } from "@/lib/derive";
+import { sourceById, sourceIndex, sources } from "@/data/sources";
+import { round } from "@/data/round";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import Dateline from "@/components/Dateline";
 import Tailpiece from "@/components/Tailpiece";
-import RoundRule from "@/components/RoundRule";
 import { SITE, lastUpdated } from "@/data/meta";
 import { pressDelay } from "@/lib/press";
 
@@ -85,7 +85,17 @@ export default function Home() {
           stats={s}
           cites={cites}
           backers={Object.fromEntries(applicantBackers)}
-          underTiles={<RoundRule />}
+          round={{
+            received: round.received,
+            shares: roundShares(),
+            cite: (() => {
+              const src = sourceById.get(round.sourceId);
+              const n = sourceIndex.get(round.sourceId);
+              return src && n !== undefined
+                ? { n, outlet: src.outlet, date: src.date }
+                : undefined;
+            })(),
+          }}
           rows={rows.map(
             (r): UiStringRow => ({
               tld: r.tld,
