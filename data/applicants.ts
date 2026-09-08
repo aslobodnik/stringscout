@@ -295,6 +295,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["shortdot"],
   },
   {
+    slug: "vantnexus",
+    status: "disclosed",
+    name: "Vant Nexus",
+    backers: "Deepak Khetan, CFO + Jean Guillon, CIO",
+    applicationCount: "6",
+    feesPaid: null,
+    revealedOn: "2026-09-08",
+    note: null,
+    sourceIds: ["vantnexus"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",

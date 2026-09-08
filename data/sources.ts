@@ -235,6 +235,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "vantnexus",
+    outlet: "Vant Nexus",
+    title: "Vant Nexus — Reshaping the Digital Landscape",
+    url: "https://vantnexus.com/",
+    date: "2026-09-08",
+    kind: "applicant",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",

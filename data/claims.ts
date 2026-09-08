@@ -212,6 +212,13 @@ const shortdot = expand(
   ["shortdot"]
 );
 
+// Vant Nexus — three strings stated as applied on its site, plus three
+// strings the same page labels "Replacement Strings".
+const vantnexus = [
+  ...expand(["portal", "island", "truck"], "vantnexus", ["vantnexus"], "primary"),
+  ...expand(["profile", "park", "beach"], "vantnexus", ["vantnexus"], "backup"),
+];
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -265,6 +272,7 @@ export const claims: Claim[] = dedupe([
   ...registeredagents,
   ...worldchess,
   ...shortdot,
+  ...vantnexus,
   ...intents,
   ...announcedClaims,
 ]);
