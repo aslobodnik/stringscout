@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Tip from "@/components/Tip";
 import { round } from "@/data/round";
 import { sourceById, sourceIndex } from "@/data/sources";
 import { roundShares } from "@/lib/derive";
@@ -42,6 +43,9 @@ export default function RoundRule() {
       : []),
   ];
   const disclosed = blocks.reduce((sum, b) => sum + b.count, 0);
+  // The void named: the share of ICANN's figure nobody has disclosed. Whole
+  // percent, and no floor mark, since the axis and caption already carry it.
+  const undisclosed = Math.round(((round.received - disclosed) / round.received) * 100);
   const at = (units: number) => `${(units / round.received) * 100}%`;
   let left = 0;
   const placed = blocks.map((b) => {
@@ -56,7 +60,7 @@ export default function RoundRule() {
   }));
   const summary = `${fmt(disclosed)} disclosed of ${fmt(round.received)}+ applications: ${blocks
     .map((b) => `${b.label} ${fmt(b.count)}`)
-    .join(", ")}.`;
+    .join(", ")}. ${undisclosed}% undisclosed.`;
 
   return (
     <div className="-mt-5 mb-10">
@@ -65,10 +69,11 @@ export default function RoundRule() {
       <p className="serif italic text-base text-ink">
         ICANN received more than {fmt(round.received)} applications.
         {src && n !== undefined && (
-          <sup className="src ml-0.5 text-[9px] not-italic">
-            <Link href={`/sources#src-${n}`} title={`${src.outlet} · ${formatDate(src.date)}`}>
-              {n}
-            </Link>
+          <sup className="group relative src ml-0.5 text-[9px] not-italic">
+            <Tip>
+              {src.outlet} · {formatDate(src.date)}
+            </Tip>
+            <Link href={`/sources#src-${n}`}>{n}</Link>
           </sup>
         )}{" "}
         {fmt(disclosed)} have been self-revealed.
@@ -77,11 +82,23 @@ export default function RoundRule() {
         {placed.map((b, i) => (
           <div
             key={b.key}
-            title={`${b.label} · ${fmt(b.count)}`}
-            className={`absolute inset-y-0 box-border ${b.tone} ${i ? "border-l border-paper" : ""}`}
+            className={`group absolute inset-y-0 box-border ${b.tone} ${i ? "border-l border-paper" : ""}`}
             style={{ left: b.left, width: b.width }}
-          />
+          >
+            <Tip>
+              {b.label} · {fmt(b.count)}
+            </Tip>
+          </div>
         ))}
+        {/* centred in the empty track, in oxblood; too tight on phones,
+            where it would run into the rings */}
+        <span
+          aria-hidden="true"
+          className="label !text-[10px] text-oxblood absolute inset-y-0 right-0 hidden sm:flex items-center justify-center"
+          style={{ left: at(disclosed) }}
+        >
+          {undisclosed}% undisclosed
+        </span>
       </div>
       {/* the graduations, every hundred, numbered every four hundred */}
       <div aria-hidden="true" className="relative h-6">

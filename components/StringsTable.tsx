@@ -3,6 +3,7 @@
 import { pressDelay } from "@/lib/press";
 import Egg from "@/components/eggs/Egg";
 import Link from "next/link";
+import Tip, { TIP_BOX } from "@/components/Tip";
 import {
   Fragment,
   useEffect,
@@ -264,9 +265,6 @@ function ApplicantSelect({
   );
 }
 
-const TIP_BOX =
-  "pointer-events-none absolute left-0 bottom-full mb-1.5 z-30 hidden sm:block whitespace-nowrap border border-ink border-l-2 border-l-gold bg-paper-deep text-ink px-2.5 py-1.5 text-xs font-normal normal-case tracking-normal opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out";
-
 const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
 const MARK_DETAIL = Object.fromEntries(MARKS.map((m) => [m.mark, m.detail]));
 
@@ -304,13 +302,11 @@ function Marker({
   return (
     // inline-block keeps the applicant button's underline from running beneath
     // the block: decorations are not drawn through an atomic inline
-    // no tooltip: the legend defines every mark four lines above the
-    // table and never scrolls out from under them
-    <span className="inline-block no-underline align-[0.1em]">
+    <span className="group relative inline-block no-underline align-[0.1em]">
+      <Tip>{MARK_DETAIL[mark]}</Tip>
       <button
         type="button"
         aria-label={MARK_DETAIL[mark]}
-        title={MARK_DETAIL[mark]}
         onClick={(e) => {
           e.stopPropagation();
           onFilter(mark);
@@ -323,8 +319,7 @@ function Marker({
   );
 }
 
-// The number in the /sources list. The native title carries the outlet, so a
-// reader can identify the source without a box covering the row.
+// The number in the /sources list, the outlet and date on hover.
 function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
   const nums = ids
     .map((id) => ({ id, c: cites[id] }))
@@ -333,14 +328,12 @@ function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
   return (
     <sup className="src ml-0.5 text-[9px] no-underline">
       {nums.map(({ id, c }, i) => (
-        <span key={id}>
+        <span key={id} className="group relative">
           {i > 0 && <span className="text-rule">,</span>}
-          <Link
-            href={`/sources#src-${c.n}`}
-            title={`${c.outlet} · ${formatDate(c.date)}`}
-          >
-            {c.n}
-          </Link>
+          <Tip>
+            {c.outlet} · {formatDate(c.date)}
+          </Tip>
+          <Link href={`/sources#src-${c.n}`}>{c.n}</Link>
         </span>
       ))}
     </sup>
@@ -367,7 +360,7 @@ const TAG =
 
 function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
   const tip = (
-    <span role="tooltip" className={TIP_BOX}>
+    <span role="tooltip" className={`${TIP_BOX} left-0`}>
       {ISSUE_TIP[issue.kind]}
     </span>
   );
@@ -407,9 +400,9 @@ function FilterChip({
       type="button"
       onClick={onClear}
       aria-label={`Clear the ${label.toLowerCase()} filter`}
-      title={`Clear the ${label.toLowerCase()} filter`}
-      className="label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
+      className="group relative label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
     >
+      <Tip>Clear the {label.toLowerCase()} filter</Tip>
       {verbatim ? (
         <span className="normal-case tracking-normal text-xs">{label}</span>
       ) : (
@@ -449,7 +442,7 @@ function Legend({
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
-            <span role="tooltip" className={TIP_BOX}>
+            <span role="tooltip" className={`${TIP_BOX} left-0`}>
               {detail}
             </span>
             {/* selected, the whole control is one ink field — a bordered
@@ -699,12 +692,14 @@ function StatTiles({
             </div>
           </>
         );
-        const shell = `${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+        const tip = title ?? (href ? "See every applicant" : on ? "Show all strings" : `Show only these ${v}`);
+        const shell = `group relative ${cell} ${divider} cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
           on ? "bg-paper-deep" : "hover:bg-paper-deep"
         }`;
         if (href)
           return (
-            <Link key={l} href={href} title="See every applicant" className={`${shell} block`}>
+            <Link key={l} href={href} className={`${shell} block`}>
+              <Tip>{tip}</Tip>
               {inner}
             </Link>
           );
@@ -713,10 +708,11 @@ function StatTiles({
             key={l}
             type="button"
             aria-pressed={on}
-            title={title ?? (on ? "Show all strings" : `Show only these ${v}`)}
+            aria-label={tip}
             onClick={act}
             className={shell}
           >
+            <Tip>{tip}</Tip>
             {inner}
           </button>
         );
@@ -838,7 +834,7 @@ function IndexEntry({
           )}
         </span>
         {(r.gloss || issues) && (
-          <span role="tooltip" className={TIP_BOX}>
+          <span role="tooltip" className={`${TIP_BOX} left-0`}>
             {r.gloss && <span className="serif italic">“{r.gloss}”</span>}
             {r.gloss && issues && " · "}
             {issues}
@@ -1251,9 +1247,10 @@ export default function StringsTable({
         <button
           type="button"
           onClick={() => downloadCsv(sorted, csvScope, cites)}
-          title="Download the strings below as CSV, punycode included"
-          className="group label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
+          aria-label="Download the strings below as CSV, punycode included"
+          className="group relative label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2"
         >
+          <Tip side="right">Download the strings below as CSV, punycode included</Tip>
           CSV
           <span
             aria-hidden
@@ -1400,7 +1397,7 @@ export default function StringsTable({
                         >
                           <span className="text-gold">.</span>
                           {r.tld}
-                          <span role="tooltip" className={`${TIP_BOX} serif italic`}>
+                          <span role="tooltip" className={`${TIP_BOX} left-0 serif italic`}>
                             “{r.gloss}”
                           </span>
                         </button>
