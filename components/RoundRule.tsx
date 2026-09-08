@@ -79,8 +79,6 @@ export default function RoundRule({
   const filtering = active !== "all";
   // with one applicant picked, the rest of the rule steps back
   const dim = (label: string) => (filtering && active !== label ? "opacity-30" : "");
-  const tipFor = (b: (typeof blocks)[number]) =>
-    b.pick ? (active === b.label ? "Show all strings" : `Show only ${b.label}`) : null;
 
   return (
     <div className="-mt-5 mb-10">
@@ -106,7 +104,6 @@ export default function RoundRule({
           const tip = (
             <Tip>
               {b.label} · {fmt(b.count)}
-              {tipFor(b) && <span className="text-ink-soft"> · {tipFor(b)}</span>}
             </Tip>
           );
           return b.pick ? (
@@ -114,7 +111,7 @@ export default function RoundRule({
               key={b.key}
               type="button"
               aria-pressed={active === b.label}
-              aria-label={`${b.label}, ${fmt(b.count)}. ${tipFor(b)}`}
+              aria-label={`${b.label}, ${fmt(b.count)}`}
               onClick={() => onPick(b.label)}
               className={`${cls} cursor-pointer focus-visible:outline-2 focus-visible:outline-gold`}
               style={{ left: b.left, width: b.width }}
