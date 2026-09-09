@@ -219,6 +219,21 @@ const vantnexus = [
   ...expand(["profile", "park", "beach"], "vantnexus", ["vantnexus"], "backup"),
 ];
 
+// Aruba S.p.A. (.cloud registry) — 39 strings named to Domain Name Wire as
+// primary or replacement, split not stated per string; the only record of
+// the reveal.
+const aruba = expand(
+  [
+    "aid", "all", "ask", "beta", "bit", "bnb", "cart", "ciao", "daily",
+    "demo", "easy", "fix", "gaming", "gen", "genius", "gym", "happy",
+    "hello", "hola", "human", "kit", "lab", "mars", "max", "moon", "omg",
+    "pec", "pop", "rem", "roma", "sign", "sito", "super", "tag", "tex",
+    "vps", "yes", "zen", "zzz",
+  ],
+  "aruba",
+  ["dnw-aruba"]
+);
+
 // Pre-window intent announcements, per Domain Incite. Not applications: the
 // "intent" kind keeps them visible in the table without counting them as
 // disclosed strings.
@@ -273,6 +288,7 @@ export const claims: Claim[] = dedupe([
   ...worldchess,
   ...shortdot,
   ...vantnexus,
+  ...aruba,
   ...intents,
   ...announcedClaims,
 ]);

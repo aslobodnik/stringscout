@@ -306,6 +306,17 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["vantnexus"],
   },
   {
+    slug: "aruba",
+    status: "disclosed",
+    name: "Aruba S.p.A.",
+    backers: "Francesco Simondi, Head of Registry Services",
+    applicationCount: "39",
+    feesPaid: null,
+    revealedOn: "2026-09-09",
+    note: null,
+    sourceIds: ["dnw-aruba"],
+  },
+  {
     slug: "d3",
     status: "intent",
     name: "D3",

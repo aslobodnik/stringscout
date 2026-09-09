@@ -243,6 +243,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "dnw-aruba",
+    outlet: "Domain Name Wire",
+    title: "Exclusive: Aruba applies for 39 top level domain strings",
+    url: "https://domainnamewire.com/2026/09/09/aruba-tld/",
+    date: "2026-09-09",
+    kind: "trade",
+  },
+  {
     id: "di",
     outlet: "Domain Incite",
     title: "Second new gTLD contention set revealed",
@@ -255,7 +263,7 @@ const handSources: Source[] = [
     outlet: "IANA",
     title: "Root Zone Database",
     url: "https://www.iana.org/domains/root/db",
-    date: "2026-08-27",
+    date: "2026-09-09",
     kind: "reference",
   },
   {
