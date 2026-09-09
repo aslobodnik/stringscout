@@ -259,6 +259,14 @@ const handSources: Source[] = [
     kind: "trade",
   },
   {
+    id: "hch",
+    outlet: "GlobeNewswire",
+    title: "Human Centered Holdings applies to steward .human",
+    url: "https://www.globenewswire.com/news-release/2026/09/09/3358977/0/en/human-centered-holdings-applies-to-steward-human.html",
+    date: "2026-09-09",
+    kind: "applicant",
+  },
+  {
     id: "iana",
     outlet: "IANA",
     title: "Root Zone Database",

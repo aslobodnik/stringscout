@@ -150,6 +150,10 @@ const hccf = expand(["self"], "hccf", ["hccf-x"], "primary");
 // Gate Naming Limited — .gate, announced by D3 on X (only record of the reveal).
 const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
 
+// Human Centered Holdings — .human, stated as applied in its own GlobeNewswire
+// release. Single-string applicant naming its application, so primary.
+const hch = expand(["human"], "hch", ["hch"], "primary");
+
 // Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
 // (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
 // not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
@@ -281,6 +285,7 @@ export const claims: Claim[] = dedupe([
   ...harbin,
   ...hccf,
   ...gatenaming,
+  ...hch,
   ...unstoppable,
   ...radix,
   ...agentcommunity,

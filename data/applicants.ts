@@ -349,6 +349,17 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["di"],
   },
+  {
+    slug: "hch",
+    status: "disclosed",
+    name: "Human Centered Holdings",
+    backers: "Justin O'Mara Henning, Founder and Manager",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-09-09",
+    note: null,
+    sourceIds: ["hch"],
+  },
 ];
 
 export const applicants: Applicant[] = [
