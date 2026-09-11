@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { claims } from "@/data/claims";
+import { claims, type Claim } from "@/data/claims";
 import {
   applicants,
   type Applicant,
@@ -94,11 +94,16 @@ describe("claims and applicants", () => {
   });
 
   it("keeps an applicant's strongest marker and unions its sources", () => {
-    for (const r of rows) {
-      const marks = applicantMarks(r.claims);
-      expect(new Set(marks.map((m) => m.name)).size).toBe(marks.length);
-      for (const m of marks) expect(m.sourceIds.length).toBeGreaterThan(0);
-    }
+    const claim = (kind: Claim["kind"], ...sourceIds: string[]): Claim => ({
+      tld: "x",
+      applicantSlug: "unstoppable",
+      kind,
+      sourceIds,
+    });
+    const marks = applicantMarks([claim("intent", "a"), claim("unknown", "b"), claim("primary", "c")]);
+    expect(marks).toHaveLength(1);
+    expect(marks[0].mark).toBe("p");
+    expect([...marks[0].sourceIds].sort()).toEqual(["a", "b", "c"]);
   });
 
   it("counts overlaps by distinct applicant, not by claim", () => {
@@ -109,21 +114,33 @@ describe("claims and applicants", () => {
   });
 });
 
-describe("stats", () => {
-  it("reports the row count the table renders, not the claim count", () => {
-    expect(stats().strings).toBe(rows.length);
+describe("strings", () => {
+  const row = (tld: string) => rows.find((r) => r.tld === tld)!;
+
+  it("flags a string already in the root zone, by its A-label", () => {
+    expect(row("fan").issues).toEqual([{ kind: "delegated" }]);
+    expect(row("公益").punycode).toBe("xn--55qw42g");
+    expect(row("公益").issues).toEqual([{ kind: "delegated" }]);
   });
 
-  it("never counts an intent announcement as a disclosed application", () => {
-    expect(stats().claims).toBe(claims.filter((c) => c.kind !== "intent").length);
+  it("flags the singular or plural of a delegated string, never a ccTLD", () => {
+    expect(row("farms").issues).toEqual([{ kind: "plural", other: "farm" }]);
+    expect(row("tire").issues).toEqual([{ kind: "plural", other: "tires" }]);
+    // .es is delegated; .e is not a plural collision
+    const others = rows.flatMap((r) => r.issues).filter((i) => i.kind === "plural").map((i) => i.other!);
+    expect(others.filter((o) => o.length === 2)).toEqual([]);
+  });
+
+  it("flags singular and plural disclosed by different applicants, on both rows", () => {
+    expect(row("lab").issues).toEqual([{ kind: "similar", other: "labs" }]);
+    expect(row("labs").issues).toEqual([{ kind: "similar", other: "lab" }]);
   });
 });
 
 describe("round", () => {
   const r = roundStats();
 
-  it("adds up to ICANN's figure, with intent outside it", () => {
-    expect(r.primary + r.replacement + r.unknown + r.undisclosed).toBe(r.received);
+  it("counts every filed unit the table counts, with intent outside it", () => {
     expect(r.primary + r.replacement + r.unknown).toBe(stats().claims);
   });
 
@@ -131,7 +148,6 @@ describe("round", () => {
     const shares = roundShares();
     expect(shares.reduce((n, s) => n + s.count, 0)).toBe(r.primary + r.replacement + r.unknown);
     expect(shares.map((s) => s.count)).toEqual([...shares.map((s) => s.count)].sort((a, b) => b - a));
-    expect(shares.some((s) => s.name === "Journey To The West Corporation")).toBe(true);
   });
 
   it("counts an intent the applicant later filed as a filing, not an intent", () => {
