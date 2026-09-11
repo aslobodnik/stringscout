@@ -927,10 +927,16 @@ export default function StringsTable({
   // one deep link. The server snapshot is null, so the prerender says "all"
   // and React swaps in the real value after hydration without a mismatch.
   const fromUrl = useSyncExternalStore(subscribeToUrl, applicantParam, () => null);
-  // the URL supplies the opening value; touching any control takes over from it
-  const [picked, setPicked] = useState<string | null>(null);
-  const applicant = picked ?? fromUrl ?? "all";
-  const setApplicant = setPicked;
+  // The URL is the store: a pick writes ?applicant= and the subscription
+  // above reads it back, so a deep link, a Dateline link and a tap in a row
+  // all agree. replaceState, not push: a filter is not a history entry.
+  const applicant = fromUrl ?? "all";
+  const setApplicant = (v: string) => {
+    const u = new URL(window.location.href);
+    if (v === "all") u.searchParams.delete("applicant");
+    else u.searchParams.set("applicant", v);
+    history.replaceState(history.state, "", u);
+  };
   const [scope, setScope] = useState<Scope>("all");
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
   const [page, setPage] = useState(0);
@@ -1438,9 +1444,9 @@ export default function StringsTable({
                             <Egg name={name}>
                             <button
                               type="button"
-                              aria-pressed={applicant === name}
+                              aria-current={applicant === name || undefined}
                               onClick={() => {
-                                setApplicant(applicant === name ? "all" : name);
+                                setApplicant(name);
                                 setPage(0);
                                 revealResults(true);
                               }}
