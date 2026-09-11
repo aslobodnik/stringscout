@@ -159,13 +159,15 @@ export function roundStats() {
   }
   const count = (mark: Mark) => [...best.values()].filter((m) => m === mark).length;
   const primary = count("p");
+  const replacement = count("r"); // a filed application too, AGB §5.1
   const unknown = count("u");
   return {
     received: round.received,
     primary,
+    replacement,
     unknown,
     intent: count("i"),
-    undisclosed: round.received - primary - unknown,
+    undisclosed: round.received - primary - replacement - unknown,
   };
 }
 

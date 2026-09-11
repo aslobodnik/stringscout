@@ -123,13 +123,13 @@ describe("round", () => {
   const r = roundStats();
 
   it("adds up to ICANN's figure, with intent outside it", () => {
-    expect(r.primary + r.unknown + r.undisclosed).toBe(r.received);
-    expect(r.primary + r.unknown).toBe(stats().claims);
+    expect(r.primary + r.replacement + r.unknown + r.undisclosed).toBe(r.received);
+    expect(r.primary + r.replacement + r.unknown).toBe(stats().claims);
   });
 
   it("shares out the disclosed total by applicant, largest first", () => {
     const shares = roundShares();
-    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(r.primary + r.unknown);
+    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(r.primary + r.replacement + r.unknown);
     expect(shares.map((s) => s.count)).toEqual([...shares.map((s) => s.count)].sort((a, b) => b - a));
     expect(shares.some((s) => s.name === "Journey To The West Corporation")).toBe(true);
   });
