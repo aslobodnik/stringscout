@@ -1,4 +1,4 @@
-import { applicantBackers, applicantMarks, roundShares, stats, stringRows } from "@/lib/derive";
+import { applicantBackers, roundShares, stats, stringRows } from "@/lib/derive";
 import { sourceById, sourceIndex, sources } from "@/data/sources";
 import { round } from "@/data/round";
 import StringsTable, { type UiStringRow } from "@/components/StringsTable";
@@ -103,9 +103,9 @@ export default function Home() {
               gloss: r.gloss,
               existing: r.existing,
               issues: r.issues,
-              applicants: applicantMarks(r.claims),
+              applicants: r.applicants,
               overlap: r.contested,
-              count: new Set(r.claims.map((c) => c.applicantSlug)).size,
+              count: r.count,
             })
           )}
         />

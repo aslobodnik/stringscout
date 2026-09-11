@@ -4,20 +4,12 @@ import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
 import { round } from "@/data/round";
 import { MARKS, type Mark } from "./marks";
+import type { Issue } from "./issues";
 
 export { MARKS, type Mark };
+export { issueLabel, type Issue, type IssueKind } from "./issues";
 
-// Things worth a reader's attention before they trust a row.
-// delegated: the string is already a TLD, so it cannot be applied for.
-// plural:    singular/plural of a delegated TLD, which ICANN treats as
-//            confusingly similar.
-// similar:   singular/plural of a string another applicant disclosed.
-export type IssueKind = "delegated" | "plural" | "similar";
-
-export type Issue = {
-  kind: IssueKind;
-  other?: string; // the TLD or string it collides with
-};
+export type ApplicantMark = { name: string; mark: Mark; sourceIds: string[] };
 
 export type StringRow = {
   tld: string;
@@ -26,7 +18,9 @@ export type StringRow = {
   existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
   claims: Claim[];
-  contested: boolean;
+  applicants: ApplicantMark[]; // one entry per applicant, strongest marker
+  count: number; // distinct applicants: one cited by two sources is one
+  contested: boolean; // count > 1
 };
 
 const rootSet = new Set(rootZone);
@@ -82,23 +76,12 @@ export function stringRows(): StringRow[] {
         existing: issues.some((i) => i.kind === "delegated"),
         issues,
         claims: rows,
+        applicants: applicantMarks(rows),
+        count: owners.size,
         contested: owners.size > 1,
       };
     })
     .sort((a, b) => a.tld.localeCompare(b.tld));
-}
-
-export function contestedRows(): StringRow[] {
-  return stringRows()
-    .filter((r) => r.contested)
-    .sort(
-      // most contested first, counted by distinct applicant: one applicant
-      // cited by two sources is one contender, not two
-      (a, b) =>
-        new Set(b.claims.map((c) => c.applicantSlug)).size -
-          new Set(a.claims.map((c) => c.applicantSlug)).size ||
-        a.tld.localeCompare(b.tld)
-    );
 }
 
 export const applicantName = new Map(applicants.map((a) => [a.slug, a.name]));
@@ -132,9 +115,7 @@ function markOf(kind: Claim["kind"]): Mark {
 
 // One entry per applicant on a string. An applicant claiming the same string
 // more than once keeps its strongest marker.
-export function applicantMarks(
-  rows: Claim[]
-): { name: string; mark: Mark; sourceIds: string[] }[] {
+export function applicantMarks(rows: Claim[]): ApplicantMark[] {
   const best = new Map<string, Mark>();
   const srcs = new Map<string, Set<string>>();
   for (const c of rows) {

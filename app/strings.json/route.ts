@@ -1,4 +1,4 @@
-import { applicantMarks, stringRows } from "@/lib/derive";
+import { issueLabel, stringRows } from "@/lib/derive";
 import { sourceById, sourceIndex } from "@/data/sources";
 import { SITE, lastUpdated } from "@/data/meta";
 
@@ -13,12 +13,10 @@ export function GET() {
     punycode: r.punycode,
     english: r.gloss ?? null,
     overlap: r.contested,
-    applicantCount: new Set(r.claims.map((c) => c.applicantSlug)).size,
+    applicantCount: r.count,
     existingTld: r.existing,
-    issues: r.issues.map((i) =>
-      i.kind === "delegated" ? "existing tld" : `${i.kind} of .${i.other}`
-    ),
-    applicants: applicantMarks(r.claims).map((a) => ({
+    issues: r.issues.map(issueLabel),
+    applicants: r.applicants.map((a) => ({
       name: a.name,
       // p: stated primary, r: stated replacement, u: unknown which, i: intent only
       marker: a.mark,

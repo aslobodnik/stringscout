@@ -34,7 +34,7 @@ const ui = (r: (typeof rows)[number]): Searchable => ({
   gloss: r.gloss,
   overlap: r.contested,
   issues: r.issues,
-  applicants: applicantMarks(r.claims),
+  applicants: r.applicants,
 });
 const NONE = {
   q: "",

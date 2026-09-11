@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { stats } from "@/lib/derive";
 import { lastUpdated } from "@/data/meta";
@@ -7,20 +9,11 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Stringscout — self-revealed strings in the 2026 gTLD round";
 
-// Google serves a TTF when asked without a browser user agent; satori needs
-// TTF or OTF, not the woff2 it gives browsers.
-async function jost(weight: number): Promise<ArrayBuffer | null> {
-  try {
-    const css = await fetch(
-      `https://fonts.googleapis.com/css2?family=Jost:wght@${weight}&display=swap`
-    ).then((r) => r.text());
-    const url = css.match(/src: url\((.+?)\)/)?.[1];
-    if (!url) return null;
-    return await fetch(url).then((r) => r.arrayBuffer());
-  } catch {
-    return null;
-  }
-}
+// The two Jost cuts the card sets, vendored so the build never reaches
+// Google Fonts and a missing file fails the build instead of the card
+// silently falling back to sans-serif. Satori needs TTF or OTF.
+const jost = (weight: 300 | 500) =>
+  readFile(join(process.cwd(), "app/fonts", `jost-${weight}.ttf`));
 
 const PAPER = "#f4efe3";
 const INK = "#211d15";
@@ -34,9 +27,9 @@ export default async function OgImage() {
   const s = stats();
   const [light, medium] = await Promise.all([jost(300), jost(500)]);
   const fonts = [
-    light && { name: "Jost", data: light, style: "normal" as const, weight: 300 as const },
-    medium && { name: "Jost", data: medium, style: "normal" as const, weight: 500 as const },
-  ].filter((f) => !!f);
+    { name: "Jost", data: light, style: "normal" as const, weight: 300 as const },
+    { name: "Jost", data: medium, style: "normal" as const, weight: 500 as const },
+  ];
   const tiles = [
     [s.applicants, "Applicants"],
     [s.strings, "Strings disclosed"],
@@ -56,7 +49,7 @@ export default async function OgImage() {
           background: PAPER,
           color: INK,
           padding: "0 84px",
-          fontFamily: fonts.length ? "Jost" : "sans-serif",
+          fontFamily: "Jost",
           fontWeight: 500,
         }}
       >
@@ -153,6 +146,6 @@ export default async function OgImage() {
         </div>
       </div>
     ),
-    { ...size, fonts: fonts.length ? fonts : undefined }
+    { ...size, fonts }
   );
 }
