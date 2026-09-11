@@ -98,13 +98,19 @@ export default function RoundRule({
       </p>
       <div role="group" aria-label={summary} className="relative mt-3 h-8 border border-rule">
         {placed.map((b, i) => {
-          const cls = `group absolute inset-y-0 box-border ${b.tone} ${
-            i ? "border-l border-paper" : ""
-          } ${dim(b.label)} transition-opacity duration-300 ease-in-out`;
+          const cls = `group absolute inset-y-0 box-border ${i ? "border-l border-paper" : ""}`;
+          // the screen dims on its own layer: opacity on the block would take
+          // the tip down with it and the caption above would read through
           const tip = (
-            <Tip>
-              {b.label} · {fmt(b.count)}
-            </Tip>
+            <>
+              <span
+                aria-hidden="true"
+                className={`absolute inset-0 ${b.tone} ${dim(b.label)} transition-opacity duration-300 ease-in-out`}
+              />
+              <Tip>
+                {b.label} · {fmt(b.count)}
+              </Tip>
+            </>
           );
           return b.pick ? (
             <button
