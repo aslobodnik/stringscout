@@ -77,6 +77,16 @@ body {
   background: radial-gradient(circle, transparent 1px, var(--ink) 1.1px 1.8px, transparent 2px) 0 0 / 5px 5px;
 }
 
+/* Source mark: the row a cite sent the reader to. :target covers a hard
+   load; components/SourceMark.tsx adds is-target on a client-side one. The
+   oxblood rule at the left edge is the same mark the dateline's "latest"
+   carries. */
+.src-row:target,
+.src-row.is-target {
+  background: var(--paper-deep);
+  box-shadow: inset 2px 0 0 var(--oxblood);
+}
+
 sup.src a {
   color: var(--gold);
   text-decoration: none;

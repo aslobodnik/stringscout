@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import SourceMark from "@/components/SourceMark";
 import SectionHead from "@/components/SectionHead";
 import { formatDate } from "@/lib/format";
 import {
@@ -27,6 +28,7 @@ export default function SourcesPage() {
   return (
     <>
       <PageHeader title="Sources" current="/sources" />
+      <SourceMark />
 
       {byKind.map((g, gi) => (
         <section key={g.kind} className="mb-12">
@@ -40,7 +42,7 @@ export default function SourcesPage() {
               <li
                 key={src.id}
                 id={`src-${sourceIndex.get(src.id)}`}
-                className="flex gap-3 py-2 border-t border-rule-faint scroll-mt-16 target:bg-paper-deep"
+                className="src-row flex gap-3 py-2 border-t border-rule-faint scroll-mt-16"
               >
                 <span className="text-gold w-7 shrink-0 text-right">
                   {sourceIndex.get(src.id)}.
