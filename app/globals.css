@@ -149,6 +149,7 @@ input[type="search"]::-webkit-search-cancel-button {
   user-select: none;
   -webkit-mask-image: radial-gradient(ellipse 70% 70% at 60% 60%, #000 30%, transparent 72%);
   mask-image: radial-gradient(ellipse 70% 70% at 60% 60%, #000 30%, transparent 72%);
+  transition: opacity 1.2s ease-in-out;
 }
 @media (min-width: 640px) {
   .tailpiece {
@@ -160,6 +161,46 @@ input[type="search"]::-webkit-search-cancel-button {
   display: block;
   width: 100%;
   height: auto;
+}
+/* Reaching the foot turns the lamps up (components/Tailpiece.tsx): the
+   plate warms to half strength and each screen takes a gold glow in turn,
+   then the whole thing settles back to the faint plate. Gold multiplied
+   onto the engraving's paper reads as lamplight on it. */
+.tailpiece.is-lit {
+  opacity: 0.5;
+}
+.tailpiece-lamp {
+  position: absolute;
+  width: 16%;
+  aspect-ratio: 74 / 58;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(214, 160, 60, 0.85) 0%,
+    rgba(214, 160, 60, 0.35) 45%,
+    rgba(214, 160, 60, 0) 72%
+  );
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+.is-lit .tailpiece-lamp {
+  transition-duration: 0.6s;
+  transition-timing-function: ease-out;
+}
+.tailpiece-lamp-desk {
+  width: 13%;
+  aspect-ratio: 1;
+}
+.is-lit .tailpiece-lamp {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tailpiece,
+  .tailpiece-lamp {
+    transition: none;
+    transition-delay: 0s !important;
+  }
 }
 
 /* Press flourishes. Type settles onto the page once on load and again each
