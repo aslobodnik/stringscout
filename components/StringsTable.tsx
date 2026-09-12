@@ -788,9 +788,12 @@ export default function StringsTable({
                               type="button"
                               aria-current={applicant === name || undefined}
                               onClick={() => {
+                                // a name already filtered on has nothing to set, so the
+                                // click scrolls to the toolbar rather than doing nothing
+                                const same = applicant === name;
                                 setApplicant(name);
                                 setPage(0);
-                                revealResults(true);
+                                revealResults(!same);
                               }}
                               className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
                                 applicant === name ? "text-gold decoration-gold" : ""
