@@ -283,6 +283,14 @@ const handSources: Source[] = [
     date: "2026-08-13",
     kind: "reference",
   },
+  {
+    id: "dotlocal-twente",
+    outlet: "Dotlocal",
+    title: "Domeinextensie .twente komt eraan: aanvraag officieel ingediend",
+    url: "https://dotlocal.com/twente-aanvraag-ingediend/",
+    date: "2026-09-17",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

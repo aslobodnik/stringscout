@@ -154,6 +154,10 @@ const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
 // release. Single-string applicant naming its application, so primary.
 const hch = expand(["human"], "hch", ["hch"], "primary");
 
+// Dotlocal — .twente, officially submitted to ICANN per its own blog post.
+// Single-string applicant naming its application, so primary.
+const dotlocal = expand(["twente"], "dotlocal", ["dotlocal-twente"], "primary");
+
 // Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
 // (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
 // not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
@@ -286,6 +290,7 @@ export const claims: Claim[] = dedupe([
   ...hccf,
   ...gatenaming,
   ...hch,
+  ...dotlocal,
   ...unstoppable,
   ...radix,
   ...agentcommunity,

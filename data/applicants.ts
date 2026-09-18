@@ -360,6 +360,17 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["hch"],
   },
+  {
+    slug: "dotlocal",
+    status: "disclosed",
+    name: "Dotlocal",
+    backers: "Siemen Roorda, Product Owner",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-09-17",
+    note: null,
+    sourceIds: ["dotlocal-twente"],
+  },
 ];
 
 export const applicants: Applicant[] = [
