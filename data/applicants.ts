@@ -371,6 +371,17 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["dotlocal-twente"],
   },
+  {
+    slug: "inwx",
+    status: "disclosed",
+    name: "INWX Domains GmbH",
+    backers: "People undisclosed",
+    applicationCount: "1",
+    feesPaid: null,
+    revealedOn: "2026-09-21",
+    note: null,
+    sourceIds: ["dnw-inwx"],
+  },
 ];
 
 export const applicants: Applicant[] = [

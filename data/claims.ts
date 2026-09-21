@@ -158,6 +158,10 @@ const hch = expand(["human"], "hch", ["hch"], "primary");
 // Single-string applicant naming its application, so primary.
 const dotlocal = expand(["twente"], "dotlocal", ["dotlocal-twente"], "primary");
 
+// INWX Domains GmbH — .crew, per Domain Name Wire (only record of the
+// reveal). Single-string applicant naming its application, so primary.
+const inwx = expand(["crew"], "inwx", ["dnw-inwx"], "primary");
+
 // Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
 // (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
 // not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
@@ -291,6 +295,7 @@ export const claims: Claim[] = dedupe([
   ...gatenaming,
   ...hch,
   ...dotlocal,
+  ...inwx,
   ...unstoppable,
   ...radix,
   ...agentcommunity,

@@ -291,6 +291,14 @@ const handSources: Source[] = [
     date: "2026-09-17",
     kind: "applicant",
   },
+  {
+    id: "dnw-inwx",
+    outlet: "Domain Name Wire",
+    title: "German domain registrar applies for .crew top level domain",
+    url: "https://domainnamewire.com/2026/09/21/german-domain-registrar-applies-for-crew-top-level-domain/",
+    date: "2026-09-21",
+    kind: "trade",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and
