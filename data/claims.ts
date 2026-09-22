@@ -162,6 +162,10 @@ const dotlocal = expand(["twente"], "dotlocal", ["dotlocal-twente"], "primary");
 // reveal). Single-string applicant naming its application, so primary.
 const inwx = expand(["crew"], "inwx", ["dnw-inwx"], "primary");
 
+// Pawprint Prototyping (dotfurry.org) — .furry, confirmed filed per its own
+// newsletter post. Single-string applicant naming its application, so primary.
+const dotfurry = expand(["furry"], "dotfurry", ["dotfurry-update"], "primary");
+
 // Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
 // (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
 // not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
@@ -296,6 +300,7 @@ export const claims: Claim[] = dedupe([
   ...hch,
   ...dotlocal,
   ...inwx,
+  ...dotfurry,
   ...unstoppable,
   ...radix,
   ...agentcommunity,

@@ -299,6 +299,14 @@ const handSources: Source[] = [
     date: "2026-09-21",
     kind: "trade",
   },
+  {
+    id: "dotfurry-update",
+    outlet: "dotfurry.org",
+    title: ".Furry gTLD Application Update",
+    url: "https://www.dotfurry.org/news/application-update-september/",
+    date: "2026-09-04",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

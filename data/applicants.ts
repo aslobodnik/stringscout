@@ -382,6 +382,17 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["dnw-inwx"],
   },
+  {
+    slug: "dotfurry",
+    status: "disclosed",
+    name: "Pawprint Prototyping",
+    backers: "Rechner Fox, CTO + Kataze Skunk, President",
+    applicationCount: "1",
+    feesPaid: "$54,250",
+    revealedOn: "2026-09-04",
+    note: null,
+    sourceIds: ["dotfurry-update"],
+  },
 ];
 
 export const applicants: Applicant[] = [
