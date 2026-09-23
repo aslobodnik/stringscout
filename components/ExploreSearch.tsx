@@ -67,17 +67,23 @@ export default function ExploreSearch() {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
+    const started = performance.now();
     setDraft(query);
     setError(current => current?.query === query ? current : null);
+    setPendingQuery(query);
+    const showWhenReady = async (next: ExploreResponse) => {
+      const remaining = 200 - (performance.now() - started);
+      if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining));
+      if (controller.signal.aborted || active.current !== controller) return;
+      showResults(next);
+    };
     const saved = catalog.current?.results.get(catalogKey(query));
     const cached = saved ? { query, results: saved, metrics: { serverMs: 0, evaluated: catalog.current!.results.size } } : recent.current.get(query);
-    if (cached) {
-      setPendingQuery(null);
-      showResults({ ...cached, query });
-      return;
-    }
-    setPendingQuery(query);
     try {
+      if (cached) {
+        await showWhenReady({ ...cached, query });
+        return;
+      }
       const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -95,12 +101,12 @@ export default function ExploreSearch() {
       const next = { ...data, results: data.results.slice(0, MAX_RESULTS) };
       recent.current.set(query, next);
       if (recent.current.size > 100) recent.current.delete(recent.current.keys().next().value!);
-      showResults(next);
+      await showWhenReady(next);
     } catch {
       if (controller.signal.aborted || active.current !== controller) return;
       setError({ query });
     } finally {
-      if (active.current === controller) setPendingQuery(null);
+      if (active.current === controller && !controller.signal.aborted) setPendingQuery(null);
     }
   }
 
