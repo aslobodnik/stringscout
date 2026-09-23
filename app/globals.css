@@ -454,3 +454,32 @@ tr:has(.tally):has([data-applicant]:hover) .tally-leader {
   }
 }
 
+/* Round rule (components/RoundRule.tsx). The graduations under a block
+   answer it: hover the block, or have it picked, and they rise, in gold. Six
+   covers the five screens and others. On load the scale is scribed in, each
+   tick drawn down from the frame in turn; off under reduced motion. */
+.rule:has([data-block="0"]:hover) [data-under="0"],
+.rule:has([data-block="1"]:hover) [data-under="1"],
+.rule:has([data-block="2"]:hover) [data-under="2"],
+.rule:has([data-block="3"]:hover) [data-under="3"],
+.rule:has([data-block="4"]:hover) [data-under="4"],
+.rule:has([data-block="5"]:hover) [data-under="5"],
+.rule [data-under][data-active] {
+  background-color: var(--gold);
+  height: 6px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rule-scribe {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  .rule-tick {
+    transform-origin: top;
+    animation: rule-scribe 0.2s ease-out both;
+    animation-delay: var(--press-delay, 0s);
+  }
+}

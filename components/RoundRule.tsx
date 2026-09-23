@@ -1,6 +1,7 @@
 "use client";
 
 import Tip from "@/components/Tip";
+import { pressDelay } from "@/lib/press";
 import { Cite } from "./strings-table/Cite";
 import type { Citations } from "./strings-table/types";
 
@@ -66,21 +67,52 @@ export default function RoundRule({
   const at = (units: number) => `${(units / received) * 100}%`;
   let left = 0;
   const placed = blocks.map((b) => {
-    const block = { ...b, left: at(left), width: at(b.count) };
+    const block = { ...b, left: at(left), width: at(b.count), leftOf: left };
     left += b.count;
     return block;
   });
   // every hundred to 1,500, numbered every four hundred, then ICANN's figure
-  // closes the axis
+  // closes the axis. A graduation is inked as far as the disclosure reaches
+  // and faint beyond it, and each knows the block it sits under, so the
+  // scale can answer a block. The reading, disclosed, is set in oxblood
+  // after the fixed graduations; a fixed figure it would run into yields.
+  const under = (units: number) => {
+    let sum = 0;
+    for (let i = 0; i < blocks.length; i++) {
+      sum += blocks[i].count;
+      if (units < sum) return i;
+    }
+    return -1;
+  };
+  // a fixed figure the reading would run into yields: within 7% of the
+  // axis always, within 12% only on phones, where the figures sit closer
+  const near = (units: number) => {
+    const gap = Math.abs(units - disclosed) / received;
+    return gap < 0.07 ? "hidden" : gap < 0.12 ? "hidden sm:block" : "block";
+  };
   const ticks = [
     ...Array.from({ length: 16 }, (_, i) => ({
+      value: i * 100,
       at: at(i * 100),
       major: i % 4 === 0,
-      value: i * 100,
       last: false,
+      reached: i * 100 <= disclosed,
+      under: under(i * 100),
+      numbered: i % 4 === 0 ? near(i * 100) : "",
     })),
-    { at: at(received), major: true, value: received, last: true },
+    {
+      value: received,
+      at: at(received),
+      major: true,
+      last: true,
+      reached: disclosed >= received,
+      under: -1,
+      numbered: near(received),
+    },
   ];
+  const reading = disclosed > 0 && disclosed < received;
+  // the scale is scribed in left to right, the reading struck last
+  const scribe = (i: number) => pressDelay(i * 20);
   const summary = `${fmt(disclosed)} disclosed of ${fmt(received)} applications: ${blocks
     .map((b) => `${b.label} ${fmt(b.count)}`)
     .join(", ")}. ${undisclosed}% undisclosed.`;
@@ -89,7 +121,7 @@ export default function RoundRule({
   const dim = (label: string) => (filtering && active !== label ? "opacity-30" : "");
 
   return (
-    <div className="-mt-5 mb-10">
+    <div className="rule -mt-5 mb-10">
       {/* ICANN's own figure with its cite, then how much of it is self-revealed:
           the caption the gauge is read against */}
       <p className="serif italic text-base text-ink">
@@ -100,15 +132,18 @@ export default function RoundRule({
       <div role="group" aria-label={summary} className="relative mt-3 h-8 border border-rule">
         {placed.map((b, i) => {
           const cls = `group absolute inset-y-0 box-border ${i ? "border-l border-paper" : ""}`;
+          const idx = { "data-block": i };
           // the screen dims on its own layer: opacity on the block would take
-          // the tip down with it and the caption above would read through
+          // the tip down with it and the caption above would read through.
+          // A block past the midpoint hangs its tip from its right edge.
+          const { leftOf } = b;
           const tip = (
             <>
               <span
                 aria-hidden="true"
                 className={`absolute inset-0 ${b.tone} ${dim(b.label)} transition-opacity duration-300 ease-in-out`}
               />
-              <Tip>
+              <Tip side={leftOf < received / 2 ? "left" : "right"}>
                 {b.label} · {fmt(b.count)}
               </Tip>
             </>
@@ -120,13 +155,14 @@ export default function RoundRule({
               aria-pressed={active === b.label}
               aria-label={`${b.label}, ${fmt(b.count)}`}
               onClick={() => onPick(b.label)}
+              {...idx}
               className={`${cls} cursor-pointer focus-visible:outline-2 focus-visible:outline-gold`}
               style={{ left: b.left, width: b.width }}
             >
               {tip}
             </button>
           ) : (
-            <div key={b.key} className={cls} style={{ left: b.left, width: b.width }}>
+            <div key={b.key} {...idx} className={cls} style={{ left: b.left, width: b.width }}>
               {tip}
             </div>
           );
@@ -146,23 +182,45 @@ export default function RoundRule({
         {ticks.map((t, i) => (
           <span key={t.value}>
             <span
-              className={`absolute top-0 w-px ${t.major ? "h-1.5 bg-ink" : "h-[3px] bg-rule"} ${
-                t.last ? "-translate-x-full" : ""
-              }`}
-              style={{ left: t.at }}
+              data-under={t.under >= 0 ? t.under : undefined}
+              data-active={t.under >= 0 && active === blocks[t.under].label ? "" : undefined}
+              className={`rule-tick absolute top-0 w-px transition-[background-color,height] duration-300 ease-in-out ${
+                t.major ? "h-1.5" : "h-[3px]"
+              } ${t.reached ? "bg-ink" : "bg-rule"}`}
+              style={{ left: t.last ? `calc(${t.at} - 1px)` : t.at, ...scribe(i) }}
             />
-            {t.major && (
+            {t.numbered && (
               <span
-                className={`label !text-[10px] text-ink-soft absolute top-[9px] ${
+                className={`absolute top-[9px] ${t.numbered} ${
                   i === 0 ? "" : t.last ? "-translate-x-full" : "-translate-x-1/2"
                 }`}
                 style={{ left: t.at }}
               >
-                {fmt(t.value)}
+                <span className="press-word label !text-[10px] text-ink-soft block" style={scribe(i)}>
+                  {fmt(t.value)}
+                </span>
               </span>
             )}
           </span>
         ))}
+        {/* the reading: the disclosed count, struck a hair below the
+            graduations, its figure in oxblood among the fixed ones */}
+        {reading && (
+          <>
+            <span
+              className="rule-tick absolute top-0 w-px h-2 bg-oxblood"
+              style={{ left: at(disclosed), ...scribe(ticks.length + 6) }}
+            />
+            <span className="absolute top-[9px] -translate-x-1/2" style={{ left: at(disclosed) }}>
+              <span
+                className="press-word label !text-[10px] text-oxblood block"
+                style={scribe(ticks.length + 6)}
+              >
+                {fmt(disclosed)}
+              </span>
+            </span>
+          </>
+        )}
       </div>
       {/* the blocks in the order they are drawn, set as a ledger: one column
           on phones, two from sm, a dot leader binding each name to its
