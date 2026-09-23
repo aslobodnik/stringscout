@@ -178,7 +178,7 @@ export default function ExploreSearch() {
                   ))}
                 </ul>
               )}
-              <ul ref={resultsList} aria-label="Related strings" className={`relative col-start-1 row-start-1 flex flex-wrap gap-3 transition-opacity duration-200 motion-reduce:transition-none ${pendingQuery ? "opacity-50" : "opacity-100"}`}>
+              <ul id="explore-results" ref={resultsList} aria-label="Related strings" className={`relative col-start-1 row-start-1 flex flex-wrap gap-3 transition-opacity duration-200 motion-reduce:transition-none ${pendingQuery ? "opacity-50" : "opacity-100"}`}>
                 {search.results.slice(0, count).map((result) => (
                   <li key={result.tld} className="max-w-full">
                     <button
@@ -195,26 +195,19 @@ export default function ExploreSearch() {
               </ul>
             </div>
           )}
-          <div className="mt-6 flex justify-end">
-            <div className="flex items-center gap-3 text-xs text-ink-soft">
-              Show
-              <div role="group" aria-label="Number of results" className="flex border border-rule">
-                {[10, 25].map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    aria-label={`Show ${value} strings`}
-                    aria-pressed={count === value}
-                    onClick={() => { setCount(value); setResultsMinHeight(0); setPrevious(null); }}
-                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 transition-colors duration-200 ease-in-out first:border-l-0 motion-reduce:transition-none ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              strings
+          {search.results.length > 10 && (
+            <div className="mt-3 flex">
+              <button
+                type="button"
+                aria-expanded={count > 10}
+                aria-controls="explore-results"
+                onClick={() => { setCount(count === 10 ? MAX_RESULTS : 10); setResultsMinHeight(0); setPrevious(null); }}
+                className={`min-h-11 cursor-pointer text-sm text-gold underline decoration-gold/40 underline-offset-4 transition-colors duration-200 ease-in-out hover:decoration-gold motion-reduce:transition-none ${focus}`}
+              >
+                {count === 10 ? `Show ${search.results.length - 10} more` : "Show fewer"}
+              </button>
             </div>
-          </div>
+          )}
         </section>
       )}
     </>
