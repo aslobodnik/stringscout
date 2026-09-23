@@ -14,8 +14,9 @@ The single-line search bar uses an inline text button and a small character coun
 Ten result pills appear by default, with inline buttons to show 10 or 25.
 Selecting a pill submits that string as a new query. The browser requests the top 25 once per search;
 changing the number of visible results makes no new API request.
-Previous results remain visible while the next search runs. A fixed-height status
-line shows progress without collapsing the results area.
+Previous results remain visible while the next search runs. Loading feedback
+shares the fixed-height character-count row; completed results are announced only
+to screen readers, keeping the visible layout compact.
 
 `POST /api/explore` accepts `{ "query": "ski", "limit": 25 }` and returns `query`, ranked
 `results` (`tld`, optional `gloss`, and `score`), and `metrics` (`serverMs` and

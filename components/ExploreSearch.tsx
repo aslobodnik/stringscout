@@ -83,15 +83,21 @@ export default function ExploreSearch() {
             Explore
           </button>
         </div>
-        <p className="mt-2 text-right text-[10px] leading-none text-ink-soft">{draft.length}/{MAX_QUERY_LENGTH}</p>
+        <div className="mt-2 flex h-4 items-center justify-between gap-4 text-ink-soft">
+          <div role="status" aria-live="polite" className="flex min-w-0 items-center gap-2 text-xs">
+            {pendingQuery ? (
+              <>
+                <span aria-hidden="true" className="h-3 w-3 shrink-0 rounded-full border border-gold/25 border-t-gold motion-safe:animate-spin" />
+                <span className="min-w-0 truncate">Finding connections for “{pendingQuery}”…</span>
+              </>
+            ) : search ? (
+              <span className="sr-only">{Math.min(count, search.results.length)} results for “{search.query}”</span>
+            ) : null}
+          </div>
+          <p className="shrink-0 text-[10px] leading-none">{draft.length}/{MAX_QUERY_LENGTH}</p>
+        </div>
       </form>
 
-      <div role="status" aria-live="polite" className="mt-8 flex h-5 items-center gap-2 text-sm text-ink-soft">
-        <span aria-hidden="true" className={`h-3 w-3 shrink-0 rounded-full border border-gold/25 border-t-gold motion-safe:animate-spin ${pendingQuery ? "" : "invisible"}`} />
-        <span className="min-w-0 truncate">
-          {pendingQuery ? `Finding connections for “${pendingQuery}”…` : search ? `${Math.min(count, search.results.length)} results for “${search.query}”` : null}
-        </span>
-      </div>
       {error && <p role="alert" className="mt-4 text-oxblood">{error}</p>}
 
       {search && (
