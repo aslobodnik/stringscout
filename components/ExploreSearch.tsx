@@ -159,12 +159,7 @@ export default function ExploreSearch() {
       {error && (
         <div className="mt-4 flex flex-col gap-3 border border-rule bg-paper-deep/40 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div role="alert" className="min-w-0 break-words">
-            <p>We couldn’t finish the search for “{error.query}”.</p>
-            <p className="mt-1 text-sm text-ink-soft">
-              {error.kind === "offline" ? "Check your connection, then try again."
-                : error.kind === "rate_limit" ? "Please wait a moment before trying again."
-                : "Please try again in a moment."}
-            </p>
+            <p>Oops, that didn’t work.</p>
           </div>
           <button
             type="button"
