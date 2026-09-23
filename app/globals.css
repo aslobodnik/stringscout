@@ -6,7 +6,7 @@
 }
 
 .explore-results-leaving {
-  animation: explore-results-leave 200ms ease-in-out both;
+  animation: explore-results-leave 300ms ease-in-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {

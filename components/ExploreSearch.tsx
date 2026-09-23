@@ -45,7 +45,7 @@ export default function ExploreSearch() {
 
   useLayoutEffect(() => {
     if (!search || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const animation = resultsList.current?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: "ease-in-out" });
+    const animation = resultsList.current?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: "ease-in-out" });
     return () => animation?.cancel();
   }, [search]);
 
@@ -56,7 +56,7 @@ export default function ExploreSearch() {
     setPrevious(animate ? shown.current : null);
     shown.current = next;
     setSearch(next);
-    if (animate) transitionTimer.current = setTimeout(() => setPrevious(null), 200);
+    if (animate) transitionTimer.current = setTimeout(() => setPrevious(null), 300);
   }
 
   async function explore(value: string) {
