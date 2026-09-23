@@ -184,7 +184,6 @@ export default function ExploreSearch() {
                     <button
                       type="button"
                       onClick={() => void explore(result.tld)}
-                      title={result.gloss ? `Explore ${result.gloss}` : `Explore ${result.tld}`}
                       className={`${pill} cursor-pointer transition-colors duration-200 ease-in-out hover:border-gold hover:bg-paper-deep active:border-gold active:bg-gold/10 motion-reduce:transition-none ${focus}`}
                     >
                       <Tld>{result.tld}</Tld>
