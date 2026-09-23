@@ -45,7 +45,9 @@ export default function ExploreSearch() {
       setSearch({ ...data, results: data.results.slice(0, MAX_RESULTS) });
     } catch (caught) {
       if (controller.signal.aborted || active.current !== controller) return;
-      setError(caught instanceof Error ? caught.message : "Search didn’t finish. Please try again.");
+      setError(caught instanceof Error && !(caught instanceof TypeError)
+        ? caught.message
+        : "Search didn’t finish. Please try again.");
     } finally {
       if (active.current === controller) setPendingQuery(null);
     }
@@ -63,9 +65,9 @@ export default function ExploreSearch() {
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key !== "Enter") return;
+              if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return;
               event.preventDefault();
-              if (!event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
+              if (!event.shiftKey) {
                 event.currentTarget.form?.requestSubmit();
               }
             }}
