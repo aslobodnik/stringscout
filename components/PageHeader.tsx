@@ -5,6 +5,7 @@ import Dateline from "./Dateline";
 // typing the path, but it is not something to send a reader to.
 const NAV = [
   { href: "/", label: "Strings" },
+  { href: "/explore", label: "Explore" },
   { href: "/applicants", label: "Applicants" },
   { href: "/sources", label: "Sources" },
 ];
@@ -25,7 +26,7 @@ export function TopBar({ current }: { current: string }) {
           scout
         </span>
       </Link>
-      <nav aria-label="Site" className="flex">
+      <nav aria-label="Site" className="flex flex-wrap">
         {NAV.map((n) =>
           n.href === current ? (
             <span
