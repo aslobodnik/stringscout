@@ -72,7 +72,7 @@ export default function ExploreSearch() {
               }
             }}
             maxLength={MAX_QUERY_LENGTH}
-            placeholder="ski, a feeling, a whole idea…"
+            placeholder="skiing, quantum mechanics, love…"
             autoComplete="off"
             enterKeyHint="search"
             className="h-14 min-w-0 flex-1 bg-transparent px-4 text-xl placeholder:text-ink-soft/60 focus:outline-none sm:h-16 sm:px-5 sm:text-2xl"
