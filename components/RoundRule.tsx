@@ -70,20 +70,16 @@ export default function RoundRule({
     left += b.count;
     return block;
   });
-  // every hundred up to the figure, numbered every four hundred, and the
-  // figure itself closes the axis. A hundred within two hundred of the figure
-  // keeps its mark but gives up its number, or the two would collide.
-  const hundreds = Math.floor(received / 100);
+  // every hundred to 1,500, numbered every four hundred, then ICANN's figure
+  // closes the axis
   const ticks = [
-    ...Array.from({ length: hundreds + 1 }, (_, i) => ({
+    ...Array.from({ length: 16 }, (_, i) => ({
       at: at(i * 100),
-      major: i % 4 === 0 && (received - i * 100 >= 200 || i * 100 === received),
+      major: i % 4 === 0,
       value: i * 100,
-      last: i * 100 === received,
+      last: false,
     })),
-    ...(hundreds * 100 < received
-      ? [{ at: at(received), major: true, value: received, last: true }]
-      : []),
+    { at: at(received), major: true, value: received, last: true },
   ];
   const summary = `${fmt(disclosed)} disclosed of ${fmt(received)} applications: ${blocks
     .map((b) => `${b.label} ${fmt(b.count)}`)
@@ -145,12 +141,14 @@ export default function RoundRule({
           {undisclosed}% undisclosed
         </span>
       </div>
-      {/* the graduations, every hundred, numbered every four hundred, the figure last */}
+      {/* the graduations, the figure last, flush with the frame */}
       <div aria-hidden="true" className="relative h-6">
         {ticks.map((t, i) => (
           <span key={t.value}>
             <span
-              className={`absolute top-0 w-px ${t.major ? "h-1.5 bg-ink" : "h-[3px] bg-rule"}`}
+              className={`absolute top-0 w-px ${t.major ? "h-1.5 bg-ink" : "h-[3px] bg-rule"} ${
+                t.last ? "-translate-x-full" : ""
+              }`}
               style={{ left: t.at }}
             />
             {t.major && (
