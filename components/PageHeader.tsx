@@ -1,20 +1,12 @@
 import Link from "next/link";
 import Dateline from "./Dateline";
-
-// /withdrawn is deliberately absent: it exists for the record, reachable by
-// typing the path, but it is not something to send a reader to.
-const NAV = [
-  { href: "/", label: "Strings" },
-  { href: "/explore", label: "Explore" },
-  { href: "/applicants", label: "Applicants" },
-  { href: "/sources", label: "Sources" },
-];
+import SiteNav from "./SiteNav";
 
 // Scrolls with the page rather than floating: pinned, it slid over the plate
 // frame lines on every scroll.
 export function TopBar({ current }: { current: string }) {
   return (
-    <div className="flex flex-wrap items-stretch justify-between gap-x-4 border-b border-ink">
+    <div className="flex items-stretch justify-between gap-x-4 border-b border-ink">
       <Link
         href="/"
         className="group label !text-[13px] flex items-center py-3 focus-visible:outline-2 focus-visible:outline-gold"
@@ -26,27 +18,7 @@ export function TopBar({ current }: { current: string }) {
           scout
         </span>
       </Link>
-      <nav aria-label="Site" className="flex flex-wrap">
-        {NAV.map((n) =>
-          n.href === current ? (
-            <span
-              key={n.href}
-              aria-current="page"
-              className="label text-ink flex items-center px-3 py-3 -mb-px border-b-2 border-ink"
-            >
-              {n.label}
-            </span>
-          ) : (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="label text-ink-soft flex items-center px-3 py-3 -mb-px border-b-2 border-transparent hover:text-oxblood focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out"
-            >
-              {n.label}
-            </Link>
-          )
-        )}
-      </nav>
+      <SiteNav current={current} />
     </div>
   );
 }
