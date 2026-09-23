@@ -1,4 +1,5 @@
 export const MAX_QUERY_LENGTH = 120;
+export const MAX_RESULTS = 50;
 
 export type ExploreResult = {
   tld: string;

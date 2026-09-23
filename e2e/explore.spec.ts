@@ -4,19 +4,20 @@ import type { ExploreResponse } from "../lib/explore";
 function response(query: string): ExploreResponse {
   return {
     query,
-    results: Array.from({ length: 45 }, (_, index) => ({
+    results: Array.from({ length: 75 }, (_, index) => ({
       tld: index === 0 ? "mountain" : `string${index}`,
       score: 0.99 - index / 100,
       ...(index === 1 ? { gloss: "a translated meaning" } : {}),
     })),
-    metrics: { serverMs: 400, evaluated: 45 },
+    metrics: { serverMs: 400, evaluated: 783 },
   };
 }
 
-test("Enter searches; counts and diagnostic expansion reuse the same results", async ({ page }) => {
+test("Enter shows 10 results, caps at 50, and keeps diagnostics out of the page", async ({ page }) => {
   const queries: string[] = [];
   await page.route("**/api/explore", async (route) => {
-    const { query } = route.request().postDataJSON();
+    const { query, limit } = route.request().postDataJSON();
+    expect(limit).toBe(50);
     queries.push(query);
     await route.fulfill({ json: response(query) });
   });
@@ -29,12 +30,11 @@ test("Enter searches; counts and diagnostic expansion reuse the same results", a
   await input.press("Enter");
   const pills = page.getByRole("list", { name: "Related strings" }).getByRole("button");
   await expect(pills).toHaveCount(10);
-  await page.getByRole("combobox", { name: "Number of results" }).selectOption("7");
-  await expect(pills).toHaveCount(7);
-  await page.getByRole("button", { name: "Show details", exact: true }).click();
-  await expect(page.getByRole("table").locator("tbody tr")).toHaveCount(20);
-  await page.getByRole("button", { name: "Show 20 more" }).click();
-  await expect(page.getByRole("table").locator("tbody tr")).toHaveCount(40);
+  await page.getByRole("combobox", { name: "Number of results" }).selectOption("50");
+  await expect(pills).toHaveCount(50);
+  await expect(page.getByRole("table")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Show details", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("main")).not.toContainText(/score|latency|server search|round trip|gold rule|model|provider|\d+ ms/i);
   expect(queries).toEqual(["ski"]);
   await pills.first().click();
   await expect(input).toHaveValue("mountain");
@@ -78,13 +78,14 @@ test("Shift+Enter and composition do not submit a partial query", async ({ page 
 });
 
 for (const width of [375, 1280]) {
-  test(`results and details fit at ${width}px`, async ({ page }) => {
+  test(`50 results fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.route("**/api/explore", (route) => route.fulfill({ json: response("a sentence about a quiet mountain after fresh snow") }));
     await page.goto("/explore");
     await page.getByRole("textbox", { name: "Word or phrase" }).fill("a sentence about a quiet mountain after fresh snow");
     await page.getByRole("button", { name: "Explore", exact: false }).click();
-    await page.getByRole("button", { name: "Show details", exact: true }).click();
+    await page.getByRole("combobox", { name: "Number of results" }).selectOption("50");
+    await expect(page.getByRole("list", { name: "Related strings" }).getByRole("button")).toHaveCount(50);
     const overflow = await page.evaluate(() => [...document.querySelectorAll("main *, nav")].filter((element) => {
       const rect = element.getBoundingClientRect();
       return rect.width > 0 && (rect.left < 0 || rect.right > innerWidth);

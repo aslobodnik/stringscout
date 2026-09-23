@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MAX_QUERY_LENGTH, type ExploreResponse } from "@/lib/explore";
+import { MAX_QUERY_LENGTH, MAX_RESULTS, type ExploreResponse } from "@/lib/explore";
 import Tld from "./Tld";
 
-type Search = ExploreResponse & { elapsedMs: number };
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold";
 const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
   process.env.NODE_ENV === "development"
@@ -15,11 +14,9 @@ const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
 export default function ExploreSearch({ catalogSize }: { catalogSize: number }) {
   const [draft, setDraft] = useState("");
   const [pendingQuery, setPendingQuery] = useState<string | null>(null);
-  const [search, setSearch] = useState<Search | null>(null);
+  const [search, setSearch] = useState<ExploreResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(10);
-  const [details, setDetails] = useState(false);
-  const [detailCount, setDetailCount] = useState(20);
   const active = useRef<AbortController | null>(null);
 
   useEffect(() => () => active.current?.abort(), []);
@@ -34,13 +31,11 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
     setPendingQuery(query);
     setError(null);
     setSearch(null);
-    setDetailCount(20);
-    const started = performance.now();
     try {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, limit: MAX_RESULTS }),
         signal: controller.signal,
       });
       const data = await response.json().catch(() => null);
@@ -48,7 +43,7 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
       if (!response.ok) throw new Error(data?.error || "Search didn’t finish. Please try again.");
       if (!data || !Array.isArray(data.results) || !data.metrics) throw new Error("Search didn’t finish. Please try again.");
       if (active.current !== controller) return;
-      setSearch({ ...data, elapsedMs: Math.round(performance.now() - started) });
+      setSearch({ ...data, results: data.results.slice(0, MAX_RESULTS) });
     } catch (caught) {
       if (controller.signal.aborted || active.current !== controller) return;
       setError(caught instanceof Error ? caught.message : "Search didn’t finish. Please try again.");
@@ -103,14 +98,11 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
 
       {search && (
         <section aria-label={`Results for ${search.query}`} className="mt-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-rule pt-4">
-            <p className="text-xs text-ink-soft" data-testid="search-metrics">
-              {search.elapsedMs.toLocaleString()} ms
-            </p>
+          <div className="flex justify-end border-t border-rule pt-4">
             <label className="flex items-center gap-2 text-xs text-ink-soft">
               Show
               <select aria-label="Number of results" value={count} onChange={(event) => setCount(Number(event.target.value))} className={`min-h-9 border border-rule bg-paper px-2 text-ink ${focus}`}>
-                {[5, 7, 10, 15, 20].map((value) => <option key={value} value={value}>{value}</option>)}
+                {[10, 20, 30, 40, 50].map((value) => <option key={value} value={value}>{value}</option>)}
               </select>
               strings
             </label>
@@ -119,7 +111,6 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
             <p className="mt-6 text-ink-soft">No strings to explore yet.</p>
           ) : (
             <>
-              {search.results[0].score < 0.5 && <p className="mt-5 text-sm text-ink-soft">These connections scored low. Try another phrase or inspect the details.</p>}
               <ul aria-label="Related strings" className="mt-6 flex flex-wrap gap-3">
                 {search.results.slice(0, count).map((result) => (
                   <li key={result.tld} className="max-w-full">
@@ -139,44 +130,6 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
             </>
           )}
 
-          <button type="button" aria-expanded={details} aria-controls="explore-details" onClick={() => setDetails(!details)} className={`mt-8 min-h-11 text-sm text-gold underline decoration-rule underline-offset-4 hover:text-oxblood ${focus}`}>
-            {details ? "Hide details" : "Show details"}
-          </button>
-          {details && (
-            <div id="explore-details" className="mt-3 border-t border-rule pt-5">
-              <h3 className="label">Search details</h3>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
-                Each string is scored against “{search.query}”. The score is the model’s probability of a meaningful connection, from 0 to 1. It isn’t a measure of accuracy. No minimum score is applied.
-              </p>
-              <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 text-sm sm:grid-cols-4">
-                {[
-                  ["Browser round trip", `${search.elapsedMs} ms`],
-                  ["Server search", `${search.metrics.serverMs} ms`],
-                  ["Strings evaluated", search.metrics.evaluated.toLocaleString()],
-                ].map(([label, value]) => (
-                  <div key={label}><dt className="text-xs text-ink-soft">{label}</dt><dd className="mt-1 break-words">{value}</dd></div>
-                ))}
-              </dl>
-              <p className="mt-4 text-xs text-ink-soft">Changing the result count makes no new search request.</p>
-              <table className="mt-6 w-full table-fixed text-left text-sm">
-                <caption className="sr-only">Ranked strings and connection scores</caption>
-                <thead className="border-y border-rule text-xs text-ink-soft">
-                  <tr><th className="w-12 py-3 font-normal">Rank</th><th className="py-3 font-normal">String</th><th className="w-20 py-3 text-right font-normal">Score</th></tr>
-                </thead>
-                <tbody>
-                  {search.results.slice(0, detailCount).map((result, index) => (
-                    <tr key={result.tld} className={index === count - 1 ? "border-b-2 border-gold" : "border-b border-rule-faint"}>
-                      <td className="py-3 align-top text-ink-soft">{index + 1}</td>
-                      <td className="py-3 pr-3 break-words"><Tld>{result.tld}</Tld>{result.gloss && <span className="block text-xs text-ink-soft">{result.gloss}</span>}</td>
-                      <td className="py-3 text-right align-top">{result.score.toFixed(4)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="mt-3 text-xs text-ink-soft">The gold rule marks the last visible pill. Equal scores are ordered alphabetically.</p>
-              {detailCount < search.results.length && <button type="button" onClick={() => setDetailCount(detailCount + 20)} className={`mt-3 min-h-11 text-sm text-gold underline underline-offset-4 ${focus}`}>Show 20 more</button>}
-            </div>
-          )}
         </section>
       )}
     </>
