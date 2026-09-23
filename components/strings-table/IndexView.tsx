@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
-import { TIP_BOX } from "@/components/Tip";
+import Tip from "@/components/Tip";
+import Tld from "@/components/Tld";
 import { ISSUE_TIP } from "./IssueTag";
 import type { UiStringRow } from "./types";
 
@@ -30,8 +31,7 @@ function IndexEntry({
                 : undefined
             }
           >
-            <span className="text-gold">.</span>
-            {r.tld}
+            <Tld>{r.tld}</Tld>
           </span>
           {r.overlap && (
             <sup className="ml-0.5 text-[9px] text-oxblood">{r.count}</sup>
@@ -41,11 +41,11 @@ function IndexEntry({
           )}
         </span>
         {(r.gloss || issues) && (
-          <span role="tooltip" className={`${TIP_BOX} left-0`}>
+          <Tip>
             {r.gloss && <span className="serif italic">“{r.gloss}”</span>}
             {r.gloss && issues && " · "}
             {issues}
-          </span>
+          </Tip>
         )}
       </button>
     </li>

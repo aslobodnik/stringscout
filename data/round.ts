@@ -5,7 +5,5 @@
 // figure is ICANN's, quoted, never an estimate of ours.
 export const round = {
   received: 1616, // applications proceeding, fee paid
-  submitted: 1663, // applications submitted at close of the window
-  announcedOn: "2026-09-22",
   sourceId: "icann-confirmed",
 };

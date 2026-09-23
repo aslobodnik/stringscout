@@ -2,7 +2,6 @@ import { claims, type Claim } from "@/data/claims";
 import { applicants, type Applicant } from "@/data/applicants";
 import { cjkGloss } from "@/data/translations";
 import { rootZone } from "@/data/rootZone";
-import { round } from "@/data/round";
 import { MARKS, type Mark } from "./marks";
 import type { Issue } from "./issues";
 
@@ -15,12 +14,10 @@ export type StringRow = {
   tld: string;
   punycode: string; // A-label; identical to tld for ASCII strings
   gloss?: string; // English translation for non-Latin strings
-  existing: boolean; // already a delegated TLD in the IANA root zone
   issues: Issue[];
-  claims: Claim[];
   applicants: ApplicantMark[]; // one entry per applicant, strongest marker
   count: number; // distinct applicants: one cited by two sources is one
-  contested: boolean; // count > 1
+  overlap: boolean; // count > 1
 };
 
 const rootSet = new Set(rootZone);
@@ -44,13 +41,17 @@ function toPunycode(tld: string): string {
   }
 }
 
+// distinct strings in a set of claims, per applicant
+const stringsBy = (list: Claim[]) =>
+  new Map(
+    [...Map.groupBy(list, (c) => c.applicantSlug)].map(([slug, cs]) => [
+      slug,
+      new Set(cs.map((c) => c.tld)),
+    ])
+  );
+
 export function stringRows(): StringRow[] {
-  const byTld = new Map<string, Claim[]>();
-  for (const c of claims) {
-    const rows = byTld.get(c.tld) ?? [];
-    rows.push(c);
-    byTld.set(c.tld, rows);
-  }
+  const byTld = Map.groupBy(claims, (c) => c.tld);
   return [...byTld.entries()]
     .map(([tld, rows]) => {
       const punycode = toPunycode(tld);
@@ -73,12 +74,10 @@ export function stringRows(): StringRow[] {
         tld,
         punycode,
         gloss: cjkGloss[tld],
-        existing: issues.some((i) => i.kind === "delegated"),
         issues,
-        claims: rows,
         applicants: applicantMarks(rows),
         count: owners.size,
-        contested: owners.size > 1,
+        overlap: owners.size > 1,
       };
     })
     .sort((a, b) => a.tld.localeCompare(b.tld));
@@ -93,16 +92,10 @@ export const applicantBackers = new Map(
 
 // Distinct strings each applicant has named, every claim kind: the count the
 // applicants column, its sort and the dateline all print, so the number in a
-// link equals the number where it lands. The stored applicationCount goes
-// stale the moment a scrape adds strings, so nothing reads that field.
-const namedStrings = new Map<string, Set<string>>();
-for (const c of claims) {
-  const set = namedStrings.get(c.applicantSlug) ?? new Set<string>();
-  set.add(c.tld);
-  namedStrings.set(c.applicantSlug, set);
-}
+// link equals the number where it lands. Counted, never stored: a stored
+// count goes stale the moment a scrape adds strings.
+const namedStrings = stringsBy(claims);
 export const stringCount = (slug: string) => namedStrings.get(slug)?.size ?? 0;
-
 
 const RANK: Record<Mark, number> = { p: 0, r: 1, u: 2, i: 3 };
 
@@ -116,21 +109,11 @@ function markOf(kind: Claim["kind"]): Mark {
 // One entry per applicant on a string. An applicant claiming the same string
 // more than once keeps its strongest marker.
 export function applicantMarks(rows: Claim[]): ApplicantMark[] {
-  const best = new Map<string, Mark>();
-  const srcs = new Map<string, Set<string>>();
-  for (const c of rows) {
-    const m = markOf(c.kind);
-    const prev = best.get(c.applicantSlug);
-    if (!prev || RANK[m] < RANK[prev]) best.set(c.applicantSlug, m);
-    const set = srcs.get(c.applicantSlug) ?? new Set<string>();
-    for (const id of c.sourceIds) set.add(id);
-    srcs.set(c.applicantSlug, set);
-  }
-  return [...best]
-    .map(([slug, mark]) => ({
+  return [...Map.groupBy(rows, (c) => c.applicantSlug)]
+    .map(([slug, cs]) => ({
       name: applicantName.get(slug) ?? slug,
-      mark,
-      sourceIds: [...(srcs.get(slug) ?? [])],
+      mark: cs.map((c) => markOf(c.kind)).sort((a, b) => RANK[a] - RANK[b])[0],
+      sourceIds: [...new Set(cs.flatMap((c) => c.sourceIds))],
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -144,45 +127,11 @@ export function latestReveal(list: Applicant[] = applicants): Applicant[] {
   return disclosed.filter((a) => a.revealedOn === max);
 }
 
-// The disclosed count set against what ICANN said the round holds. One unit
-// per applicant and string, which is what an application is: an overlap is
-// two. ICANN's figure counts primary applications and most disclosures do
-// not say which strings are primary, so the split is carried, not collapsed.
-// An intent that the same applicant later filed is a filing, not an intent.
-export function roundStats() {
-  const best = new Map<string, Mark>();
-  for (const c of claims) {
-    const k = `${c.applicantSlug}|${c.tld}`;
-    const m = markOf(c.kind);
-    const prev = best.get(k);
-    if (!prev || RANK[m] < RANK[prev]) best.set(k, m);
-  }
-  const count = (mark: Mark) => [...best.values()].filter((m) => m === mark).length;
-  const primary = count("p");
-  const replacement = count("r"); // a filed application too, AGB §5.1
-  const unknown = count("u");
-  return {
-    received: round.received,
-    primary,
-    replacement,
-    unknown,
-    intent: count("i"),
-    undisclosed: round.received - primary - replacement - unknown,
-  };
-}
-
 // Disclosed units per applicant, largest first: what the round rule draws.
 // One unit per applicant and string, applied kinds only, so the counts sum
 // to the disclosed total the rule sets against ICANN's figure.
 export function roundShares(): { slug: string; name: string; count: number }[] {
-  const per = new Map<string, Set<string>>();
-  for (const c of claims) {
-    if (c.kind === "intent") continue;
-    const set = per.get(c.applicantSlug) ?? new Set<string>();
-    set.add(c.tld);
-    per.set(c.applicantSlug, set);
-  }
-  return [...per]
+  return [...stringsBy(claims.filter((c) => c.kind !== "intent"))]
     .map(([slug, set]) => ({
       slug,
       name: applicantName.get(slug) ?? slug,
@@ -199,8 +148,7 @@ export function stats() {
   return {
     applicants: applicants.filter((a) => a.status === "disclosed").length,
     strings: rows.length,
-    contested: rows.filter((r) => r.contested).length,
+    overlap: rows.filter((r) => r.overlap).length,
     issues: rows.filter((r) => r.issues.length).length,
-    claims: claims.filter((c) => c.kind !== "intent").length,
   };
 }

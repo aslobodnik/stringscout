@@ -33,7 +33,7 @@ export default async function OgImage() {
   const tiles = [
     [s.applicants, "Applicants"],
     [s.strings, "Strings disclosed"],
-    [s.contested, "Overlapping strings"],
+    [s.overlap, "Overlapping strings"],
     [s.issues, "Potential issues"],
   ] as const;
 

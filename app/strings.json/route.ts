@@ -1,4 +1,5 @@
 import { issueLabel, stringRows } from "@/lib/derive";
+import { isDelegated } from "@/lib/issues";
 import { sourceById, sourceIndex } from "@/data/sources";
 import { SITE, lastUpdated } from "@/data/meta";
 
@@ -12,9 +13,9 @@ export function GET() {
     string: r.tld,
     punycode: r.punycode,
     english: r.gloss ?? null,
-    overlap: r.contested,
+    overlap: r.overlap,
     applicantCount: r.count,
-    existingTld: r.existing,
+    existingTld: isDelegated(r.issues),
     issues: r.issues.map(issueLabel),
     applicants: r.applicants.map((a) => ({
       name: a.name,

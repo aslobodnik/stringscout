@@ -39,13 +39,7 @@ const SOURCE_ALIASES: Record<string, string> = {
 export const leadSlug = (lead: string) =>
   ALIASES[lead.toLowerCase()] ?? `aa-${slugify(lead)}`;
 
-const byLead = new Map<string, Announced[]>();
-for (const r of announced) {
-  const k = leadSlug(r.lead);
-  const group = byLead.get(k);
-  if (group) group.push(r);
-  else byLead.set(k, [r]);
-}
+const byLead = Map.groupBy(announced, (r) => leadSlug(r.lead));
 
 // One source per distinct trade-press URL the table cites. Applicant Auction
 // compiled the list; the announcement itself is what we link to.
@@ -127,7 +121,6 @@ export const liveStrings = (r: Announced) =>
 export const announcedApplicants: Applicant[] = [...byLead]
   .filter(([, rows]) => !(rows[0].lead.toLowerCase() in ALIASES))
   .map(([slug, rows]) => {
-    const live = rows.map((r) => liveStrings(r)).flat();
     const partners = [...new Set(rows.flatMap((r) => r.partners))];
     const noted = rows.find((r) => r.note)?.note ?? null;
     return {
@@ -135,7 +128,6 @@ export const announcedApplicants: Applicant[] = [...byLead]
       status: "intent" as const,
       name: rows[0].lead,
       backers: partners.length ? `With ${partners.join(", ")}` : "People undisclosed",
-      applicationCount: String(new Set(live).size),
       feesPaid: null,
       revealedOn: rows.map((r) => r.date).sort()[0],
       note: noted,
@@ -151,13 +143,13 @@ export const announcedApplicants: Applicant[] = [...byLead]
 
 // Extra strings for applicants we already track by hand.
 export const announcedClaims: Claim[] = announced.flatMap((r) =>
-    liveStrings(r).map((tld) => ({
-      tld,
-      applicantSlug: leadSlug(r.lead),
-      kind: "intent" as const,
-      sourceIds: r.sourceUrl ? [urlIds.get(r.sourceUrl)!] : [],
-    }))
-  );
+  liveStrings(r).map((tld) => ({
+    tld,
+    applicantSlug: leadSlug(r.lead),
+    kind: "intent" as const,
+    sourceIds: r.sourceUrl ? [urlIds.get(r.sourceUrl)!] : [],
+  }))
+);
 
 // How the /withdrawn table names the document recording a withdrawal.
 export function withdrawnLabel(url: string): string {
@@ -169,18 +161,19 @@ export function withdrawnLabel(url: string): string {
 
 // Announced and then pulled before filing. Shown on its own, counted nowhere.
 export const withdrawnClaims = announced.flatMap((r) =>
-    r.strings
-      .filter((t) => pulledAt(r, t) !== null)
-      .map((tld) => {
-        const withdrawnUrl = pulledAt(r, tld);
-        return {
-          tld,
-          applicant: r.lead,
-          partners: r.partners,
-          withdrawnUrl,
-          withdrawnLabel: withdrawnUrl ? withdrawnLabel(withdrawnUrl) : null,
-          sourceId: r.sourceUrl ? urlIds.get(r.sourceUrl)! : null,
-          date: r.date,
-        };
-      })
-  );
+  r.strings.flatMap((tld) => {
+    const withdrawnUrl = pulledAt(r, tld);
+    if (withdrawnUrl === null) return [];
+    return [
+      {
+        tld,
+        applicant: r.lead,
+        partners: r.partners,
+        withdrawnUrl,
+        withdrawnLabel: withdrawnLabel(withdrawnUrl),
+        sourceId: r.sourceUrl ? urlIds.get(r.sourceUrl)! : null,
+        date: r.date,
+      },
+    ];
+  })
+);

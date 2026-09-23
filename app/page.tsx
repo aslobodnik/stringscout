@@ -1,7 +1,7 @@
 import { applicantBackers, roundShares, stats, stringRows } from "@/lib/derive";
-import { sourceById, sourceIndex, sources } from "@/data/sources";
+import { sourceIndex, sources } from "@/data/sources";
 import { round } from "@/data/round";
-import StringsTable, { type UiStringRow } from "@/components/StringsTable";
+import StringsTable from "@/components/StringsTable";
 import SectionHead from "@/components/SectionHead";
 import { TopBar } from "@/components/PageHeader";
 import Dateline from "@/components/Dateline";
@@ -36,7 +36,7 @@ export default function Home() {
     variableMeasured: [
       { "@type": "PropertyValue", name: "Strings disclosed", value: s.strings },
       { "@type": "PropertyValue", name: "Applicants", value: s.applicants },
-      { "@type": "PropertyValue", name: "Overlapping strings", value: s.contested },
+      { "@type": "PropertyValue", name: "Overlapping strings", value: s.overlap },
     ],
   };
   // only what the table renders, so the client bundle stays free of the data
@@ -85,29 +85,8 @@ export default function Home() {
           stats={s}
           cites={cites}
           backers={Object.fromEntries(applicantBackers)}
-          round={{
-            received: round.received,
-            shares: roundShares(),
-            cite: (() => {
-              const src = sourceById.get(round.sourceId);
-              const n = sourceIndex.get(round.sourceId);
-              return src && n !== undefined
-                ? { n, outlet: src.outlet, date: src.date }
-                : undefined;
-            })(),
-          }}
-          rows={rows.map(
-            (r): UiStringRow => ({
-              tld: r.tld,
-              punycode: r.punycode,
-              gloss: r.gloss,
-              existing: r.existing,
-              issues: r.issues,
-              applicants: r.applicants,
-              overlap: r.contested,
-              count: r.count,
-            })
-          )}
+          round={{ received: round.received, shares: roundShares(), sourceId: round.sourceId }}
+          rows={rows}
         />
         <Tailpiece />
       </section>

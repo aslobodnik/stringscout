@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import Tip from "@/components/Tip";
-import { formatDate } from "@/lib/format";
+import { Cite } from "./strings-table/Cite";
+import type { Citations } from "./strings-table/types";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
@@ -22,7 +22,7 @@ export type RoundShare = { slug: string; name: string; count: number };
 export type RoundData = {
   received: number; // ICANN's figure: applications proceeding, fee paid
   shares: RoundShare[]; // largest first
-  cite?: { n: number; outlet: string; date: string };
+  sourceId: string; // the source of ICANN's figure
 };
 
 // A printer's rule turned gauge: the disclosed count set against ICANN's
@@ -34,14 +34,16 @@ export type RoundData = {
 // name in a row; the others block is many applicants, so it only tells.
 export default function RoundRule({
   round,
+  cites,
   active,
   onPick,
 }: {
   round: RoundData;
+  cites: Citations;
   active: string; // applicant name filtering the table, or "all"
   onPick: (name: string) => void;
 }) {
-  const { received, shares, cite } = round;
+  const { received, shares, sourceId } = round;
   const named = shares.filter((s) => s.count >= MIN_NAMED).slice(0, SCREENS.length);
   const rest = shares.slice(named.length);
   const others = rest.reduce((sum, s) => sum + s.count, 0);
@@ -96,14 +98,7 @@ export default function RoundRule({
           the caption the gauge is read against */}
       <p className="serif italic text-base text-ink">
         ICANN confirmed {fmt(received)} applications proceeding.
-        {cite && (
-          <sup className="group relative src ml-0.5 text-[9px] not-italic">
-            <Tip>
-              {cite.outlet} · {formatDate(cite.date)}
-            </Tip>
-            <Link href={`/sources#src-${cite.n}`}>{cite.n}</Link>
-          </sup>
-        )}{" "}
+        <Cite ids={[sourceId]} cites={cites} />{" "}
         {fmt(disclosed)} have been self-revealed.
       </p>
       <div role="group" aria-label={summary} className="relative mt-3 h-8 border border-rule">

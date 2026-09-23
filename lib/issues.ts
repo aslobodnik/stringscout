@@ -18,3 +18,7 @@ export function issueLabel(issue: Issue): string {
   if (issue.kind === "plural") return `plural of .${issue.other}`;
   return `near .${issue.other}`;
 }
+
+// already in the root zone: the CSV and JSON carry it as its own column
+export const isDelegated = (issues: Issue[]) =>
+  issues.some((i) => i.kind === "delegated");

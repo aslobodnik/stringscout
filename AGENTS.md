@@ -5,7 +5,7 @@ Everything the site renders comes from `data/`. Overlap counts, punycode, and ma
 ## Adding a reveal
 
 1. `data/sources.ts` — one source per applicant. Primary sources only: the applicant's own site, its own post, its own press release. Trade press only when it is the only record.
-2. `data/applicants.ts` — the entity, the people behind it with their titles, the count, the date it disclosed.
+2. `data/applicants.ts` — the entity, the people behind it with their titles, the date it disclosed. String counts are derived from `data/claims.ts`, never stored.
 3. `data/claims.ts` — the strings, via `expand(strings, slug, [sourceId], kind)`. Use kind `"primary"` when the source says the string is primary, or when the applicant named exactly one string and called it its application: AGB Appendix 1 Question Set 5 designates the applied-for string as the primary (TAMS.1) and §5.1 permits at most one replacement, so a single-string applicant has named its primary. Use `"intent"` when the applicant stated intent without a confirmed application, otherwise leave it unknown.
 4. Bump `lastUpdated` in `data/meta.ts`.
 5. Check each string against the [IANA root zone list](https://data.iana.org/TLD/tlds-alpha-by-domain.txt). `data/rootZone.ts` holds that list, lowercased; `lib/derive.ts` flags any disclosed string already delegated, or the singular/plural of one. Refresh it by re-fetching the IANA file.

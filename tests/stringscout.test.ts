@@ -20,22 +20,13 @@ import {
   applicantMarks,
   latestReveal,
   roundShares,
-  roundStats,
-  stats,
   stringCount,
   stringRows,
 } from "@/lib/derive";
-import { matches, type Searchable } from "@/lib/search";
+import { matches } from "@/lib/search";
 import { formatDate } from "@/lib/format";
 
 const rows = stringRows();
-const ui = (r: (typeof rows)[number]): Searchable => ({
-  tld: r.tld,
-  gloss: r.gloss,
-  overlap: r.contested,
-  issues: r.issues,
-  applicants: r.applicants,
-});
 const NONE = {
   q: "",
   applicant: "all",
@@ -43,7 +34,7 @@ const NONE = {
   mark: null,
 } as const;
 const find = (q: string) =>
-  rows.map(ui).filter((r) => matches(r, { ...NONE, q }, applicantBackers));
+  rows.filter((r) => matches(r, { ...NONE, q }, applicantBackers));
 
 describe("search", () => {
   it("strips a leading dot, so the text the table prints is findable", () => {
@@ -108,8 +99,10 @@ describe("claims and applicants", () => {
 
   it("counts overlaps by distinct applicant, not by claim", () => {
     for (const r of rows) {
-      const owners = new Set(r.claims.map((c) => c.applicantSlug));
-      expect(r.contested).toBe(owners.size > 1);
+      const owners = new Set(
+        claims.filter((c) => c.tld === r.tld).map((c) => c.applicantSlug)
+      );
+      expect(r.overlap).toBe(owners.size > 1);
     }
   });
 });
@@ -138,26 +131,16 @@ describe("strings", () => {
 });
 
 describe("round", () => {
-  const r = roundStats();
-
-  it("counts every filed unit the table counts, with intent outside it", () => {
-    expect(r.primary + r.replacement + r.unknown).toBe(stats().claims);
-  });
+  // one unit per applicant and string; an intent the same applicant later
+  // filed is a filing, so it lands in this set once and nowhere else
+  const filed = new Set(
+    claims.filter((c) => c.kind !== "intent").map((c) => `${c.applicantSlug}|${c.tld}`)
+  );
 
   it("shares out the disclosed total by applicant, largest first", () => {
     const shares = roundShares();
-    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(r.primary + r.replacement + r.unknown);
+    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(filed.size);
     expect(shares.map((s) => s.count)).toEqual([...shares.map((s) => s.count)].sort((a, b) => b - a));
-  });
-
-  it("counts an intent the applicant later filed as a filing, not an intent", () => {
-    // Unstoppable announced .agi upstream and then filed it: one unit, filed.
-    const pairs = new Set(
-      claims.filter((c) => c.kind === "intent").map((c) => `${c.applicantSlug}|${c.tld}`)
-    );
-    const filed = claims.filter((c) => c.kind !== "intent" && pairs.has(`${c.applicantSlug}|${c.tld}`));
-    expect(filed.length).toBeGreaterThan(0);
-    expect(r.intent).toBe(pairs.size - new Set(filed.map((c) => `${c.applicantSlug}|${c.tld}`)).size);
   });
 });
 

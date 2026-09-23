@@ -34,7 +34,7 @@ export function StatTiles({
       title: "Show every string",
     },
     {
-      v: s.contested,
+      v: s.overlap,
       l: "Overlapping strings",
       on: scope === "overlap",
       accent: true,

@@ -1,4 +1,4 @@
-import Tip, { TIP_BOX } from "@/components/Tip";
+import Tip from "@/components/Tip";
 import { MARKS, type Mark } from "@/lib/marks";
 
 export const MARK_LABEL = Object.fromEntries(MARKS.map((m) => [m.mark, m.label]));
@@ -82,9 +82,7 @@ export function Legend({
               on ? "bg-ink text-paper" : "hover:bg-paper-deep"
             }`}
           >
-            <span role="tooltip" className={`${TIP_BOX} left-0`}>
-              {detail}
-            </span>
+            <Tip>{detail}</Tip>
             {/* selected, the whole control is one ink field — a bordered
                 swatch inside it just reads as a box in a box */}
             <MarkBlock mark={mark} inverted={on} />

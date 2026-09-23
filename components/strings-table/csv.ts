@@ -1,4 +1,4 @@
-import { issueLabel } from "@/lib/issues";
+import { isDelegated, issueLabel } from "@/lib/issues";
 import type { Citations, UiStringRow } from "./types";
 
 // applicants, markers and sources stay parallel: index n of each describes
@@ -37,7 +37,7 @@ export function toCsv(rows: UiStringRow[], cites: Citations): string {
         .join("; "),
       String(r.count),
       r.overlap ? "yes" : "no",
-      r.existing ? "yes" : "no",
+      isDelegated(r.issues) ? "yes" : "no",
       r.issues.map(issueLabel).join("; "),
     ]
       .map(csvCell)

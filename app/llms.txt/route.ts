@@ -12,7 +12,7 @@ export function GET() {
   const body = `# Stringscout
 
 > The public record of self-revealed strings in ICANN's 2026 gTLD round:
-> ${s.strings} strings from ${s.applicants} applicants, ${s.contested} of them disclosed by more than
+> ${s.strings} strings from ${s.applicants} applicants, ${s.overlap} of them disclosed by more than
 > one applicant. Every fact links to its source. Last updated ${lastUpdated}.
 
 ICANN keeps the applied-for list private until Reveal Day, expected October

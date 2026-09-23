@@ -21,247 +21,6 @@ function expand(
   return tlds.map((tld) => ({ tld, applicantSlug, kind, sourceIds }));
 }
 
-// Oinkadot — 25 strings, called its primary domains in the Domain Name Wire
-// piece; replacement strings withheld.
-const oinkadot = expand(
-  [
-    "anime", "bit", "bug", "cancel", "dine", "dragon", "ghost", "glitch",
-    "hack", "heart", "king", "loop", "manga", "moon", "panda", "puff",
-    "queen", "sign", "spice", "stack", "stay", "super", "weed", "wire", "zzz",
-  ],
-  "oinkadot",
-  ["dnw"],
-  "primary"
-);
-
-// Link Freedom Group — full 316-string list published on lfg.link.
-const lfg = expand(lfgStrings, "lfg", ["lfg"]);
-
-// TLD1 LLC — four applied-for strings per its site.
-const tld1 = expand(["bewell", "etc", "joinus", "whatsnew"], "tld1", ["tld1"]);
-
-// internet.Best — ten applied-for strings per internet.best/icann2026.
-const ibest = expand(
-  [
-    "prompt", "chatbot", "answer", "ask", "skills",
-    "creator", "socialmedia", "influencer", "content", "streamer",
-  ],
-  "ibest",
-  ["ibest"]
-);
-
-// Endpoint Domains — eight strings, stated as primary applications on its site.
-const endpoint = expand(
-  ["big", "fab", "fart", "ftw", "happy", "nsfw", "private", "true"],
-  "endpoint",
-  ["endpoint"],
-  "primary"
-);
-
-// Suffix Inc. — 13 strings, stated as primary in the founder's X post.
-const suffix = expand(
-  [
-    "asap", "create", "future", "lfg", "mvp", "out", "pal",
-    "planet", "research", "share", "tag", "this", "visit",
-  ],
-  "suffix",
-  ["tomx"],
-  "primary"
-);
-
-// Four applicants named exactly one string and referred to "the application"
-// in the singular. AGB Appendix 1 Question Set 5 designates the applied-for
-// string as TAMS.1, the primary, and §5.1 allows at most one replacement, so a
-// single-string applicant has necessarily named its primary. None of the four
-// used the word, which is why they sat at "unknown" until this was decided.
-
-// Wiz — .bitcoin community priority application.
-const wiz = expand(["bitcoin"], "wiz", ["cb"], "primary");
-
-// USA Made in America — .factory, stated as its only primary string.
-const usamade = expand(["factory"], "usamade", ["gnw-factory"], "primary");
-
-// Journey To The West — 323 strings from xiyou.domains, which presents them
-// under one heading, "Our Primary and Replacements", without saying which are
-// which. The split in the site's own data file is a display grouping, not a
-// primary/replacement designation.
-const jttw = [
-  ...expand(jttwPrimary, "jttw", ["xiyou"]),
-  ...expand(jttwOther, "jttw", ["xiyou"]),
-];
-
-// Phoenix Domain Partners — 13 disclosed strings via Domain Name Wire.
-const phoenix = expand(
-  [
-    "merch", "amor", "beach", "bbq", "chic", "comics", "connect",
-    "jackpot", "pool", "quince", "quote", "therapy", "vibe",
-  ],
-  "phoenix",
-  ["dnw-sp"]
-);
-
-// Youness Kasmi — .bit and .ion per his X post; entity undisclosed.
-const kasmi = expand(["bit", "ion"], "kasmi", ["kasmi-x"]);
-
-// Sui Naming Limited — .sui per SuiNS X post.
-const suinaming = expand(["sui"], "suinaming", ["suins-x"], "primary");
-
-// Name Space LLC — 10 primary strings named to Domain Name Wire; replacement
-// strings undisclosed.
-const namespace = expand(
-  ["mars", "sound", "hello", "fest", "aura", "yam", "ify", "iii", "yyy", "brain"],
-  "namespace",
-  ["dnw-ns"],
-  "primary"
-);
-
-// Telegram — .gram per Pavel Durov's X post. Unstoppable's filing post names
-// .gram as its own fifth filing, made as registry service provider to
-// Telegram: one application, so it corroborates this claim rather than adding
-// an applicant.
-const telegram = expand(["gram"], "telegram", ["durov-x", "ud-filed"], "primary");
-
-// easyGroup Ltd — .easy dotBrand per its RNS announcement.
-const easygroup = expand(["easy"], "easygroup", ["easy-rns"], "primary");
-
-// Starlight Registry — 40 strings named to Domain Name Wire, listed there as
-// its primary applications.
-const starlight = expand(
-  [
-    "aid", "arc", "asi", "brain", "clone", "craft", "den", "did",
-    "droid", "fab", "flux", "folio", "forge", "foundry", "gate", "grid",
-    "intel", "intelligence", "kit", "lab", "lens", "lift", "logic", "maker",
-    "mart", "matrix", "mesh", "mod", "ops", "path", "scan", "sense",
-    "shift", "ship", "sync", "synth", "sys", "trek", "view", "wave",
-  ],
-  "starlight",
-  ["dnw-starlight"],
-  "primary"
-);
-
-// Brian Harbin — .grit, via Domain Name Wire (only record of the reveal).
-const harbin = expand(["grit"], "harbin", ["dnw-grit"]);
-
-// Human-Centered Computing Foundation — .self, submission confirmed in its own
-// X post with an ICANN portal screenshot. Single-string applicant, so primary.
-// The Applicant Auction row for the same entity joins via ALIASES.
-const hccf = expand(["self"], "hccf", ["hccf-x"], "primary");
-
-// Gate Naming Limited — .gate, announced by D3 on X (only record of the reveal).
-const gatenaming = expand(["gate"], "gatenaming", ["d3-gate-x"]);
-
-// Human Centered Holdings — .human, stated as applied in its own GlobeNewswire
-// release. Single-string applicant naming its application, so primary.
-const hch = expand(["human"], "hch", ["hch"], "primary");
-
-// Dotlocal — .twente, officially submitted to ICANN per its own blog post.
-// Single-string applicant naming its application, so primary.
-const dotlocal = expand(["twente"], "dotlocal", ["dotlocal-twente"], "primary");
-
-// INWX Domains GmbH — .crew, per Domain Name Wire (only record of the
-// reveal). Single-string applicant naming its application, so primary.
-const inwx = expand(["crew"], "inwx", ["dnw-inwx"], "primary");
-
-// Pawprint Prototyping (dotfurry.org) — .furry, confirmed filed per its own
-// newsletter post. Single-string applicant naming its application, so primary.
-const dotfurry = expand(["furry"], "dotfurry", ["dotfurry-update"], "primary");
-
-// Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
-// (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
-// not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
-// same post lists as not proceeding are in data/withdrawn.ts.
-const unstoppable = expand(["agi", "robot", "hub", "xmr"], "unstoppable", ["ud-filed"]);
-
-// Radix — 46 strings, stated as its primary applications on deux.radix.website.
-const radix = expand(
-  [
-    "agi", "asi", "agent", "agentic", "intelligence", "mcp", "mind", "robotics",
-    "bit", "hub", "stack", "platform", "quantum", "labs", "flow", "neo",
-    "therapy", "wellness", "biotech", "pharma",
-    "fintech", "wealth", "invest", "wallet", "coin", "crypto",
-    "founder", "firm", "brand", "official", "advisory", "project", "research",
-    "mart", "etc", "fix",
-    "creator", "profile", "portfolio", "podcast", "pod", "merch",
-    "collective", "vibe", "zen", "atelier",
-  ],
-  "radix",
-  ["radix"],
-  "primary"
-);
-
-// Agent Community — .agent, its own blog post confirming the community
-// application was filed before the window closed. Single-string applicant,
-// so primary.
-const agentcommunity = expand(["agent"], "agentcommunity", ["agentcommunity"], "primary");
-
-// Registered Agents Inc — six applied-for strings per its own press release
-// on astronym.com; primary/replacement split not stated.
-const registeredagents = expand(
-  ["epic", "identity", "mark", "private", "registeredagent", "verified"],
-  "registeredagents",
-  ["astronym"]
-);
-
-// World Chess — .chess, a community application filed through a World Chess
-// subsidiary with FIDE as sponsor, per the joint FIDE release. Single-string
-// applicant, so primary.
-const worldchess = expand(["chess"], "worldchess", ["fide"], "primary");
-
-// ShortDot — 80 strings across 40 applications, published on shortdot.bond;
-// primary/replacement split not stated.
-const shortdot = expand(
-  [
-    "agi", "api", "bit", "core", "dna", "gen", "hub", "key", "lab", "mcp",
-    "neo", "root", "unit",
-    "aid", "aim", "ask", "dig", "find", "fix", "get", "hit", "let", "mix",
-    "see", "set", "tap", "try", "way",
-    "ace", "big", "bold", "fab", "flex", "gig", "goat", "good", "hero",
-    "icon", "max", "mvp", "tag", "xxl",
-    "bro", "crew", "duo", "fam", "solo", "sub", "uni",
-    "glow", "hip", "lit", "mood", "omg", "pop", "slay", "vibe", "wild",
-    "xoxo", "yay", "yes", "zzz",
-    "air", "gym", "heal", "moon", "zen",
-    "age", "amp", "ego", "era", "eye", "gem", "hey", "inn", "jet", "owl",
-    "pod", "soon", "why",
-  ],
-  "shortdot",
-  ["shortdot"]
-);
-
-// Vant Nexus — three strings stated as applied on its site, plus three
-// strings the same page labels "Replacement Strings".
-const vantnexus = [
-  ...expand(["portal", "island", "truck"], "vantnexus", ["vantnexus"], "primary"),
-  ...expand(["profile", "park", "beach"], "vantnexus", ["vantnexus"], "backup"),
-];
-
-// Aruba S.p.A. (.cloud registry) — 39 strings named to Domain Name Wire as
-// primary or replacement, split not stated per string; the only record of
-// the reveal.
-const aruba = expand(
-  [
-    "aid", "all", "ask", "beta", "bit", "bnb", "cart", "ciao", "daily",
-    "demo", "easy", "fix", "gaming", "gen", "genius", "gym", "happy",
-    "hello", "hola", "human", "kit", "lab", "mars", "max", "moon", "omg",
-    "pec", "pop", "rem", "roma", "sign", "sito", "super", "tag", "tex",
-    "vps", "yes", "zen", "zzz",
-  ],
-  "aruba",
-  ["dnw-aruba"]
-);
-
-// Pre-window intent announcements, per Domain Incite. Not applications: the
-// "intent" kind keeps them visible in the table without counting them as
-// disclosed strings.
-const intents = [
-  // .anime by D3 only. Unstoppable's refund page pulled .manga and its filing
-  // post pulled .anime, so both are carried on /withdrawn and claimed here by
-  // neither Unstoppable nor Kintsugi.
-  ...expand(["anime"], "d3", ["di"], "intent"),
-  ...expand(["chain"], "freename", ["di"], "intent"),
-  ...expand(["chain"], "3dns", ["di"], "intent"),
-];
-
 // A hand-written claim and a scraped one can land on the same string, the same
 // applicant and the same URL — one fact recorded twice. Two claims citing the
 // same string and applicant from *different* sources are two corroborations
@@ -278,37 +37,239 @@ const dedupe = (all: Claim[]): Claim[] => {
 };
 
 export const claims: Claim[] = dedupe([
-  ...oinkadot,
-  ...lfg,
-  ...tld1,
-  ...ibest,
-  ...suffix,
-  ...endpoint,
-  ...wiz,
-  ...usamade,
-  ...jttw,
-  ...phoenix,
-  ...kasmi,
-  ...suinaming,
-  ...namespace,
-  ...telegram,
-  ...easygroup,
-  ...starlight,
-  ...harbin,
-  ...hccf,
-  ...gatenaming,
-  ...hch,
-  ...dotlocal,
-  ...inwx,
-  ...dotfurry,
-  ...unstoppable,
-  ...radix,
-  ...agentcommunity,
-  ...registeredagents,
-  ...worldchess,
-  ...shortdot,
-  ...vantnexus,
-  ...aruba,
-  ...intents,
+  // Oinkadot — 25 strings, called its primary domains in the Domain Name Wire
+  // piece; replacement strings withheld.
+  ...expand(
+    [
+      "anime", "bit", "bug", "cancel", "dine", "dragon", "ghost", "glitch",
+      "hack", "heart", "king", "loop", "manga", "moon", "panda", "puff",
+      "queen", "sign", "spice", "stack", "stay", "super", "weed", "wire", "zzz",
+    ],
+    "oinkadot",
+    ["dnw"],
+    "primary"
+  ),
+
+  // Link Freedom Group — full 316-string list published on lfg.link.
+  ...expand(lfgStrings, "lfg", ["lfg"]),
+
+  // TLD1 LLC — four applied-for strings per its site.
+  ...expand(["bewell", "etc", "joinus", "whatsnew"], "tld1", ["tld1"]),
+
+  // internet.Best — ten applied-for strings per internet.best/icann2026.
+  ...expand(
+    [
+      "prompt", "chatbot", "answer", "ask", "skills",
+      "creator", "socialmedia", "influencer", "content", "streamer",
+    ],
+    "ibest",
+    ["ibest"]
+  ),
+
+  // Endpoint Domains — eight strings, stated as primary applications on its site.
+  ...expand(
+    ["big", "fab", "fart", "ftw", "happy", "nsfw", "private", "true"],
+    "endpoint",
+    ["endpoint"],
+    "primary"
+  ),
+
+  // Suffix Inc. — 13 strings, stated as primary in the founder's X post.
+  ...expand(
+    [
+      "asap", "create", "future", "lfg", "mvp", "out", "pal",
+      "planet", "research", "share", "tag", "this", "visit",
+    ],
+    "suffix",
+    ["tomx"],
+    "primary"
+  ),
+
+  // Four applicants named exactly one string and referred to "the application"
+  // in the singular. AGB Appendix 1 Question Set 5 designates the applied-for
+  // string as TAMS.1, the primary, and §5.1 allows at most one replacement, so a
+  // single-string applicant has necessarily named its primary. None of the four
+  // used the word, which is why they sat at "unknown" until this was decided.
+
+  // Wiz — .bitcoin community priority application.
+  ...expand(["bitcoin"], "wiz", ["cb"], "primary"),
+
+  // USA Made in America — .factory, stated as its only primary string.
+  ...expand(["factory"], "usamade", ["gnw-factory"], "primary"),
+
+  // Journey To The West — 323 strings from xiyou.domains, which presents them
+  // under one heading, "Our Primary and Replacements", without saying which are
+  // which. The split in the site's own data file is a display grouping, not a
+  // primary/replacement designation.
+  ...expand(jttwPrimary, "jttw", ["xiyou"]),
+  ...expand(jttwOther, "jttw", ["xiyou"]),
+
+  // Phoenix Domain Partners — 13 disclosed strings via Domain Name Wire.
+  ...expand(
+    [
+      "merch", "amor", "beach", "bbq", "chic", "comics", "connect",
+      "jackpot", "pool", "quince", "quote", "therapy", "vibe",
+    ],
+    "phoenix",
+    ["dnw-sp"]
+  ),
+
+  // Youness Kasmi — .bit and .ion per his X post; entity undisclosed.
+  ...expand(["bit", "ion"], "kasmi", ["kasmi-x"]),
+
+  // Sui Naming Limited — .sui per SuiNS X post.
+  ...expand(["sui"], "suinaming", ["suins-x"], "primary"),
+
+  // Name Space LLC — 10 primary strings named to Domain Name Wire; replacement
+  // strings undisclosed.
+  ...expand(
+    ["mars", "sound", "hello", "fest", "aura", "yam", "ify", "iii", "yyy", "brain"],
+    "namespace",
+    ["dnw-ns"],
+    "primary"
+  ),
+
+  // Telegram — .gram per Pavel Durov's X post. Unstoppable's filing post names
+  // .gram as its own fifth filing, made as registry service provider to
+  // Telegram: one application, so it corroborates this claim rather than adding
+  // an applicant.
+  ...expand(["gram"], "telegram", ["durov-x", "ud-filed"], "primary"),
+
+  // easyGroup Ltd — .easy dotBrand per its RNS announcement.
+  ...expand(["easy"], "easygroup", ["easy-rns"], "primary"),
+
+  // Starlight Registry — 40 strings named to Domain Name Wire, listed there as
+  // its primary applications.
+  ...expand(
+    [
+      "aid", "arc", "asi", "brain", "clone", "craft", "den", "did",
+      "droid", "fab", "flux", "folio", "forge", "foundry", "gate", "grid",
+      "intel", "intelligence", "kit", "lab", "lens", "lift", "logic", "maker",
+      "mart", "matrix", "mesh", "mod", "ops", "path", "scan", "sense",
+      "shift", "ship", "sync", "synth", "sys", "trek", "view", "wave",
+    ],
+    "starlight",
+    ["dnw-starlight"],
+    "primary"
+  ),
+
+  // Brian Harbin — .grit, via Domain Name Wire (only record of the reveal).
+  ...expand(["grit"], "harbin", ["dnw-grit"]),
+
+  // Human-Centered Computing Foundation — .self, submission confirmed in its own
+  // X post with an ICANN portal screenshot. Single-string applicant, so primary.
+  // The Applicant Auction row for the same entity joins via ALIASES.
+  ...expand(["self"], "hccf", ["hccf-x"], "primary"),
+
+  // Gate Naming Limited — .gate, announced by D3 on X (only record of the reveal).
+  ...expand(["gate"], "gatenaming", ["d3-gate-x"]),
+
+  // Human Centered Holdings — .human, stated as applied in its own GlobeNewswire
+  // release. Single-string applicant naming its application, so primary.
+  ...expand(["human"], "hch", ["hch"], "primary"),
+
+  // Dotlocal — .twente, officially submitted to ICANN per its own blog post.
+  // Single-string applicant naming its application, so primary.
+  ...expand(["twente"], "dotlocal", ["dotlocal-twente"], "primary"),
+
+  // INWX Domains GmbH — .crew, per Domain Name Wire (only record of the
+  // reveal). Single-string applicant naming its application, so primary.
+  ...expand(["crew"], "inwx", ["dnw-inwx"], "primary"),
+
+  // Pawprint Prototyping (dotfurry.org) — .furry, confirmed filed per its own
+  // newsletter post. Single-string applicant naming its application, so primary.
+  ...expand(["furry"], "dotfurry", ["dotfurry-update"], "primary"),
+
+  // Unstoppable Domains — .agi, .robot, .hub and .xmr, filed per its own post
+  // (with 0G Foundation, Hub Culture and Cake Wallet). Primary/replacement split
+  // not stated. Its Applicant Auction intent rows join via ALIASES; the ones the
+  // same post lists as not proceeding are in data/withdrawn.ts.
+  ...expand(["agi", "robot", "hub", "xmr"], "unstoppable", ["ud-filed"]),
+
+  // Radix — 46 strings, stated as its primary applications on deux.radix.website.
+  ...expand(
+    [
+      "agi", "asi", "agent", "agentic", "intelligence", "mcp", "mind", "robotics",
+      "bit", "hub", "stack", "platform", "quantum", "labs", "flow", "neo",
+      "therapy", "wellness", "biotech", "pharma",
+      "fintech", "wealth", "invest", "wallet", "coin", "crypto",
+      "founder", "firm", "brand", "official", "advisory", "project", "research",
+      "mart", "etc", "fix",
+      "creator", "profile", "portfolio", "podcast", "pod", "merch",
+      "collective", "vibe", "zen", "atelier",
+    ],
+    "radix",
+    ["radix"],
+    "primary"
+  ),
+
+  // Agent Community — .agent, its own blog post confirming the community
+  // application was filed before the window closed. Single-string applicant,
+  // so primary.
+  ...expand(["agent"], "agentcommunity", ["agentcommunity"], "primary"),
+
+  // Registered Agents Inc — six applied-for strings per its own press release
+  // on astronym.com; primary/replacement split not stated.
+  ...expand(
+    ["epic", "identity", "mark", "private", "registeredagent", "verified"],
+    "registeredagents",
+    ["astronym"]
+  ),
+
+  // World Chess — .chess, a community application filed through a World Chess
+  // subsidiary with FIDE as sponsor, per the joint FIDE release. Single-string
+  // applicant, so primary.
+  ...expand(["chess"], "worldchess", ["fide"], "primary"),
+
+  // ShortDot — 80 strings across 40 applications, published on shortdot.bond;
+  // primary/replacement split not stated.
+  ...expand(
+    [
+      "agi", "api", "bit", "core", "dna", "gen", "hub", "key", "lab", "mcp",
+      "neo", "root", "unit",
+      "aid", "aim", "ask", "dig", "find", "fix", "get", "hit", "let", "mix",
+      "see", "set", "tap", "try", "way",
+      "ace", "big", "bold", "fab", "flex", "gig", "goat", "good", "hero",
+      "icon", "max", "mvp", "tag", "xxl",
+      "bro", "crew", "duo", "fam", "solo", "sub", "uni",
+      "glow", "hip", "lit", "mood", "omg", "pop", "slay", "vibe", "wild",
+      "xoxo", "yay", "yes", "zzz",
+      "air", "gym", "heal", "moon", "zen",
+      "age", "amp", "ego", "era", "eye", "gem", "hey", "inn", "jet", "owl",
+      "pod", "soon", "why",
+    ],
+    "shortdot",
+    ["shortdot"]
+  ),
+
+  // Vant Nexus — three strings stated as applied on its site, plus three
+  // strings the same page labels "Replacement Strings".
+  ...expand(["portal", "island", "truck"], "vantnexus", ["vantnexus"], "primary"),
+  ...expand(["profile", "park", "beach"], "vantnexus", ["vantnexus"], "backup"),
+
+  // Aruba S.p.A. (.cloud registry) — 39 strings named to Domain Name Wire as
+  // primary or replacement, split not stated per string; the only record of
+  // the reveal.
+  ...expand(
+    [
+      "aid", "all", "ask", "beta", "bit", "bnb", "cart", "ciao", "daily",
+      "demo", "easy", "fix", "gaming", "gen", "genius", "gym", "happy",
+      "hello", "hola", "human", "kit", "lab", "mars", "max", "moon", "omg",
+      "pec", "pop", "rem", "roma", "sign", "sito", "super", "tag", "tex",
+      "vps", "yes", "zen", "zzz",
+    ],
+    "aruba",
+    ["dnw-aruba"]
+  ),
+
+  // Pre-window intent announcements, per Domain Incite. Not applications: the
+  // "intent" kind keeps them visible in the table without counting them as
+  // disclosed strings.
+  // .anime by D3 only. Unstoppable's refund page pulled .manga and its filing
+  // post pulled .anime, so both are carried on /withdrawn and claimed here by
+  // neither Unstoppable nor Kintsugi.
+  ...expand(["anime"], "d3", ["di"], "intent"),
+  ...expand(["chain"], "freename", ["di"], "intent"),
+  ...expand(["chain"], "3dns", ["di"], "intent"),
   ...announcedClaims,
 ]);

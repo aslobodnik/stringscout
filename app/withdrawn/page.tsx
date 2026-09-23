@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import SectionHead from "@/components/SectionHead";
+import Tld from "@/components/Tld";
 import { formatDate } from "@/lib/format";
 import { withdrawnClaims } from "@/data/announcedAdapter";
 import { sourceById, sourceIndex } from "@/data/sources";
@@ -53,10 +54,9 @@ export default function WithdrawnPage() {
                   className="border-t border-rule-faint align-top"
                 >
                   <td className="py-3 pr-4 font-medium whitespace-nowrap">
-                    <span className="text-gold">.</span>
-                    <span className="line-through decoration-oxblood/70">
-                      {w.tld}
-                    </span>
+                    <Tld>
+                      <span className="line-through decoration-oxblood/70">{w.tld}</span>
+                    </Tld>
                   </td>
                   <td className="py-3 pr-4 [overflow-wrap:anywhere]">
                     {w.applicant}
@@ -82,18 +82,14 @@ export default function WithdrawnPage() {
                     )}
                   </td>
                   <td className="py-3 pr-4">
-                    {w.withdrawnUrl ? (
-                      <a
-                        href={w.withdrawnUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out"
-                      >
-                        {w.withdrawnLabel}
-                      </a>
-                    ) : (
-                      <span className="text-ink-soft">—</span>
-                    )}
+                    <a
+                      href={w.withdrawnUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out"
+                    >
+                      {w.withdrawnLabel}
+                    </a>
                   </td>
                   <td className="py-3 pr-4 whitespace-nowrap text-ink-soft">
                     {formatDate(w.date)}

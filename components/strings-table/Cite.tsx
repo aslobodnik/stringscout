@@ -10,7 +10,7 @@ export function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
     .filter((x): x is { id: string; c: Citation } => !!x.c);
   if (!nums.length) return null;
   return (
-    <sup className="src ml-0.5 text-[9px] no-underline">
+    <sup className="src ml-0.5 text-[9px] no-underline not-italic">
       {nums.map(({ id, c }, i) => (
         <span key={id} className="group relative">
           {i > 0 && <span className="text-rule">,</span>}

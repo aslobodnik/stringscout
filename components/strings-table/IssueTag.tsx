@@ -1,4 +1,4 @@
-import { TIP_BOX } from "@/components/Tip";
+import Tip from "@/components/Tip";
 import { issueLabel, type Issue } from "@/lib/issues";
 
 export const ISSUE_TIP: Record<Issue["kind"], string> = {
@@ -14,11 +14,7 @@ const TAG =
   "group relative label text-oxblood !text-[9px] block mt-1 w-fit sm:inline sm:mt-0 sm:ml-2 sm:whitespace-nowrap";
 
 export function IssueTag({ issue, punycode }: { issue: Issue; punycode: string }) {
-  const tip = (
-    <span role="tooltip" className={`${TIP_BOX} left-0`}>
-      {ISSUE_TIP[issue.kind]}
-    </span>
-  );
+  const tip = <Tip>{ISSUE_TIP[issue.kind]}</Tip>;
   const target =
     issue.kind === "delegated" ? punycode : issue.kind === "plural" ? issue.other : null;
   if (!target)

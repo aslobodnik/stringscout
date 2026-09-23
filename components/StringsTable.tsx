@@ -2,10 +2,10 @@
 
 import { pressDelay } from "@/lib/press";
 import Egg from "@/components/eggs/Egg";
-import Tip, { TIP_BOX } from "@/components/Tip";
+import Tip from "@/components/Tip";
+import Tld from "@/components/Tld";
 import RoundRule, { type RoundData } from "@/components/RoundRule";
 import {
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -21,7 +21,8 @@ import { Cite } from "./strings-table/Cite";
 import { IndexView } from "./strings-table/IndexView";
 import { IssueTag } from "./strings-table/IssueTag";
 import { Legend, MARK_LABEL, Marker } from "./strings-table/Marker";
-import { ShortcutSheet, isMac } from "./strings-table/ShortcutSheet";
+import { ShortcutSheet } from "./strings-table/ShortcutSheet";
+import { useTableKeys } from "./strings-table/useTableKeys";
 import { StatTiles } from "./strings-table/StatTiles";
 import { downloadCsv } from "./strings-table/csv";
 import type { Citations, UiStats, UiStringRow } from "./strings-table/types";
@@ -33,6 +34,8 @@ const PAGE_SIZES = [25, 100] as const;
 const PAGE = PAGE_SIZES[0]; // default
 const MIN_ROWS = 12; // floor, so typing never collapses the page under the reader
 const DEBOUNCE_MS = 180;
+const PAGER =
+  "label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
 
 function FilterChip({
   label,
@@ -65,7 +68,7 @@ function FilterChip({
 
 type SortKey = "tld" | "applicants" | "overlap";
 
-// dir: default sort direction (overlaps = most-contested first); short: sub-sm header label
+// dir: default sort direction (overlaps = most applicants first); short: sub-sm header label
 const SORT_COLS: {
   key: SortKey;
   label: string;
@@ -260,7 +263,6 @@ export default function StringsTable({
   };
   const [scope, setScope] = useState<Scope>("all");
   const [markFilter, setMarkFilter] = useState<Mark | null>(null);
-  const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(PAGE);
   const [pinned, setPinned] = useState<string | null>(null);
   const [view, setView] = useState<"paged" | "all">("paged");
@@ -268,6 +270,13 @@ export default function StringsTable({
   // the strings its dotted search also matches (.con reaches .concert too)
   const [focused, setFocused] = useState<string | null>(null);
   const [sort, setSort] = useState<Sort>({ key: "tld", dir: 1 });
+  // A new filter or sort starts from page one: the page is held against the
+  // filter it was turned under and reads as 0 under any other, so no setter
+  // has to remember to reset it.
+  const filterKey = [query, applicant, scope, markFilter, sort.key, sort.dir].join("|");
+  const [paging, setPaging] = useState({ key: filterKey, n: 0 });
+  const page = paging.key === filterKey ? paging.n : 0;
+  const setPage = (n: number) => setPaging({ key: filterKey, n });
   const [sheet, setSheet] = useState(false);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -295,13 +304,11 @@ export default function StringsTable({
 
   const toggleMark = (m: Mark) => {
     setMarkFilter((v) => (v === m ? null : m));
-    setPage(0);
     revealResults(true);
   };
 
   const toggleScope = (next: Scope) => {
     setScope((v) => (v === next ? "all" : next));
-    setPage(0);
     revealResults();
   };
 
@@ -322,7 +329,7 @@ export default function StringsTable({
     if (n === pageSize) return;
     holdFoot();
     // keep the reader on the page holding the rows they were reading
-    setPage((p) => Math.floor((p * pageSize) / n));
+    setPage(Math.floor((current * pageSize) / n));
     setPageSize(n);
   };
 
@@ -338,7 +345,6 @@ export default function StringsTable({
     if (debounce.current) clearTimeout(debounce.current);
     setQ(v);
     setQuery(v);
-    setPage(0);
   };
 
   const clearAll = () => {
@@ -409,12 +415,6 @@ export default function StringsTable({
     }
   };
 
-  // Keys, for the reader who has them: / and Cmd-K (Ctrl-K elsewhere) reach
-  // the search box from anywhere on the page, Esc clears everything from
-  // anywhere, the arrows turn the page, and ? lists all of it. Nothing else
-  // fires while a box is being typed in, and nothing fires under a held
-  // modifier, so the browser keeps its own keys. Nothing is drawn for any of
-  // it: the sheet is the only place they are named.
   const focusSearch = () => {
     revealResults(true);
     const box = searchRef.current;
@@ -429,71 +429,22 @@ export default function StringsTable({
     const el = toolbarRef.current;
     if (el && el.getBoundingClientRect().top > window.innerHeight) revealResults();
   };
-  // bound afresh each render, so the handler reads the page it is on
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.isComposing || e.keyCode === 229) return;
-      const t = e.target as HTMLElement | null;
-      const typing =
-        !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable);
-      const mod = isMac() ? e.metaKey : e.ctrlKey;
-      if (mod && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        if (sheet) {
-          setSheet(false);
-          setTimeout(focusSearch, 0); // once the dialog has let the page go
-        } else focusSearch();
-        return;
-      }
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (sheet) {
-        if (e.key === "Escape" || e.key === "?") {
-          e.preventDefault();
-          setSheet(false);
-        } else if (e.key === "/") {
-          e.preventDefault();
-          setSheet(false);
-          setTimeout(focusSearch, 0);
-        }
-        return;
-      }
-      if (e.key === "Escape") {
-        // one clear, wherever the reader is: the box, every filter, an open
-        // gloss. With nothing to clear it leaves the box instead.
-        e.preventDefault();
-        const dirty =
-          !!q || applicant !== "all" || scope !== "all" || !!markFilter || !!pinned;
-        if (dirty) {
-          clearAll();
-          setPinned(null);
-        } else if (typing) t?.blur();
-        return;
-      }
-      if (typing) return;
-      switch (e.key) {
-        case "/":
-          e.preventDefault();
-          focusSearch();
-          return;
-        case "?":
-          e.preventDefault();
-          setSheet(true);
-          return;
-        case "ArrowLeft":
-          if (!e.shiftKey && view === "paged" && current > 0) turnPage(current - 1);
-          return;
-        case "ArrowRight":
-          if (!e.shiftKey && view === "paged" && current < pageCount - 1)
-            turnPage(current + 1);
-          return;
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
-
   const clean =
     !query.trim() && applicant === "all" && scope === "all" && !markFilter;
+  useTableKeys({
+    sheet,
+    setSheet,
+    focusSearch,
+    dirty: !clean || !!q || !!pinned,
+    clear: () => {
+      clearAll();
+      setPinned(null);
+    },
+    paged: view === "paged",
+    page: current,
+    pageCount,
+    turnPage,
+  });
 
   // the filename should say which slice of the table it holds
   const csvScope = clean
@@ -516,9 +467,7 @@ export default function StringsTable({
   // Re-press: the rows are keyed on the slice they show, so a new page, filter,
   // sort or view remounts them and the press flourish runs again, in either
   // direction of Show all / Back to table.
-  const slice = [
-    current, query, applicant, scope, markFilter, sort.key, sort.dir, pageSize, view,
-  ].join("|");
+  const slice = [current, filterKey, pageSize, view].join("|");
 
   return (
     <div>
@@ -535,10 +484,10 @@ export default function StringsTable({
       {round && (
         <RoundRule
           round={round}
+          cites={cites}
           active={applicant}
           onPick={(name) => {
             setApplicant(applicant === name ? "all" : name);
-            setPage(0);
             revealResults(true);
           }}
         />
@@ -558,10 +507,7 @@ export default function StringsTable({
             const v = e.target.value;
             setQ(v);
             if (debounce.current) clearTimeout(debounce.current);
-            debounce.current = setTimeout(() => {
-              setQuery(v);
-              setPage(0);
-            }, DEBOUNCE_MS);
+            debounce.current = setTimeout(() => setQuery(v), DEBOUNCE_MS);
           }}
           placeholder="Search…"
           aria-label="Search strings"
@@ -570,10 +516,7 @@ export default function StringsTable({
         <ApplicantSelect
           options={applicantOptions}
           value={applicant}
-          onChange={(v) => {
-            setApplicant(v);
-            setPage(0);
-          }}
+          onChange={setApplicant}
         />
         <ShowAll
           all={view === "all"}
@@ -614,10 +557,7 @@ export default function StringsTable({
               label={
                 scope === "overlap" ? "Overlapping strings" : "Potential issues"
               }
-              onClear={() => {
-                setScope("all");
-                setPage(0);
-              }}
+              onClear={() => setScope("all")}
             />
           )}
           {query.trim() && (
@@ -701,10 +641,7 @@ export default function StringsTable({
                       <SortButton
                         col={col}
                         sort={sort}
-                        onSort={(v) => {
-                          setSort(v);
-                          setPage(0);
-                        }}
+                        onSort={setSort}
                       />
                     </th>
                   );
@@ -732,11 +669,8 @@ export default function StringsTable({
                           }
                           className="group relative cursor-pointer border-b border-dotted border-ink-soft font-medium hover:border-gold transition-colors duration-200 ease-in-out"
                         >
-                          <span className="text-gold">.</span>
-                          {r.tld}
-                          <span role="tooltip" className={`${TIP_BOX} left-0 serif italic`}>
-                            “{r.gloss}”
-                          </span>
+                          <Tld>{r.tld}</Tld>
+                          <Tip className="serif italic">“{r.gloss}”</Tip>
                         </button>
                         {pinned === r.tld && (
                           <span className="serif italic text-ink-soft ml-2">
@@ -746,8 +680,7 @@ export default function StringsTable({
                       </>
                     ) : (
                       <span>
-                        <span className="text-gold">.</span>
-                        {r.tld}
+                        <Tld>{r.tld}</Tld>
                       </span>
                     )}
                     {r.issues.map((issue) => (
@@ -771,7 +704,6 @@ export default function StringsTable({
                                 // click scrolls to the toolbar rather than doing nothing
                                 const same = applicant === name;
                                 setApplicant(name);
-                                setPage(0);
                                 revealResults(!same);
                               }}
                               className={`cursor-pointer text-left underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out ${
@@ -850,7 +782,7 @@ export default function StringsTable({
             type="button"
             disabled={current === 0}
             onClick={() => setPage(current - 1)}
-            className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+            className={PAGER}
           >
             Prev
           </button>
@@ -861,7 +793,7 @@ export default function StringsTable({
             type="button"
             disabled={current === pageCount - 1}
             onClick={() => setPage(current + 1)}
-            className="label border border-ink text-ink hover:bg-paper-deep px-3 h-10 cursor-pointer transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+            className={PAGER}
           >
             Next
           </button>
