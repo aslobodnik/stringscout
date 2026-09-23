@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+@keyframes explore-results-leave {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.explore-results-leaving {
+  animation: explore-results-leave 200ms ease-in-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-results-leaving { animation: none; opacity: 0; }
+}
+
 :root {
   --paper: #f4efe3;
   --paper-deep: #ece5d3;
