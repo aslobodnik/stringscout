@@ -14,7 +14,8 @@ export function Cite({ ids, cites }: { ids: string[]; cites: Citations }) {
       {nums.map(({ id, c }, i) => (
         <span key={id} className="group relative">
           {i > 0 && <span className="text-rule">,</span>}
-          <Tip>
+          {/* below md the outlet wraps, so a cite near the right edge stays on the page */}
+          <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">
             {c.outlet} · {formatDate(c.date)}
           </Tip>
           <Link href={`/sources#src-${c.n}`}>{c.n}</Link>

@@ -43,3 +43,7 @@ next-env.d.ts
 # local-only: page captures kept as an evidence trail, and the operator runbook
 /snapshots/
 /UPDATE.md
+
+# playwright
+/test-results/
+/playwright-report/

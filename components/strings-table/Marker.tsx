@@ -39,7 +39,8 @@ export function Marker({
     // inline-block keeps the applicant button's underline from running beneath
     // the block: decorations are not drawn through an atomic inline
     <span className="group relative inline-block no-underline align-[0.1em]">
-      <Tip>{MARK_DETAIL[mark]}</Tip>
+      {/* the detail is a sentence: below md it wraps to stay on the page */}
+      <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">{MARK_DETAIL[mark]}</Tip>
       <button
         type="button"
         aria-label={MARK_DETAIL[mark]}

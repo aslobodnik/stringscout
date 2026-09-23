@@ -43,8 +43,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${jost.variable} ${oldStandard.variable}`}>
       <body>
         {/* The plate frame wraps the whole document once and scrolls with it,
-            so the shell it sits in has to be the full page, not the column. */}
-        <div className="relative min-h-screen">
+            so the shell it sits in has to be the full page, not the column.
+            Clipped sideways: a hover box waiting off the right edge, unseen,
+            must not give the page a sideways scroll. */}
+        <div className="relative min-h-screen overflow-x-clip">
           <div aria-hidden className="paper-plate" />
           {/* One shell for every page: Footer's mt-auto only pins inside this
               exact flex column, so it cannot live in the pages. The top padding
