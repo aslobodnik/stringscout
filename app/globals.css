@@ -381,3 +381,76 @@ input[type="search"]::-webkit-search-cancel-button {
     animation: pig-drop 0.45s cubic-bezier(0.16, 0.84, 0.28, 1) 0.6s both;
   }
 }
+
+/* Tally. A stroke is an applicant, in the order its row names them: hovering
+   either lights the other, and the dot leader that binds the two. Drawn the
+   way a pen draws, top to bottom, the gate last and quicker, off under
+   reduced motion. Ten covers the widest overlap with room. */
+.tally-ink-line {
+  fill: none;
+  stroke: var(--oxblood);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  opacity: var(--tally-ink, 1);
+  transition:
+    stroke 300ms ease-in-out,
+    stroke-width 300ms ease-in-out,
+    opacity 300ms ease-in-out;
+}
+.tally-reach {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 4;
+  pointer-events: stroke;
+}
+.tally-stroke:hover .tally-ink-line,
+tr:has([data-applicant="0"]:hover) [data-stroke="0"] .tally-ink-line,
+tr:has([data-applicant="1"]:hover) [data-stroke="1"] .tally-ink-line,
+tr:has([data-applicant="2"]:hover) [data-stroke="2"] .tally-ink-line,
+tr:has([data-applicant="3"]:hover) [data-stroke="3"] .tally-ink-line,
+tr:has([data-applicant="4"]:hover) [data-stroke="4"] .tally-ink-line,
+tr:has([data-applicant="5"]:hover) [data-stroke="5"] .tally-ink-line,
+tr:has([data-applicant="6"]:hover) [data-stroke="6"] .tally-ink-line,
+tr:has([data-applicant="7"]:hover) [data-stroke="7"] .tally-ink-line,
+tr:has([data-applicant="8"]:hover) [data-stroke="8"] .tally-ink-line,
+tr:has([data-applicant="9"]:hover) [data-stroke="9"] .tally-ink-line {
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  opacity: 1;
+}
+tr:has([data-stroke="0"]:hover) [data-applicant="0"],
+tr:has([data-stroke="1"]:hover) [data-applicant="1"],
+tr:has([data-stroke="2"]:hover) [data-applicant="2"],
+tr:has([data-stroke="3"]:hover) [data-applicant="3"],
+tr:has([data-stroke="4"]:hover) [data-applicant="4"],
+tr:has([data-stroke="5"]:hover) [data-applicant="5"],
+tr:has([data-stroke="6"]:hover) [data-applicant="6"],
+tr:has([data-stroke="7"]:hover) [data-applicant="7"],
+tr:has([data-stroke="8"]:hover) [data-applicant="8"],
+tr:has([data-stroke="9"]:hover) [data-applicant="9"] {
+  color: var(--gold);
+  text-decoration-color: var(--gold);
+}
+tr:has(.tally-stroke:hover) .tally-leader,
+tr:has(.tally):has([data-applicant]:hover) .tally-leader {
+  border-color: var(--gold);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes tally-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .tally-ink-line {
+    stroke-dasharray: 1;
+    animation: tally-draw 0.24s cubic-bezier(0.55, 0, 0.35, 1) both;
+    animation-delay: var(--press-delay, 0s);
+  }
+  .tally-gate {
+    animation-duration: 0.17s;
+  }
+}
+

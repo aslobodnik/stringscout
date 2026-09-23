@@ -699,6 +699,7 @@ export default function StringsTable({
                             <Egg name={name}>
                             <button
                               type="button"
+                              data-applicant={i}
                               aria-current={applicant === name || undefined}
                               onClick={() => {
                                 // a name already filtered on has nothing to set, so the
@@ -727,7 +728,7 @@ export default function StringsTable({
                     {/* dot leader binds the row to its overlap tally, index-style */}
                     <span
                       aria-hidden
-                      className={`flex-1 min-w-4 -translate-y-[3px] border-b border-dotted ${
+                      className={`tally-leader flex-1 min-w-4 -translate-y-[3px] border-b border-dotted transition-colors duration-300 ease-in-out ${
                         r.overlap ? "border-oxblood/40" : "border-rule-faint"
                       }`}
                     />
@@ -736,7 +737,7 @@ export default function StringsTable({
                   <td className="py-2 whitespace-nowrap text-right">
                     {r.overlap && (
                       <>
-                        <Tally count={r.count} delay={Math.min(vi * 22, 500) + 120} />
+                        <Tally count={r.count} delay={Math.min(vi * 22, 500) + 120} seed={r.tld} />
                         <span className="sr-only">{r.count} applicants</span>
                       </>
                     )}
