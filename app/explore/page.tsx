@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { TopBar } from "@/components/PageHeader";
 import ExploreSearch from "@/components/ExploreSearch";
 
+const shareTitle = "Explore Related Strings — Stringscout";
+const description = "Type a word or phrase. Find related strings in Stringscout’s catalog.";
+
 export const metadata: Metadata = {
   title: "Explore",
-  description: "Type a word or phrase. Find related strings in Stringscout’s catalog.",
+  description,
   alternates: { canonical: "/explore" },
+  openGraph: {
+    title: shareTitle,
+    description,
+    url: "/explore",
+    siteName: "Stringscout",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: shareTitle,
+    description,
+  },
 };
 
 export default function ExplorePage() {
