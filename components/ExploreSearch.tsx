@@ -55,7 +55,7 @@ export default function ExploreSearch() {
     <>
       <form onSubmit={(event) => { event.preventDefault(); void explore(draft); }} role="search">
         <label htmlFor="explore-query" className="sr-only">Word or phrase</label>
-        <div className="flex border border-ink transition-colors duration-200 focus-within:border-gold">
+        <div className="flex border border-ink transition-colors duration-200 ease-in-out focus-within:border-gold motion-reduce:transition-none">
           <input
             id="explore-query"
             name="query"
@@ -78,7 +78,7 @@ export default function ExploreSearch() {
           <button
             type="submit"
             disabled={!draft.trim() || pendingQuery === draft.trim()}
-            className={`label m-1.5 shrink-0 cursor-pointer border border-gold/40 bg-paper-deep px-4 text-gold transition-colors duration-200 enabled:hover:border-gold enabled:hover:bg-gold/10 disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none sm:px-6 ${focus}`}
+            className={`label m-1.5 shrink-0 cursor-pointer border border-gold/40 bg-paper-deep px-4 text-gold transition-colors duration-200 ease-in-out enabled:hover:border-gold enabled:hover:bg-gold/10 disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none sm:px-6 ${focus}`}
           >
             Explore
           </button>
@@ -113,7 +113,7 @@ export default function ExploreSearch() {
                     aria-label={`Show ${value} strings`}
                     aria-pressed={count === value}
                     onClick={() => setCount(value)}
-                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 first:border-l-0 ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
+                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 transition-colors duration-200 ease-in-out first:border-l-0 motion-reduce:transition-none ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
                   >
                     {value}
                   </button>
@@ -133,7 +133,7 @@ export default function ExploreSearch() {
                       type="button"
                       onClick={() => void explore(result.tld)}
                       title={result.gloss ? `Explore ${result.gloss}` : `Explore ${result.tld}`}
-                      className={`max-w-full cursor-pointer rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words hover:border-gold hover:bg-paper-deep ${focus}`}
+                      className={`max-w-full cursor-pointer rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words transition-colors duration-200 ease-in-out hover:border-gold hover:bg-paper-deep motion-reduce:transition-none ${focus}`}
                     >
                       <Tld>{result.tld}</Tld>
                       {result.gloss && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
