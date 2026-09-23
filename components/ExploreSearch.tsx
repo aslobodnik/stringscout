@@ -157,30 +157,10 @@ export default function ExploreSearch() {
 
       {search && (
         <section aria-label={`Results for ${search.query}`} aria-busy={pendingQuery !== null} className="mt-4">
-          <div className="flex justify-end border-t border-rule pt-4">
-            <div className="flex items-center gap-3 text-xs text-ink-soft">
-              Show
-              <div role="group" aria-label="Number of results" className="flex border border-rule">
-                {[10, 25].map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    aria-label={`Show ${value} strings`}
-                    aria-pressed={count === value}
-                    onClick={() => { setCount(value); setResultsMinHeight(0); setPrevious(null); }}
-                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 transition-colors duration-200 ease-in-out first:border-l-0 motion-reduce:transition-none ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              strings
-            </div>
-          </div>
           {search.results.length === 0 ? (
             <p className="mt-6 text-ink-soft">No strings to explore yet.</p>
           ) : (
-            <div ref={resultsBox} className="mt-6 grid items-start" style={{ minHeight: resultsMinHeight || undefined }}>
+            <div ref={resultsBox} className="grid items-start" style={{ minHeight: resultsMinHeight || undefined }}>
               {previous && (
                 <ul key={previous.query} aria-hidden="true" className="explore-results-leaving pointer-events-none col-start-1 row-start-1 flex flex-wrap gap-3">
                   {previous.results.slice(0, count).map(result => (
@@ -210,7 +190,26 @@ export default function ExploreSearch() {
               </ul>
             </div>
           )}
-
+          <div className="mt-6 flex justify-end">
+            <div className="flex items-center gap-3 text-xs text-ink-soft">
+              Show
+              <div role="group" aria-label="Number of results" className="flex border border-rule">
+                {[10, 25].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-label={`Show ${value} strings`}
+                    aria-pressed={count === value}
+                    onClick={() => { setCount(value); setResultsMinHeight(0); setPrevious(null); }}
+                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 transition-colors duration-200 ease-in-out first:border-l-0 motion-reduce:transition-none ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+              strings
+            </div>
+          </div>
         </section>
       )}
     </>
