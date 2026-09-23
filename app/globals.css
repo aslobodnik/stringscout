@@ -24,6 +24,11 @@
   --font-oldstandard: var(--font-oldstandard);
 }
 
+/* Keep navigation width stable between short pages and scrolling pages. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);

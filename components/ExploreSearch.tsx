@@ -11,7 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
     : "https://api.stringscout.com/api/explore"
 );
 
-export default function ExploreSearch({ catalogSize }: { catalogSize: number }) {
+export default function ExploreSearch() {
   const [draft, setDraft] = useState("");
   const [pendingQuery, setPendingQuery] = useState<string | null>(null);
   const [search, setSearch] = useState<ExploreResponse | null>(null);
@@ -30,7 +30,6 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
     setDraft(query);
     setPendingQuery(query);
     setError(null);
-    setSearch(null);
     try {
       const response = await fetch(API_URL, {
         method: "POST",
@@ -56,69 +55,79 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
     <>
       <form onSubmit={(event) => { event.preventDefault(); void explore(draft); }} role="search">
         <label htmlFor="explore-query" className="sr-only">Word or phrase</label>
-        <div className="border border-ink bg-paper-deep/40 p-4 transition-colors focus-within:border-gold focus-within:ring-1 focus-within:ring-gold sm:p-6">
-          <textarea
+        <div className="flex border border-ink transition-colors duration-200 focus-within:border-gold">
+          <input
             id="explore-query"
             name="query"
+            type="text"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
-                event.preventDefault();
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              if (!event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
                 event.currentTarget.form?.requestSubmit();
               }
             }}
-            rows={2}
             maxLength={MAX_QUERY_LENGTH}
             placeholder="ski, a feeling, a whole idea…"
             autoComplete="off"
-            aria-describedby="explore-help"
-            className="block w-full resize-none bg-transparent text-2xl leading-relaxed placeholder:text-ink-soft/60 focus:outline-none sm:text-3xl"
+            enterKeyHint="search"
+            className="h-14 min-w-0 flex-1 bg-transparent px-4 text-xl placeholder:text-ink-soft/60 focus:outline-none sm:h-16 sm:px-5 sm:text-2xl"
           />
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-xs text-ink-soft">{draft.length} / {MAX_QUERY_LENGTH}</span>
-            <button
-              type="submit"
-              disabled={!draft.trim() || pendingQuery === draft.trim()}
-              className={`min-h-11 bg-ink px-6 py-2 text-sm text-paper hover:bg-gold disabled:cursor-default disabled:opacity-50 ${focus}`}
-            >
-              Explore <span aria-hidden="true" className="ml-4">↗</span>
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={!draft.trim() || pendingQuery === draft.trim()}
+            className={`label m-1.5 shrink-0 cursor-pointer border border-gold/40 bg-paper-deep px-4 text-gold transition-colors duration-200 enabled:hover:border-gold enabled:hover:bg-gold/10 disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none sm:px-6 ${focus}`}
+          >
+            Explore
+          </button>
         </div>
-        <p id="explore-help" className="mt-3 text-sm text-ink-soft">
-          Press Enter to explore {catalogSize.toLocaleString()} strings. Shift + Enter adds a line.
-        </p>
+        <p className="mt-2 text-right text-[10px] leading-none text-ink-soft">{draft.length}/{MAX_QUERY_LENGTH}</p>
       </form>
 
-      <div role="status" aria-live="polite" className="mt-8 text-sm text-ink-soft">
-        {pendingQuery ? `Finding connections for “${pendingQuery}”…` : search ? `${Math.min(count, search.results.length)} results for “${search.query}”` : null}
+      <div role="status" aria-live="polite" className="mt-8 flex h-5 items-center gap-2 text-sm text-ink-soft">
+        <span aria-hidden="true" className={`h-3 w-3 shrink-0 rounded-full border border-gold/25 border-t-gold motion-safe:animate-spin ${pendingQuery ? "" : "invisible"}`} />
+        <span className="min-w-0 truncate">
+          {pendingQuery ? `Finding connections for “${pendingQuery}”…` : search ? `${Math.min(count, search.results.length)} results for “${search.query}”` : null}
+        </span>
       </div>
       {error && <p role="alert" className="mt-4 text-oxblood">{error}</p>}
 
       {search && (
-        <section aria-label={`Results for ${search.query}`} className="mt-4">
+        <section aria-label={`Results for ${search.query}`} aria-busy={pendingQuery !== null} className="mt-4">
           <div className="flex justify-end border-t border-rule pt-4">
-            <label className="flex items-center gap-2 text-xs text-ink-soft">
+            <div className="flex items-center gap-3 text-xs text-ink-soft">
               Show
-              <select aria-label="Number of results" value={count} onChange={(event) => setCount(Number(event.target.value))} className={`min-h-9 border border-rule bg-paper px-2 text-ink ${focus}`}>
-                {[10, 20, 30, 40, 50].map((value) => <option key={value} value={value}>{value}</option>)}
-              </select>
+              <div role="group" aria-label="Number of results" className="flex border border-rule">
+                {[10, 25].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-label={`Show ${value} strings`}
+                    aria-pressed={count === value}
+                    onClick={() => setCount(value)}
+                    className={`min-h-11 min-w-11 cursor-pointer border-l border-rule px-3 first:border-l-0 ${count === value ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-paper-deep hover:text-ink"} ${focus}`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
               strings
-            </label>
+            </div>
           </div>
           {search.results.length === 0 ? (
             <p className="mt-6 text-ink-soft">No strings to explore yet.</p>
           ) : (
             <>
-              <ul aria-label="Related strings" className="mt-6 flex flex-wrap gap-3">
+              <ul aria-label="Related strings" className={`mt-6 flex flex-wrap gap-3 transition-opacity duration-150 motion-reduce:transition-none ${pendingQuery ? "opacity-50" : "opacity-100"}`}>
                 {search.results.slice(0, count).map((result) => (
                   <li key={result.tld} className="max-w-full">
                     <button
                       type="button"
                       onClick={() => void explore(result.tld)}
                       title={result.gloss ? `Explore ${result.gloss}` : `Explore ${result.tld}`}
-                      className={`max-w-full rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words hover:border-gold hover:bg-paper-deep ${focus}`}
+                      className={`max-w-full cursor-pointer rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words hover:border-gold hover:bg-paper-deep ${focus}`}
                     >
                       <Tld>{result.tld}</Tld>
                       {result.gloss && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
@@ -126,7 +135,6 @@ export default function ExploreSearch({ catalogSize }: { catalogSize: number }) 
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 text-xs text-ink-soft">Select a string to explore from there.</p>
             </>
           )}
 

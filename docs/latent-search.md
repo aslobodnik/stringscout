@@ -10,15 +10,17 @@ The browser calls the API directly. Development defaults to
 time with `NEXT_PUBLIC_EXPLORE_API_URL` if needed.
 
 Enter or the Explore button submits a word or phrase, up to 120 characters.
-Ten result pills appear by default, adjustable up to 50. Selecting a pill submits
-that string as a new query. The browser requests the top 50 once per search;
+The single-line search bar uses an inline text button and a small character count below it.
+Ten result pills appear by default, with inline buttons to show 10 or 25.
+Selecting a pill submits that string as a new query. The browser requests the top 25 once per search;
 changing the number of visible results makes no new API request.
+Previous results remain visible while the next search runs. A fixed-height status
+line shows progress without collapsing the results area.
 
-`POST /api/explore` accepts `{ "query": "ski", "limit": 50 }` and returns `query`, ranked
+`POST /api/explore` accepts `{ "query": "ski", "limit": 25 }` and returns `query`, ranked
 `results` (`tld`, optional `gloss`, and `score`), and `metrics` (`serverMs` and
 `evaluated`). Scores are estimates of a connection, not proof of a domain's
-availability. The API defaults to 10 results and caps the response at 50.
-The catalog count shown on the page comes from `stringRows()`.
+availability. The API defaults to 10 results and caps the response at 25.
 
 Scores and timing remain available in the API response for analysis, but are
 not displayed in the customer interface. There is no diagnostics panel.
@@ -30,4 +32,4 @@ not displayed in the customer interface. There is no diagnostics panel.
 - Revisit defaults (pill count and weak-score cutoff) after testing.
 - Consider reveal-day and replacement-string exploration when that data arrives.
 
-This prototype is for local testing first; it has not been deployed.
+The Explore page is available at https://stringscout.com/explore.

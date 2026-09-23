@@ -29,6 +29,7 @@ These are not stylistic preferences.
 - No editorializing anywhere. No superlatives, no company history, no notes restating a column.
 - Say strings and disclosed, not applications or claimed. Say overlap, not contested.
 - Applicant Guidebook facts cite inline as "AGB §x.x".
+- Use site-styled choice controls instead of browser-native select menus.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
