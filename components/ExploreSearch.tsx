@@ -13,7 +13,7 @@ const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
 );
 const CATALOG_URL = API_URL.replace(/\/explore$/, "/catalog");
 const pill = "max-w-full rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words";
-type SearchError = { query: string; kind: "unavailable" | "rate_limit" | "offline" };
+type SearchError = { query: string };
 
 export default function ExploreSearch() {
   const [draft, setDraft] = useState("");
@@ -77,7 +77,6 @@ export default function ExploreSearch() {
       return;
     }
     setPendingQuery(query);
-    let failureKind: SearchError["kind"] = "unavailable";
     try {
       const response = await fetch(API_URL, {
         method: "POST",
@@ -86,10 +85,6 @@ export default function ExploreSearch() {
         signal: controller.signal,
       });
       const data = await response.json().catch(() => null);
-      if (response.status === 429) {
-        failureKind = "rate_limit";
-        throw new Error("Search rate limited");
-      }
       if (!response.ok || !data || !Array.isArray(data.results) || !data.metrics) throw new Error("Search unavailable");
       if (active.current !== controller) return;
       const version = response.headers.get("X-Explore-Version");
@@ -103,7 +98,7 @@ export default function ExploreSearch() {
       showResults(next);
     } catch {
       if (controller.signal.aborted || active.current !== controller) return;
-      setError({ query, kind: navigator.onLine === false ? "offline" : failureKind });
+      setError({ query });
     } finally {
       if (active.current === controller) setPendingQuery(null);
     }
@@ -156,21 +151,7 @@ export default function ExploreSearch() {
         </div>
       </form>
 
-      {error && (
-        <div className="mt-4 flex flex-col gap-3 border border-rule bg-paper-deep/40 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div role="alert" className="min-w-0 break-words">
-            <p>Oops, that didn’t work.</p>
-          </div>
-          <button
-            type="button"
-            disabled={pendingQuery !== null}
-            onClick={() => void explore(error.query)}
-            className={`min-h-11 min-w-32 shrink-0 self-start cursor-pointer border border-gold/40 bg-paper px-4 text-sm text-gold transition-colors duration-200 ease-in-out enabled:hover:border-gold enabled:hover:bg-gold/10 disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none sm:self-auto ${focus}`}
-          >
-            {pendingQuery === error.query ? "Trying again…" : "Try again"}
-          </button>
-        </div>
-      )}
+      {error && <p role="alert" className="mt-4 text-ink-soft">Oops, that didn’t work. Try again.</p>}
 
       {search && (
         <section aria-label={`Results for ${search.query}`} aria-busy={pendingQuery !== null} className="mt-4">
