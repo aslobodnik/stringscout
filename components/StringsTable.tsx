@@ -24,6 +24,7 @@ import { Legend, MARK_LABEL, Marker } from "./strings-table/Marker";
 import { ShortcutSheet } from "./strings-table/ShortcutSheet";
 import { useTableKeys } from "./strings-table/useTableKeys";
 import { StatTiles } from "./strings-table/StatTiles";
+import { Tally } from "./strings-table/Tally";
 import { downloadCsv } from "./strings-table/csv";
 import type { Citations, UiStats, UiStringRow } from "./strings-table/types";
 
@@ -735,19 +736,7 @@ export default function StringsTable({
                   <td className="py-2 whitespace-nowrap text-right">
                     {r.overlap && (
                       <>
-                        {/* ledger tally: one stroke per applicant */}
-                        <span
-                          aria-hidden
-                          className="inline-flex items-baseline gap-[3px]"
-                        >
-                          {Array.from({ length: r.count }, (_, i) => (
-                            <i
-                              key={i}
-                              className="inline-block w-px h-3.5 bg-oxblood tally-ink"
-                              style={pressDelay(Math.min(vi * 22, 500) + 120 + i * 55)}
-                            />
-                          ))}
-                        </span>
+                        <Tally count={r.count} delay={Math.min(vi * 22, 500) + 120} />
                         <span className="sr-only">{r.count} applicants</span>
                       </>
                     )}
