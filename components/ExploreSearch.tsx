@@ -13,12 +13,13 @@ const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
 );
 const CATALOG_URL = API_URL.replace(/\/explore$/, "/catalog");
 const pill = "max-w-full rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words";
+type SearchError = { query: string; kind: "unavailable" | "rate_limit" | "offline" };
 
 export default function ExploreSearch() {
   const [draft, setDraft] = useState("");
   const [pendingQuery, setPendingQuery] = useState<string | null>(null);
   const [search, setSearch] = useState<ExploreResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<SearchError | null>(null);
   const [count, setCount] = useState(10);
   const [previous, setPrevious] = useState<ExploreResponse | null>(null);
   const [resultsMinHeight, setResultsMinHeight] = useState(0);
@@ -50,6 +51,7 @@ export default function ExploreSearch() {
   }, [search]);
 
   function showResults(next: ExploreResponse) {
+    setError(null);
     clearTimeout(transitionTimer.current);
     if (resultsBox.current) setResultsMinHeight(resultsBox.current.getBoundingClientRect().height);
     const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -66,7 +68,7 @@ export default function ExploreSearch() {
     const controller = new AbortController();
     active.current = controller;
     setDraft(query);
-    setError(null);
+    setError(current => current?.query === query ? current : null);
     const saved = catalog.current?.results.get(catalogKey(query));
     const cached = saved ? { query, results: saved, metrics: { serverMs: 0, evaluated: catalog.current!.results.size } } : recent.current.get(query);
     if (cached) {
@@ -75,6 +77,7 @@ export default function ExploreSearch() {
       return;
     }
     setPendingQuery(query);
+    let failureKind: SearchError["kind"] = "unavailable";
     try {
       const response = await fetch(API_URL, {
         method: "POST",
@@ -83,9 +86,11 @@ export default function ExploreSearch() {
         signal: controller.signal,
       });
       const data = await response.json().catch(() => null);
-      if (response.status === 429) throw new Error("Too many searches. Wait a moment and try again.");
-      if (!response.ok) throw new Error(data?.error || "Search didn’t finish. Please try again.");
-      if (!data || !Array.isArray(data.results) || !data.metrics) throw new Error("Search didn’t finish. Please try again.");
+      if (response.status === 429) {
+        failureKind = "rate_limit";
+        throw new Error("Search rate limited");
+      }
+      if (!response.ok || !data || !Array.isArray(data.results) || !data.metrics) throw new Error("Search unavailable");
       if (active.current !== controller) return;
       const version = response.headers.get("X-Explore-Version");
       if (version && catalog.current && version !== catalog.current.version) {
@@ -96,11 +101,9 @@ export default function ExploreSearch() {
       recent.current.set(query, next);
       if (recent.current.size > 100) recent.current.delete(recent.current.keys().next().value!);
       showResults(next);
-    } catch (caught) {
+    } catch {
       if (controller.signal.aborted || active.current !== controller) return;
-      setError(caught instanceof Error && !(caught instanceof TypeError)
-        ? caught.message
-        : "Search didn’t finish. Please try again.");
+      setError({ query, kind: navigator.onLine === false ? "offline" : failureKind });
     } finally {
       if (active.current === controller) setPendingQuery(null);
     }
@@ -116,7 +119,7 @@ export default function ExploreSearch() {
             name="query"
             type="text"
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={(event) => { setDraft(event.target.value); setError(null); }}
             onKeyDown={(event) => {
               if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return;
               event.preventDefault();
@@ -145,7 +148,7 @@ export default function ExploreSearch() {
                 <span aria-hidden="true" className="h-3 w-3 shrink-0 rounded-full border border-gold/25 border-t-gold motion-safe:animate-spin" />
                 <span className="min-w-0 truncate">Finding connections for “{pendingQuery}”…</span>
               </>
-            ) : search ? (
+            ) : search && !error ? (
               <span className="sr-only">{Math.min(count, search.results.length)} results for “{search.query}”</span>
             ) : null}
           </div>
@@ -153,10 +156,30 @@ export default function ExploreSearch() {
         </div>
       </form>
 
-      {error && <p role="alert" className="mt-4 text-oxblood">{error}</p>}
+      {error && (
+        <div className="mt-4 flex flex-col gap-3 border border-rule bg-paper-deep/40 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div role="alert" className="min-w-0 break-words">
+            <p>We couldn’t finish the search for “{error.query}”.</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              {error.kind === "offline" ? "Check your connection, then try again."
+                : error.kind === "rate_limit" ? "Please wait a moment before trying again."
+                : "Please try again in a moment."}
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={pendingQuery !== null}
+            onClick={() => void explore(error.query)}
+            className={`min-h-11 min-w-32 shrink-0 self-start cursor-pointer border border-gold/40 bg-paper px-4 text-sm text-gold transition-colors duration-200 ease-in-out enabled:hover:border-gold enabled:hover:bg-gold/10 disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none sm:self-auto ${focus}`}
+          >
+            {pendingQuery === error.query ? "Trying again…" : "Try again"}
+          </button>
+        </div>
+      )}
 
       {search && (
         <section aria-label={`Results for ${search.query}`} aria-busy={pendingQuery !== null} className="mt-4">
+          {error && <p className="mb-3 text-xs text-ink-soft">Previous results for “{search.query}”</p>}
           {search.results.length === 0 ? (
             <p className="mt-6 text-ink-soft">No strings to explore yet.</p>
           ) : (
