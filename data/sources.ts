@@ -275,12 +275,12 @@ const handSources: Source[] = [
     kind: "reference",
   },
   {
-    id: "icann-close",
+    id: "icann-confirmed",
     outlet: "ICANN",
     title:
-      "ICANN 2026 Round Closes with More Than 1,600 New gTLD Applications",
-    url: "https://www.icann.org/en/announcements/details/icann-2026-round-closes-with-more-than-1600-new-gtld-applications-13-08-2026-en",
-    date: "2026-08-13",
+      "ICANN Confirms Number of Applications Proceeding in the 2026 Round",
+    url: "https://www.icann.org/en/announcements/details/icann-confirms-number-of-applications-proceeding-in-the-2026-round-22-09-2026-en",
+    date: "2026-09-22",
     kind: "reference",
   },
   {

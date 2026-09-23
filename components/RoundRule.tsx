@@ -20,7 +20,7 @@ const OTHERS = "ink-rings";
 
 export type RoundShare = { slug: string; name: string; count: number };
 export type RoundData = {
-  received: number; // ICANN's figure, "more than"
+  received: number; // ICANN's figure: applications proceeding, fee paid
   shares: RoundShare[]; // largest first
   cite?: { n: number; outlet: string; date: string };
 };
@@ -68,12 +68,22 @@ export default function RoundRule({
     left += b.count;
     return block;
   });
-  const ticks = Array.from({ length: 17 }, (_, i) => ({
-    at: `${i * 6.25}%`,
-    major: i % 4 === 0,
-    value: i * 100,
-  }));
-  const summary = `${fmt(disclosed)} disclosed of ${fmt(received)}+ applications: ${blocks
+  // every hundred up to the figure, numbered every four hundred, and the
+  // figure itself closes the axis. A hundred within two hundred of the figure
+  // keeps its mark but gives up its number, or the two would collide.
+  const hundreds = Math.floor(received / 100);
+  const ticks = [
+    ...Array.from({ length: hundreds + 1 }, (_, i) => ({
+      at: at(i * 100),
+      major: i % 4 === 0 && (received - i * 100 >= 200 || i * 100 === received),
+      value: i * 100,
+      last: i * 100 === received,
+    })),
+    ...(hundreds * 100 < received
+      ? [{ at: at(received), major: true, value: received, last: true }]
+      : []),
+  ];
+  const summary = `${fmt(disclosed)} disclosed of ${fmt(received)} applications: ${blocks
     .map((b) => `${b.label} ${fmt(b.count)}`)
     .join(", ")}. ${undisclosed}% undisclosed.`;
   const filtering = active !== "all";
@@ -85,7 +95,7 @@ export default function RoundRule({
       {/* ICANN's own figure with its cite, then how much of it is self-revealed:
           the caption the gauge is read against */}
       <p className="serif italic text-base text-ink">
-        ICANN received more than {fmt(received)} applications.
+        ICANN confirmed {fmt(received)} applications proceeding.
         {cite && (
           <sup className="group relative src ml-0.5 text-[9px] not-italic">
             <Tip>
@@ -140,7 +150,7 @@ export default function RoundRule({
           {undisclosed}% undisclosed
         </span>
       </div>
-      {/* the graduations, every hundred, numbered every four hundred */}
+      {/* the graduations, every hundred, numbered every four hundred, the figure last */}
       <div aria-hidden="true" className="relative h-6">
         {ticks.map((t, i) => (
           <span key={t.value}>
@@ -151,11 +161,11 @@ export default function RoundRule({
             {t.major && (
               <span
                 className={`label !text-[10px] text-ink-soft absolute top-[9px] ${
-                  i === 0 ? "" : i === 16 ? "-translate-x-full" : "-translate-x-1/2"
+                  i === 0 ? "" : t.last ? "-translate-x-full" : "-translate-x-1/2"
                 }`}
                 style={{ left: t.at }}
               >
-                {i === 16 ? `${fmt(t.value)}+` : fmt(t.value)}
+                {fmt(t.value)}
               </span>
             )}
           </span>
