@@ -115,25 +115,32 @@ export default function ExploreSearch() {
       <form onSubmit={(event) => { event.preventDefault(); void explore(draft); }} role="search">
         <label htmlFor="explore-query" className="sr-only">Word or phrase</label>
         <div className="flex border border-ink transition-colors duration-200 ease-in-out focus-within:border-gold motion-reduce:transition-none">
-          <input
-            id="explore-query"
-            name="query"
-            type="text"
-            value={draft}
-            onChange={(event) => { setDraft(event.target.value); setError(null); }}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return;
-              event.preventDefault();
-              if (!event.shiftKey) {
-                event.currentTarget.form?.requestSubmit();
-              }
-            }}
-            maxLength={MAX_QUERY_LENGTH}
-            placeholder="skiing, quantum mechanics, love…"
-            autoComplete="off"
-            enterKeyHint="search"
-            className="h-14 min-w-0 flex-1 bg-transparent px-4 text-xl placeholder:text-ink-soft/60 focus:outline-none sm:h-16 sm:px-5 sm:text-2xl"
-          />
+          <div className="relative min-w-0 flex-1">
+            <input
+              id="explore-query"
+              name="query"
+              type="text"
+              value={draft}
+              onChange={(event) => { setDraft(event.target.value); setError(null); }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return;
+                event.preventDefault();
+                if (!event.shiftKey) {
+                  event.currentTarget.form?.requestSubmit();
+                }
+              }}
+              maxLength={MAX_QUERY_LENGTH}
+              placeholder="skiing, quantum mechanics, love…"
+              autoComplete="off"
+              enterKeyHint="search"
+              className="h-14 w-full min-w-0 bg-transparent px-4 text-xl placeholder:text-transparent focus:outline-none sm:h-16 sm:px-5 sm:text-2xl sm:placeholder:text-ink-soft/60"
+            />
+            {!draft && (
+              <span aria-hidden="true" className="pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 text-base leading-tight text-ink-soft/60 sm:hidden">
+                skiing, quantum mechanics, love…
+              </span>
+            )}
+          </div>
           <button
             type="submit"
             disabled={!draft.trim() || pendingQuery === draft.trim()}
