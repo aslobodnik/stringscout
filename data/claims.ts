@@ -254,6 +254,10 @@ const intents = [
   ...expand(["chain"], "3dns", ["di"], "intent"),
 ];
 
+// INWX Domains GmbH — .crew, via Domain Name Wire (only record of the
+// reveal).
+const inwx = expand(["crew"], "inwx", ["dnw-inwx"]);
+
 // A hand-written claim and a scraped one can land on the same string, the same
 // applicant and the same URL — one fact recorded twice. Two claims citing the
 // same string and applicant from *different* sources are two corroborations
@@ -299,6 +303,7 @@ export const claims: Claim[] = dedupe([
   ...shortdot,
   ...vantnexus,
   ...aruba,
+  ...inwx,
   ...intents,
   ...announcedClaims,
 ]);
