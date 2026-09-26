@@ -307,6 +307,14 @@ const handSources: Source[] = [
     date: "2026-09-04",
     kind: "applicant",
   },
+  {
+    id: "ilc",
+    outlet: "Internet Land and Cattle, LLC",
+    title: "ilc.llc — .human, .agent and .robot applied for in ICANN's 2026 round",
+    url: "https://ilc.llc/",
+    date: "2026-09-19",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and
