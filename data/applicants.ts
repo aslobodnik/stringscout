@@ -358,6 +358,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["dotfurry-update"],
   },
+  {
+    slug: "ilc",
+    status: "disclosed",
+    name: "Internet Land and Cattle, LLC",
+    backers: "People undisclosed",
+    feesPaid: null,
+    revealedOn: "2026-09-19",
+    note: null,
+    sourceIds: ["ilc"],
+  },
 ];
 
 export const applicants: Applicant[] = [

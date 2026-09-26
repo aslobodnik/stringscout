@@ -262,6 +262,10 @@ export const claims: Claim[] = dedupe([
     ["dnw-aruba"]
   ),
 
+  // Internet Land and Cattle, LLC — .human, .agent and .robot, stated as
+  // applied on its own site. Primary/replacement split not stated.
+  ...expand(["human", "agent", "robot"], "ilc", ["ilc"]),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.
