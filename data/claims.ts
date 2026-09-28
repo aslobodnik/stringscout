@@ -56,14 +56,15 @@ export const claims: Claim[] = dedupe([
   // TLD1 LLC — four applied-for strings per its site.
   ...expand(["bewell", "etc", "joinus", "whatsnew"], "tld1", ["tld1"]),
 
-  // internet.Best — ten applied-for strings per internet.best/icann2026.
+  // internet.Best — ten applied-for strings, per internet.best/icann2026
+  // and its CEO's own LinkedIn post naming the same ten.
   ...expand(
     [
       "prompt", "chatbot", "answer", "ask", "skills",
       "creator", "socialmedia", "influencer", "content", "streamer",
     ],
     "ibest",
-    ["ibest"]
+    ["ibest", "internetbest"]
   ),
 
   // Endpoint Domains — eight strings, stated as primary applications on its site.
@@ -265,17 +266,6 @@ export const claims: Claim[] = dedupe([
   // Internet Land and Cattle, LLC — .human, .agent and .robot, stated as
   // applied on its own site. Primary/replacement split not stated.
   ...expand(["human", "agent", "robot"], "ilc", ["ilc"]),
-
-  // internet.Best — 10 strings, its CEO's own LinkedIn post listing its
-  // applications for ICANN's 2026 round. Primary/replacement split not stated.
-  ...expand(
-    [
-      "answer", "ask", "chatbot", "content", "creator", "influencer",
-      "prompt", "skills", "socialmedia", "streamer",
-    ],
-    "internetbest",
-    ["internetbest"]
-  ),
 
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
