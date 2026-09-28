@@ -368,6 +368,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["ilc"],
   },
+  {
+    slug: "internetbest",
+    status: "disclosed",
+    name: "internet.Best",
+    backers: "Cyril Frémont, Founder & CEO",
+    feesPaid: null,
+    revealedOn: "2026-07-06",
+    note: null,
+    sourceIds: ["internetbest"],
+  },
 ];
 
 export const applicants: Applicant[] = [
