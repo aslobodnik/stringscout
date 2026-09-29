@@ -67,6 +67,20 @@ describe("claims and applicants", () => {
     expect(orphans).toEqual([]);
   });
 
+  it("lists each applicant once, by slug and by name", () => {
+    // A second slug for a name already listed counts its strings twice.
+    const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+    for (const key of ["slug", "name"] as const) {
+      const seen = new Map<string, string[]>();
+      for (const a of applicants) {
+        const k = norm(a[key]);
+        seen.set(k, [...(seen.get(k) ?? []), a.slug]);
+      }
+      for (const [k, slugs] of seen)
+        expect(slugs, `${key} "${k}" listed under ${slugs.join(", ")}`).toHaveLength(1);
+    }
+  });
+
   it("records one string, applicant and source once", () => {
     const seen = new Map<string, number>();
     for (const c of claims) {

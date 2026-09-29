@@ -25,6 +25,7 @@ export const ALIASES: Record<string, string> = {
   "freename.io": "freename",
   "3dns": "3dns",
   "human-centered computing foundation": "hccf",
+  shortdot: "shortdot",
 };
 
 // Scraped source URL -> the hand-written source that already cites it. Upstream
