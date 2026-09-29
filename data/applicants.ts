@@ -42,7 +42,7 @@ export const handApplicants: Applicant[] = [
     name: "internet.Best",
     backers: "Cyril Frémont, Founder & CEO",
     feesPaid: null,
-    revealedOn: "2026-07-06",
+    revealedOn: "2026-07-05",
     note: null,
     sourceIds: ["ibest", "internetbest"],
   },

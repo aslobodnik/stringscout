@@ -321,7 +321,7 @@ const handSources: Source[] = [
     title:
       "Cyril Frémont, Founder & CEO — LinkedIn post on internet.Best's 10 applications for ICANN's 2026 round",
     url: "https://www.linkedin.com/feed/update/urn:li:ugcPost:7479559642520457216/",
-    date: "2026-07-06",
+    date: "2026-07-05",
     kind: "applicant",
   },
 ];
