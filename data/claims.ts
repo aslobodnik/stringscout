@@ -266,17 +266,6 @@ export const claims: Claim[] = dedupe([
   // applied on its own site. Primary/replacement split not stated.
   ...expand(["human", "agent", "robot"], "ilc", ["ilc"]),
 
-  // internet.Best — 10 strings, its CEO's own LinkedIn post listing its
-  // applications for ICANN's 2026 round. Primary/replacement split not stated.
-  ...expand(
-    [
-      "answer", "ask", "chatbot", "content", "creator", "influencer",
-      "prompt", "skills", "socialmedia", "streamer",
-    ],
-    "internetbest",
-    ["internetbest"]
-  ),
-
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.
