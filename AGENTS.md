@@ -21,6 +21,10 @@ and counted nowhere else. A withdrawal the applicant records after the last
 scrape goes in `data/withdrawn.ts`, keyed by the lead name upstream prints, and is
 laid over the scraped row.
 
+## Interface
+
+Read `docs/style-guide.md` before adding or changing any page, table or control. A new surface starts as a copy of the closest existing one; `components/StringsTable.tsx` is the reference for anything tabular.
+
 ## House rules
 
 These are not stylistic preferences.
