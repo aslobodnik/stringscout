@@ -409,11 +409,9 @@ input[type="search"]::-webkit-search-cancel-button {
   stroke: var(--oxblood);
   stroke-width: 1.15;
   stroke-linecap: round;
-  opacity: var(--tally-ink, 1);
   transition:
     stroke 300ms ease-in-out,
-    stroke-width 300ms ease-in-out,
-    opacity 300ms ease-in-out;
+    stroke-width 300ms ease-in-out;
 }
 .tally-reach {
   fill: none;
@@ -434,7 +432,6 @@ tr:has([data-applicant="8"]:hover) [data-stroke="8"] .tally-ink-line,
 tr:has([data-applicant="9"]:hover) [data-stroke="9"] .tally-ink-line {
   stroke: var(--gold);
   stroke-width: 1.6;
-  opacity: 1;
 }
 tr:has([data-stroke="0"]:hover) [data-applicant="0"],
 tr:has([data-stroke="1"]:hover) [data-applicant="1"],

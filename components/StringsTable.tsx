@@ -737,7 +737,7 @@ export default function StringsTable({
                   <td className="py-2 whitespace-nowrap text-right">
                     {r.overlap && (
                       <>
-                        <Tally count={r.count} delay={Math.min(vi * 22, 500) + 120} seed={r.tld} />
+                        <Tally count={r.count} delay={Math.min(vi * 22, 500) + 120} />
                         <span className="sr-only">{r.count} applicants</span>
                       </>
                     )}
