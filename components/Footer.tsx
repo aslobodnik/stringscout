@@ -1,3 +1,7 @@
+import ExploreFooterNote from "./ExploreFooterNote";
+import { exploreRegistrations } from "@/data/existing-tlds/registrations";
+import { formatDate } from "@/lib/format";
+
 const REPO = "https://github.com/aslobodnik/stringscout";
 const X_PROFILE = "https://x.com/alexslobodnik";
 
@@ -46,8 +50,13 @@ function IconLink({
 export default function Footer() {
   return (
     <footer className="mt-auto double-rule pt-5 text-sm text-ink-soft flex flex-wrap items-center gap-x-6 gap-y-3">
-      <p className="max-w-xl">
-        Not affiliated with ICANN.
+      <p>
+        <ExploreFooterNote fallback="Not affiliated with ICANN.">
+          Registration counts provided by {" "}
+          <a href={exploreRegistrations.source} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold">{exploreRegistrations.sourceLabel}</a>
+          {" as of "}{formatDate(exploreRegistrations.month)}
+          {" · "}<a href={exploreRegistrations.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold">{exploreRegistrations.license}</a>
+        </ExploreFooterNote>
       </p>
       <div className="flex items-center gap-3 ml-auto">
         <span className="label !text-[10px] !tracking-[0.14em]">Developed by</span>

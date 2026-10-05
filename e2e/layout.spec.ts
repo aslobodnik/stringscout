@@ -26,7 +26,8 @@ for (const path of PAGES) {
           .map((e) => `${e.tagName.toLowerCase()} "${(e.textContent ?? "").trim().slice(0, 40)}"`);
         return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth, wide };
       });
-      expect(scrollWidth, `page is wider than the window; past the edge: ${wide.join("; ")}`).toBe(clientWidth);
+      // A reserved scrollbar gutter can make scrollWidth smaller than clientWidth.
+      expect(scrollWidth, `page is wider than the window; past the edge: ${wide.join("; ")}`).toBeLessThanOrEqual(clientWidth);
     });
   }
 }

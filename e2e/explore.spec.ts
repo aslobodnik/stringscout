@@ -13,6 +13,10 @@ function response(query: string): ExploreResponse {
   };
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/catalog", route => route.fulfill({ status: 503, json: { error: "Unavailable" } }));
+});
+
 test("Enter shows 10 results, caps at 25, and keeps diagnostics out of the page", async ({ page }) => {
   const queries: string[] = [];
   await page.route("**/api/explore", async (route) => {
@@ -31,9 +35,9 @@ test("Enter shows 10 results, caps at 25, and keeps diagnostics out of the page"
   const pills = page.getByRole("list", { name: "Related strings" }).getByRole("button");
   await expect(pills).toHaveCount(10);
   await expect(page.getByRole("combobox")).toHaveCount(0);
-  await page.getByRole("button", { name: "Show 25 strings", exact: true }).click();
+  await page.getByRole("button", { name: "Show 15 more", exact: true }).click();
   await expect(pills).toHaveCount(25);
-  await expect(page.getByRole("button", { name: "Show 25 strings", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Show fewer", exact: true })).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByRole("table")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Show details", exact: true })).toHaveCount(0);
   await expect(page.getByRole("main")).not.toContainText(/score|latency|server search|round trip|gold rule|model|provider|\d+ ms/i);
@@ -55,7 +59,7 @@ test("errors can be retried and a newer query wins over an older response", asyn
   const input = page.getByRole("textbox", { name: "Word or phrase" });
   await input.fill("fail");
   await input.press("Enter");
-  await expect(page.getByRole("main").getByRole("alert")).toContainText("Please try again");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("Oops, that didn’t work. Try again.");
   await input.fill("slow");
   await input.press("Enter");
   await expect(page.getByRole("status")).toContainText("Finding connections");
@@ -86,7 +90,7 @@ for (const width of [375, 1280]) {
     await page.goto("/explore");
     await page.getByRole("textbox", { name: "Word or phrase" }).fill("a sentence about a quiet mountain after fresh snow");
     await page.getByRole("button", { name: "Explore", exact: false }).click();
-    await page.getByRole("button", { name: "Show 25 strings", exact: true }).click();
+    await page.getByRole("button", { name: "Show 15 more", exact: true }).click();
     await expect(page.getByRole("list", { name: "Related strings" }).getByRole("button")).toHaveCount(25);
     const overflow = await page.evaluate(() => [...document.querySelectorAll("main *, nav")].filter((element) => {
       const rect = element.getBoundingClientRect();
@@ -95,3 +99,90 @@ for (const width of [375, 1280]) {
     expect(overflow).toEqual([]);
   });
 }
+
+test("scope switch keeps results and expansion state without fetching again", async ({ page }) => {
+  let calls = 0;
+  const newly = Array.from({ length: 25 }, (_, index) => ({ tld: `new${index}`, score: 0.8 }));
+  const existing = { tld: "web", score: 0.9, existing: true, availability: "coming-soon" };
+  await page.route("**/api/explore", async route => {
+    calls++;
+    const query = route.request().postDataJSON().query;
+    await route.fulfill({ json: { ...response(query), results: [existing, ...newly].slice(0, 25),
+      resultSets: { new: newly, existing: [existing] },
+    } });
+  });
+  await page.goto("/explore");
+  const modes = page.getByRole("radiogroup", { name: "String types" });
+  await expect(modes.getByRole("radio")).toHaveCount(3);
+  await expect(modes.getByRole("radio", { name: "New", exact: true })).toBeChecked();
+  await page.getByRole("textbox", { name: "Word or phrase" }).fill("mountain");
+  await page.getByRole("button", { name: "Explore", exact: true }).click();
+  const pills = page.getByRole("list", { name: "Related strings" }).getByRole("button");
+  await expect(pills).toHaveCount(10);
+  await expect(pills.first()).toContainText(".new0");
+  await page.getByRole("button", { name: "Show 15 more" }).click();
+  await modes.getByText("Both", { exact: true }).click();
+  await expect(pills).toHaveCount(25);
+  await expect(pills.first()).toContainText(".web");
+  await expect(page.getByRole("button", { name: "Show fewer" })).toHaveAttribute("aria-expanded", "true");
+  await modes.getByRole("radio", { name: "Both", exact: true }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(modes.getByRole("radio", { name: "Existing", exact: true })).toBeChecked();
+  await expect(pills).toHaveCount(1);
+  await expect(pills.first()).toContainText("Coming soon");
+  await modes.getByText("New", { exact: true }).click();
+  await expect(pills).toHaveCount(25);
+  await page.getByRole("button", { name: "Show fewer" }).click();
+  await modes.getByText("Both", { exact: true }).click();
+  await expect(pills).toHaveCount(10);
+  await pills.first().click();
+  await expect(page.getByRole("status")).toContainText("results for “web”");
+  await expect(modes.getByRole("radio", { name: "Both", exact: true })).toBeChecked();
+  await expect(pills).toHaveCount(10);
+  expect(calls).toBe(2);
+});
+
+test("preloaded category rankings include results below the mixed top list", async ({ page }) => {
+  let calls = 0;
+  const candidates = Array.from({ length: 27 }, (_, index) => ({ tld: index === 0 ? "snow" : index === 26 ? "web" : `string${index}`, ...(index === 26 ? { existing: true, availability: "coming-soon" } : {}) }));
+  await page.route("**/api/catalog", route => route.fulfill({ json: {
+    version: "test", candidates,
+    rankings: candidates.map(() => [[26, 0.95], ...Array.from({ length: 24 }, (_, index) => [index, 0.9])]),
+    rankingsByKind: {
+      new: candidates.map(() => Array.from({ length: 25 }, (_, index) => [index, 0.9])),
+      existing: candidates.map(() => [[26, 0.8]]),
+    },
+  } }));
+  await page.route("**/api/explore", route => { calls++; return route.fulfill({ json: response("snow") }); });
+  const catalogResponse = page.waitForResponse("**/api/catalog");
+  await page.goto("/explore");
+  await catalogResponse;
+  await page.getByRole("textbox", { name: "Word or phrase" }).fill("snow");
+  await page.getByRole("button", { name: "Explore", exact: true }).click();
+  await expect(page.getByRole("list", { name: "Related strings" }).getByRole("button")).toHaveCount(10);
+  await page.getByRole("radiogroup").getByText("Existing", { exact: true }).click();
+  await expect(page.getByRole("list", { name: "Related strings" }).getByRole("button")).toHaveCount(1);
+  await expect(page.getByRole("list", { name: "Related strings" })).toContainText(".web");
+  await expect(page.getByRole("list", { name: "Related strings" })).toContainText("Coming soon");
+  expect(calls).toBe(0);
+});
+
+test("filter changes while a search is pending apply to its results", async ({ page }) => {
+  let release: (() => void) | undefined;
+  const pending = new Promise<void>(resolve => { release = resolve; });
+  await page.route("**/api/explore", async route => {
+    await pending;
+    await route.fulfill({ json: { ...response("snow"), results: [{ tld: "mountain", score: 0.9 }, { tld: "web", score: 0.8, existing: true, availability: "coming-soon" }], resultSets: {
+      new: [{ tld: "mountain", score: 0.9 }],
+      existing: [{ tld: "web", score: 0.8, existing: true, availability: "coming-soon" }],
+    } } });
+  });
+  await page.goto("/explore");
+  await page.getByRole("textbox", { name: "Word or phrase" }).fill("snow");
+  await page.getByRole("button", { name: "Explore", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Finding connections");
+  await page.getByRole("radiogroup").getByText("Existing", { exact: true }).click();
+  release?.();
+  await expect(page.getByRole("list", { name: "Related strings" })).toContainText(".web");
+  await expect(page.getByRole("list", { name: "Related strings" })).not.toContainText(".mountain");
+});

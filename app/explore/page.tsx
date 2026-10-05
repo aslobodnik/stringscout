@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { TopBar } from "@/components/PageHeader";
 import ExploreSearch from "@/components/ExploreSearch";
+import { exploreRegistrations } from "@/data/existing-tlds/registrations";
 
 const shareTitle = "Explore Related Strings — Stringscout";
 const description = "Type a word or phrase. Find related strings in Stringscout’s catalog.";
@@ -36,7 +37,7 @@ export default function ExplorePage() {
             Type a word or phrase. Find related strings.
           </h2>
         </header>
-        <ExploreSearch />
+        <ExploreSearch registrations={exploreRegistrations} />
       </main>
     </>
   );

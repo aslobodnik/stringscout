@@ -1,0 +1,6063 @@
+{
+  "checkedAt": "2026-10-05",
+  "threshold": null,
+  "measure": "Registry-reported registered domains, June 2026. Daily zone counts are separate. Counts provide context and do not limit inclusion.",
+  "attribution": "Data: nTLDData (ntlddata.com), CC-BY-4.0",
+  "source": "https://ntlddata.com/api",
+  "summary": {
+    "proposed": 604,
+    "gtldsAtLeast500": 571,
+    "gtldsAtLeast10000": 283,
+    "countryCodesWithoutComparableCount": 7,
+    "upcomingWithoutReportedCount": 1,
+    "gtldsBelow500": 25
+  },
+  "proposed": [
+    {
+      "tld": "abogado",
+      "ascii": "abogado",
+      "alreadyInExplore": false,
+      "registeredDomains": 588,
+      "reportingMonth": 202606,
+      "zoneDomains": 562,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/abogado"
+    },
+    {
+      "tld": "abudhabi",
+      "ascii": "abudhabi",
+      "alreadyInExplore": false,
+      "registeredDomains": 924,
+      "reportingMonth": 202606,
+      "zoneDomains": 926,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/abudhabi"
+    },
+    {
+      "tld": "academy",
+      "ascii": "academy",
+      "alreadyInExplore": false,
+      "registeredDomains": 66504,
+      "reportingMonth": 202606,
+      "zoneDomains": 64012,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/academy"
+    },
+    {
+      "tld": "accountant",
+      "ascii": "accountant",
+      "alreadyInExplore": false,
+      "registeredDomains": 1457,
+      "reportingMonth": 202606,
+      "zoneDomains": 1472,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/accountant"
+    },
+    {
+      "tld": "accountants",
+      "ascii": "accountants",
+      "alreadyInExplore": false,
+      "registeredDomains": 1804,
+      "reportingMonth": 202606,
+      "zoneDomains": 1618,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/accountants"
+    },
+    {
+      "tld": "actor",
+      "ascii": "actor",
+      "alreadyInExplore": false,
+      "registeredDomains": 3612,
+      "reportingMonth": 202606,
+      "zoneDomains": 3446,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/actor"
+    },
+    {
+      "tld": "adult",
+      "ascii": "adult",
+      "alreadyInExplore": false,
+      "registeredDomains": 6788,
+      "reportingMonth": 202606,
+      "zoneDomains": 6126,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/adult"
+    },
+    {
+      "tld": "aero",
+      "ascii": "aero",
+      "alreadyInExplore": false,
+      "registeredDomains": 14024,
+      "reportingMonth": 202606,
+      "zoneDomains": 13769,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/aero"
+    },
+    {
+      "tld": "africa",
+      "ascii": "africa",
+      "alreadyInExplore": false,
+      "registeredDomains": 59517,
+      "reportingMonth": 202606,
+      "zoneDomains": 61304,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/africa"
+    },
+    {
+      "tld": "agency",
+      "ascii": "agency",
+      "alreadyInExplore": false,
+      "registeredDomains": 127849,
+      "reportingMonth": 202606,
+      "zoneDomains": 121951,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/agency"
+    },
+    {
+      "tld": "ai",
+      "ascii": "ai",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "airforce",
+      "ascii": "airforce",
+      "alreadyInExplore": false,
+      "registeredDomains": 959,
+      "reportingMonth": 202606,
+      "zoneDomains": 735,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/airforce"
+    },
+    {
+      "tld": "alsace",
+      "ascii": "alsace",
+      "alreadyInExplore": false,
+      "registeredDomains": 2322,
+      "reportingMonth": 202606,
+      "zoneDomains": 2305,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/alsace"
+    },
+    {
+      "tld": "amsterdam",
+      "ascii": "amsterdam",
+      "alreadyInExplore": false,
+      "registeredDomains": 18334,
+      "reportingMonth": 202606,
+      "zoneDomains": 17687,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/amsterdam"
+    },
+    {
+      "tld": "apartments",
+      "ascii": "apartments",
+      "alreadyInExplore": false,
+      "registeredDomains": 4463,
+      "reportingMonth": 202606,
+      "zoneDomains": 4045,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/apartments"
+    },
+    {
+      "tld": "app",
+      "ascii": "app",
+      "alreadyInExplore": false,
+      "registeredDomains": 1478674,
+      "reportingMonth": 202606,
+      "zoneDomains": 1696669,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/app"
+    },
+    {
+      "tld": "archi",
+      "ascii": "archi",
+      "alreadyInExplore": false,
+      "registeredDomains": 4113,
+      "reportingMonth": 202606,
+      "zoneDomains": 3970,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/archi"
+    },
+    {
+      "tld": "army",
+      "ascii": "army",
+      "alreadyInExplore": false,
+      "registeredDomains": 6661,
+      "reportingMonth": 202606,
+      "zoneDomains": 5653,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/army"
+    },
+    {
+      "tld": "art",
+      "ascii": "art",
+      "alreadyInExplore": false,
+      "registeredDomains": 315128,
+      "reportingMonth": 202606,
+      "zoneDomains": 307659,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/art"
+    },
+    {
+      "tld": "asia",
+      "ascii": "asia",
+      "alreadyInExplore": false,
+      "registeredDomains": 631116,
+      "reportingMonth": 202606,
+      "zoneDomains": 741808,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/asia"
+    },
+    {
+      "tld": "associates",
+      "ascii": "associates",
+      "alreadyInExplore": false,
+      "registeredDomains": 4131,
+      "reportingMonth": 202606,
+      "zoneDomains": 3736,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/associates"
+    },
+    {
+      "tld": "attorney",
+      "ascii": "attorney",
+      "alreadyInExplore": false,
+      "registeredDomains": 4871,
+      "reportingMonth": 202606,
+      "zoneDomains": 4661,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/attorney"
+    },
+    {
+      "tld": "auction",
+      "ascii": "auction",
+      "alreadyInExplore": false,
+      "registeredDomains": 10076,
+      "reportingMonth": 202606,
+      "zoneDomains": 5660,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/auction"
+    },
+    {
+      "tld": "audio",
+      "ascii": "audio",
+      "alreadyInExplore": false,
+      "registeredDomains": 5974,
+      "reportingMonth": 202606,
+      "zoneDomains": 5644,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/audio"
+    },
+    {
+      "tld": "auto",
+      "ascii": "auto",
+      "alreadyInExplore": false,
+      "registeredDomains": 601,
+      "reportingMonth": 202606,
+      "zoneDomains": 538,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/auto"
+    },
+    {
+      "tld": "autos",
+      "ascii": "autos",
+      "alreadyInExplore": false,
+      "registeredDomains": 289612,
+      "reportingMonth": 202606,
+      "zoneDomains": 182134,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/autos"
+    },
+    {
+      "tld": "baby",
+      "ascii": "baby",
+      "alreadyInExplore": false,
+      "registeredDomains": 56317,
+      "reportingMonth": 202606,
+      "zoneDomains": 53419,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/baby"
+    },
+    {
+      "tld": "band",
+      "ascii": "band",
+      "alreadyInExplore": false,
+      "registeredDomains": 20971,
+      "reportingMonth": 202606,
+      "zoneDomains": 20150,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/band"
+    },
+    {
+      "tld": "bank",
+      "ascii": "bank",
+      "alreadyInExplore": false,
+      "registeredDomains": 4183,
+      "reportingMonth": 202606,
+      "zoneDomains": 2343,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bank"
+    },
+    {
+      "tld": "bar",
+      "ascii": "bar",
+      "alreadyInExplore": false,
+      "registeredDomains": 44834,
+      "reportingMonth": 202606,
+      "zoneDomains": 43747,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bar"
+    },
+    {
+      "tld": "barcelona",
+      "ascii": "barcelona",
+      "alreadyInExplore": false,
+      "registeredDomains": 4652,
+      "reportingMonth": 202606,
+      "zoneDomains": 4580,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/barcelona"
+    },
+    {
+      "tld": "bargains",
+      "ascii": "bargains",
+      "alreadyInExplore": false,
+      "registeredDomains": 1996,
+      "reportingMonth": 202606,
+      "zoneDomains": 1567,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bargains"
+    },
+    {
+      "tld": "basketball",
+      "ascii": "basketball",
+      "alreadyInExplore": false,
+      "registeredDomains": 698,
+      "reportingMonth": 202606,
+      "zoneDomains": 688,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/basketball"
+    },
+    {
+      "tld": "bayern",
+      "ascii": "bayern",
+      "alreadyInExplore": false,
+      "registeredDomains": 29810,
+      "reportingMonth": 202606,
+      "zoneDomains": 27834,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bayern"
+    },
+    {
+      "tld": "beauty",
+      "ascii": "beauty",
+      "alreadyInExplore": false,
+      "registeredDomains": 88788,
+      "reportingMonth": 202606,
+      "zoneDomains": 75044,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/beauty"
+    },
+    {
+      "tld": "beer",
+      "ascii": "beer",
+      "alreadyInExplore": false,
+      "registeredDomains": 150521,
+      "reportingMonth": 202606,
+      "zoneDomains": 180134,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/beer"
+    },
+    {
+      "tld": "berlin",
+      "ascii": "berlin",
+      "alreadyInExplore": false,
+      "registeredDomains": 43431,
+      "reportingMonth": 202606,
+      "zoneDomains": 42622,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/berlin"
+    },
+    {
+      "tld": "best",
+      "ascii": "best",
+      "alreadyInExplore": false,
+      "registeredDomains": 54475,
+      "reportingMonth": 202606,
+      "zoneDomains": 76470,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/best"
+    },
+    {
+      "tld": "bet",
+      "ascii": "bet",
+      "alreadyInExplore": false,
+      "registeredDomains": 162220,
+      "reportingMonth": 202606,
+      "zoneDomains": 188657,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bet"
+    },
+    {
+      "tld": "bible",
+      "ascii": "bible",
+      "alreadyInExplore": false,
+      "registeredDomains": 1471,
+      "reportingMonth": 202606,
+      "zoneDomains": 1497,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bible"
+    },
+    {
+      "tld": "bid",
+      "ascii": "bid",
+      "alreadyInExplore": false,
+      "registeredDomains": 50782,
+      "reportingMonth": 202606,
+      "zoneDomains": 53576,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bid"
+    },
+    {
+      "tld": "bike",
+      "ascii": "bike",
+      "alreadyInExplore": false,
+      "registeredDomains": 17140,
+      "reportingMonth": 202606,
+      "zoneDomains": 15850,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bike"
+    },
+    {
+      "tld": "bingo",
+      "ascii": "bingo",
+      "alreadyInExplore": false,
+      "registeredDomains": 2764,
+      "reportingMonth": 202606,
+      "zoneDomains": 3861,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bingo"
+    },
+    {
+      "tld": "bio",
+      "ascii": "bio",
+      "alreadyInExplore": false,
+      "registeredDomains": 69202,
+      "reportingMonth": 202606,
+      "zoneDomains": 72218,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bio"
+    },
+    {
+      "tld": "biz",
+      "ascii": "biz",
+      "alreadyInExplore": false,
+      "registeredDomains": 1299510,
+      "reportingMonth": 202606,
+      "zoneDomains": 1301527,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/biz"
+    },
+    {
+      "tld": "black",
+      "ascii": "black",
+      "alreadyInExplore": false,
+      "registeredDomains": 6827,
+      "reportingMonth": 202606,
+      "zoneDomains": 5914,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/black"
+    },
+    {
+      "tld": "blackfriday",
+      "ascii": "blackfriday",
+      "alreadyInExplore": false,
+      "registeredDomains": 999,
+      "reportingMonth": 202606,
+      "zoneDomains": 877,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/blackfriday"
+    },
+    {
+      "tld": "blog",
+      "ascii": "blog",
+      "alreadyInExplore": false,
+      "registeredDomains": 389860,
+      "reportingMonth": 202606,
+      "zoneDomains": 367490,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/blog"
+    },
+    {
+      "tld": "blue",
+      "ascii": "blue",
+      "alreadyInExplore": false,
+      "registeredDomains": 16099,
+      "reportingMonth": 202606,
+      "zoneDomains": 14990,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/blue"
+    },
+    {
+      "tld": "boats",
+      "ascii": "boats",
+      "alreadyInExplore": false,
+      "registeredDomains": 72806,
+      "reportingMonth": 202606,
+      "zoneDomains": 35970,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/boats"
+    },
+    {
+      "tld": "bond",
+      "ascii": "bond",
+      "alreadyInExplore": false,
+      "registeredDomains": 1196241,
+      "reportingMonth": 202606,
+      "zoneDomains": 1175531,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bond"
+    },
+    {
+      "tld": "boo",
+      "ascii": "boo",
+      "alreadyInExplore": false,
+      "registeredDomains": 3620,
+      "reportingMonth": 202606,
+      "zoneDomains": 3700,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/boo"
+    },
+    {
+      "tld": "boston",
+      "ascii": "boston",
+      "alreadyInExplore": false,
+      "registeredDomains": 4433,
+      "reportingMonth": 202606,
+      "zoneDomains": 4299,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/boston"
+    },
+    {
+      "tld": "bot",
+      "ascii": "bot",
+      "alreadyInExplore": false,
+      "registeredDomains": 23099,
+      "reportingMonth": 202606,
+      "zoneDomains": 23557,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/bot"
+    },
+    {
+      "tld": "boutique",
+      "ascii": "boutique",
+      "alreadyInExplore": false,
+      "registeredDomains": 19132,
+      "reportingMonth": 202606,
+      "zoneDomains": 18755,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/boutique"
+    },
+    {
+      "tld": "box",
+      "ascii": "box",
+      "alreadyInExplore": false,
+      "registeredDomains": 2752,
+      "reportingMonth": 202606,
+      "zoneDomains": 1351,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/box"
+    },
+    {
+      "tld": "broker",
+      "ascii": "broker",
+      "alreadyInExplore": false,
+      "registeredDomains": 3322,
+      "reportingMonth": 202606,
+      "zoneDomains": 3180,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/broker"
+    },
+    {
+      "tld": "brussels",
+      "ascii": "brussels",
+      "alreadyInExplore": false,
+      "registeredDomains": 8102,
+      "reportingMonth": 202606,
+      "zoneDomains": 7878,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/brussels"
+    },
+    {
+      "tld": "build",
+      "ascii": "build",
+      "alreadyInExplore": false,
+      "registeredDomains": 11620,
+      "reportingMonth": 202606,
+      "zoneDomains": 12597,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/build"
+    },
+    {
+      "tld": "builders",
+      "ascii": "builders",
+      "alreadyInExplore": false,
+      "registeredDomains": 6770,
+      "reportingMonth": 202606,
+      "zoneDomains": 6153,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/builders"
+    },
+    {
+      "tld": "business",
+      "ascii": "business",
+      "alreadyInExplore": false,
+      "registeredDomains": 37863,
+      "reportingMonth": 202606,
+      "zoneDomains": 39965,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/business"
+    },
+    {
+      "tld": "buzz",
+      "ascii": "buzz",
+      "alreadyInExplore": false,
+      "registeredDomains": 219719,
+      "reportingMonth": 202606,
+      "zoneDomains": 260179,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/buzz"
+    },
+    {
+      "tld": "bzh",
+      "ascii": "bzh",
+      "alreadyInExplore": false,
+      "registeredDomains": 13817,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/bzh"
+    },
+    {
+      "tld": "cab",
+      "ascii": "cab",
+      "alreadyInExplore": false,
+      "registeredDomains": 4376,
+      "reportingMonth": 202606,
+      "zoneDomains": 3895,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cab"
+    },
+    {
+      "tld": "cafe",
+      "ascii": "cafe",
+      "alreadyInExplore": false,
+      "registeredDomains": 25445,
+      "reportingMonth": 202606,
+      "zoneDomains": 25223,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cafe"
+    },
+    {
+      "tld": "cam",
+      "ascii": "cam",
+      "alreadyInExplore": false,
+      "registeredDomains": 68225,
+      "reportingMonth": 202606,
+      "zoneDomains": 125042,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cam"
+    },
+    {
+      "tld": "camera",
+      "ascii": "camera",
+      "alreadyInExplore": false,
+      "registeredDomains": 3478,
+      "reportingMonth": 202606,
+      "zoneDomains": 3226,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/camera"
+    },
+    {
+      "tld": "camp",
+      "ascii": "camp",
+      "alreadyInExplore": false,
+      "registeredDomains": 8554,
+      "reportingMonth": 202606,
+      "zoneDomains": 7946,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/camp"
+    },
+    {
+      "tld": "capetown",
+      "ascii": "capetown",
+      "alreadyInExplore": false,
+      "registeredDomains": 3616,
+      "reportingMonth": 202606,
+      "zoneDomains": 3517,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/capetown"
+    },
+    {
+      "tld": "capital",
+      "ascii": "capital",
+      "alreadyInExplore": false,
+      "registeredDomains": 37064,
+      "reportingMonth": 202606,
+      "zoneDomains": 36930,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/capital"
+    },
+    {
+      "tld": "car",
+      "ascii": "car",
+      "alreadyInExplore": false,
+      "registeredDomains": 370,
+      "reportingMonth": 202606,
+      "zoneDomains": 305,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/car"
+    },
+    {
+      "tld": "cards",
+      "ascii": "cards",
+      "alreadyInExplore": false,
+      "registeredDomains": 14608,
+      "reportingMonth": 202606,
+      "zoneDomains": 14757,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cards"
+    },
+    {
+      "tld": "care",
+      "ascii": "care",
+      "alreadyInExplore": false,
+      "registeredDomains": 47784,
+      "reportingMonth": 202606,
+      "zoneDomains": 47775,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/care"
+    },
+    {
+      "tld": "career",
+      "ascii": "career",
+      "alreadyInExplore": false,
+      "registeredDomains": 1376,
+      "reportingMonth": 202606,
+      "zoneDomains": 1338,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/career"
+    },
+    {
+      "tld": "careers",
+      "ascii": "careers",
+      "alreadyInExplore": false,
+      "registeredDomains": 9847,
+      "reportingMonth": 202606,
+      "zoneDomains": 9334,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/careers"
+    },
+    {
+      "tld": "cars",
+      "ascii": "cars",
+      "alreadyInExplore": false,
+      "registeredDomains": 346,
+      "reportingMonth": 202606,
+      "zoneDomains": 294,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cars"
+    },
+    {
+      "tld": "casa",
+      "ascii": "casa",
+      "alreadyInExplore": false,
+      "registeredDomains": 75053,
+      "reportingMonth": 202606,
+      "zoneDomains": 100887,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/casa"
+    },
+    {
+      "tld": "case",
+      "ascii": "case",
+      "alreadyInExplore": false,
+      "registeredDomains": 45,
+      "reportingMonth": 202606,
+      "zoneDomains": 42,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/case"
+    },
+    {
+      "tld": "cash",
+      "ascii": "cash",
+      "alreadyInExplore": false,
+      "registeredDomains": 21107,
+      "reportingMonth": 202606,
+      "zoneDomains": 20970,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cash"
+    },
+    {
+      "tld": "casino",
+      "ascii": "casino",
+      "alreadyInExplore": false,
+      "registeredDomains": 99402,
+      "reportingMonth": 202606,
+      "zoneDomains": 108252,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/casino"
+    },
+    {
+      "tld": "cat",
+      "ascii": "cat",
+      "alreadyInExplore": false,
+      "registeredDomains": 118275,
+      "reportingMonth": 202606,
+      "zoneDomains": 117388,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cat"
+    },
+    {
+      "tld": "catering",
+      "ascii": "catering",
+      "alreadyInExplore": false,
+      "registeredDomains": 3290,
+      "reportingMonth": 202606,
+      "zoneDomains": 3008,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/catering"
+    },
+    {
+      "tld": "center",
+      "ascii": "center",
+      "alreadyInExplore": false,
+      "registeredDomains": 50275,
+      "reportingMonth": 202606,
+      "zoneDomains": 48567,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/center"
+    },
+    {
+      "tld": "ceo",
+      "ascii": "ceo",
+      "alreadyInExplore": false,
+      "registeredDomains": 10000,
+      "reportingMonth": 202606,
+      "zoneDomains": 8933,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ceo"
+    },
+    {
+      "tld": "cfd",
+      "ascii": "cfd",
+      "alreadyInExplore": false,
+      "registeredDomains": 688049,
+      "reportingMonth": 202606,
+      "zoneDomains": 608376,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cfd"
+    },
+    {
+      "tld": "channel",
+      "ascii": "channel",
+      "alreadyInExplore": false,
+      "registeredDomains": 3207,
+      "reportingMonth": 202606,
+      "zoneDomains": 2833,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/channel"
+    },
+    {
+      "tld": "charity",
+      "ascii": "charity",
+      "alreadyInExplore": false,
+      "registeredDomains": 4991,
+      "reportingMonth": 202606,
+      "zoneDomains": 4947,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/charity"
+    },
+    {
+      "tld": "chat",
+      "ascii": "chat",
+      "alreadyInExplore": false,
+      "registeredDomains": 58104,
+      "reportingMonth": 202606,
+      "zoneDomains": 56723,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/chat"
+    },
+    {
+      "tld": "cheap",
+      "ascii": "cheap",
+      "alreadyInExplore": false,
+      "registeredDomains": 6680,
+      "reportingMonth": 202606,
+      "zoneDomains": 3508,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cheap"
+    },
+    {
+      "tld": "christmas",
+      "ascii": "christmas",
+      "alreadyInExplore": false,
+      "registeredDomains": 15851,
+      "reportingMonth": 202606,
+      "zoneDomains": 18317,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/christmas"
+    },
+    {
+      "tld": "church",
+      "ascii": "church",
+      "alreadyInExplore": false,
+      "registeredDomains": 34539,
+      "reportingMonth": 202606,
+      "zoneDomains": 34095,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/church"
+    },
+    {
+      "tld": "city",
+      "ascii": "city",
+      "alreadyInExplore": false,
+      "registeredDomains": 34258,
+      "reportingMonth": 202606,
+      "zoneDomains": 32237,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/city"
+    },
+    {
+      "tld": "claims",
+      "ascii": "claims",
+      "alreadyInExplore": false,
+      "registeredDomains": 4303,
+      "reportingMonth": 202606,
+      "zoneDomains": 4053,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/claims"
+    },
+    {
+      "tld": "cleaning",
+      "ascii": "cleaning",
+      "alreadyInExplore": false,
+      "registeredDomains": 2757,
+      "reportingMonth": 202606,
+      "zoneDomains": 2407,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cleaning"
+    },
+    {
+      "tld": "click",
+      "ascii": "click",
+      "alreadyInExplore": false,
+      "registeredDomains": 873213,
+      "reportingMonth": 202606,
+      "zoneDomains": 887448,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/click"
+    },
+    {
+      "tld": "clinic",
+      "ascii": "clinic",
+      "alreadyInExplore": false,
+      "registeredDomains": 19474,
+      "reportingMonth": 202606,
+      "zoneDomains": 19032,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/clinic"
+    },
+    {
+      "tld": "clothing",
+      "ascii": "clothing",
+      "alreadyInExplore": false,
+      "registeredDomains": 10186,
+      "reportingMonth": 202606,
+      "zoneDomains": 9609,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/clothing"
+    },
+    {
+      "tld": "cloud",
+      "ascii": "cloud",
+      "alreadyInExplore": false,
+      "registeredDomains": 551867,
+      "reportingMonth": 202606,
+      "zoneDomains": 558439,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cloud"
+    },
+    {
+      "tld": "club",
+      "ascii": "club",
+      "alreadyInExplore": false,
+      "registeredDomains": 569871,
+      "reportingMonth": 202606,
+      "zoneDomains": 551007,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/club"
+    },
+    {
+      "tld": "co",
+      "ascii": "co",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "coach",
+      "ascii": "coach",
+      "alreadyInExplore": false,
+      "registeredDomains": 27466,
+      "reportingMonth": 202606,
+      "zoneDomains": 26587,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/coach"
+    },
+    {
+      "tld": "codes",
+      "ascii": "codes",
+      "alreadyInExplore": false,
+      "registeredDomains": 19850,
+      "reportingMonth": 202606,
+      "zoneDomains": 19865,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/codes"
+    },
+    {
+      "tld": "coffee",
+      "ascii": "coffee",
+      "alreadyInExplore": false,
+      "registeredDomains": 28464,
+      "reportingMonth": 202606,
+      "zoneDomains": 28138,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/coffee"
+    },
+    {
+      "tld": "college",
+      "ascii": "college",
+      "alreadyInExplore": false,
+      "registeredDomains": 7214,
+      "reportingMonth": 202606,
+      "zoneDomains": 9005,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/college"
+    },
+    {
+      "tld": "cologne",
+      "ascii": "cologne",
+      "alreadyInExplore": false,
+      "registeredDomains": 3960,
+      "reportingMonth": 202606,
+      "zoneDomains": 3783,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cologne"
+    },
+    {
+      "tld": "com",
+      "ascii": "com",
+      "alreadyInExplore": false,
+      "registeredDomains": 170253825,
+      "reportingMonth": 202606,
+      "zoneDomains": 167164684,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/com"
+    },
+    {
+      "tld": "community",
+      "ascii": "community",
+      "alreadyInExplore": false,
+      "registeredDomains": 26945,
+      "reportingMonth": 202606,
+      "zoneDomains": 25085,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/community"
+    },
+    {
+      "tld": "company",
+      "ascii": "company",
+      "alreadyInExplore": false,
+      "registeredDomains": 94922,
+      "reportingMonth": 202606,
+      "zoneDomains": 98154,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/company"
+    },
+    {
+      "tld": "compare",
+      "ascii": "compare",
+      "alreadyInExplore": false,
+      "registeredDomains": 964,
+      "reportingMonth": 202606,
+      "zoneDomains": 777,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/compare"
+    },
+    {
+      "tld": "computer",
+      "ascii": "computer",
+      "alreadyInExplore": false,
+      "registeredDomains": 10191,
+      "reportingMonth": 202606,
+      "zoneDomains": 9654,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/computer"
+    },
+    {
+      "tld": "condos",
+      "ascii": "condos",
+      "alreadyInExplore": false,
+      "registeredDomains": 1611,
+      "reportingMonth": 202606,
+      "zoneDomains": 1320,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/condos"
+    },
+    {
+      "tld": "construction",
+      "ascii": "construction",
+      "alreadyInExplore": false,
+      "registeredDomains": 10056,
+      "reportingMonth": 202606,
+      "zoneDomains": 9384,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/construction"
+    },
+    {
+      "tld": "consulting",
+      "ascii": "consulting",
+      "alreadyInExplore": false,
+      "registeredDomains": 41255,
+      "reportingMonth": 202606,
+      "zoneDomains": 39748,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/consulting"
+    },
+    {
+      "tld": "contact",
+      "ascii": "contact",
+      "alreadyInExplore": false,
+      "registeredDomains": 12039,
+      "reportingMonth": 202606,
+      "zoneDomains": 11850,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/contact"
+    },
+    {
+      "tld": "contractors",
+      "ascii": "contractors",
+      "alreadyInExplore": false,
+      "registeredDomains": 3960,
+      "reportingMonth": 202606,
+      "zoneDomains": 3504,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/contractors"
+    },
+    {
+      "tld": "cooking",
+      "ascii": "cooking",
+      "alreadyInExplore": false,
+      "registeredDomains": 2296,
+      "reportingMonth": 202606,
+      "zoneDomains": 2260,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cooking"
+    },
+    {
+      "tld": "cool",
+      "ascii": "cool",
+      "alreadyInExplore": false,
+      "registeredDomains": 23197,
+      "reportingMonth": 202606,
+      "zoneDomains": 21975,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cool"
+    },
+    {
+      "tld": "coop",
+      "ascii": "coop",
+      "alreadyInExplore": false,
+      "registeredDomains": 8570,
+      "reportingMonth": 202606,
+      "zoneDomains": 8298,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/coop"
+    },
+    {
+      "tld": "corsica",
+      "ascii": "corsica",
+      "alreadyInExplore": false,
+      "registeredDomains": 2392,
+      "reportingMonth": 202606,
+      "zoneDomains": 2399,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/corsica"
+    },
+    {
+      "tld": "country",
+      "ascii": "country",
+      "alreadyInExplore": false,
+      "registeredDomains": 2730,
+      "reportingMonth": 202606,
+      "zoneDomains": 2634,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/country"
+    },
+    {
+      "tld": "coupons",
+      "ascii": "coupons",
+      "alreadyInExplore": false,
+      "registeredDomains": 8207,
+      "reportingMonth": 202606,
+      "zoneDomains": 8827,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/coupons"
+    },
+    {
+      "tld": "courses",
+      "ascii": "courses",
+      "alreadyInExplore": false,
+      "registeredDomains": 16445,
+      "reportingMonth": 202606,
+      "zoneDomains": 27892,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/courses"
+    },
+    {
+      "tld": "cpa",
+      "ascii": "cpa",
+      "alreadyInExplore": false,
+      "registeredDomains": 6526,
+      "reportingMonth": 202606,
+      "zoneDomains": 6562,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cpa"
+    },
+    {
+      "tld": "credit",
+      "ascii": "credit",
+      "alreadyInExplore": false,
+      "registeredDomains": 6184,
+      "reportingMonth": 202606,
+      "zoneDomains": 5693,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/credit"
+    },
+    {
+      "tld": "creditcard",
+      "ascii": "creditcard",
+      "alreadyInExplore": false,
+      "registeredDomains": 1689,
+      "reportingMonth": 202606,
+      "zoneDomains": 1491,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/creditcard"
+    },
+    {
+      "tld": "creditunion",
+      "ascii": "creditunion",
+      "alreadyInExplore": false,
+      "registeredDomains": 430,
+      "reportingMonth": 202606,
+      "zoneDomains": 385,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/creditunion"
+    },
+    {
+      "tld": "cricket",
+      "ascii": "cricket",
+      "alreadyInExplore": false,
+      "registeredDomains": 1129,
+      "reportingMonth": 202606,
+      "zoneDomains": 1027,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cricket"
+    },
+    {
+      "tld": "cruises",
+      "ascii": "cruises",
+      "alreadyInExplore": false,
+      "registeredDomains": 2482,
+      "reportingMonth": 202606,
+      "zoneDomains": 2303,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cruises"
+    },
+    {
+      "tld": "cymru",
+      "ascii": "cymru",
+      "alreadyInExplore": false,
+      "registeredDomains": 8769,
+      "reportingMonth": 202606,
+      "zoneDomains": 8699,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cymru"
+    },
+    {
+      "tld": "cyou",
+      "ascii": "cyou",
+      "alreadyInExplore": false,
+      "registeredDomains": 578820,
+      "reportingMonth": 202606,
+      "zoneDomains": 524693,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/cyou"
+    },
+    {
+      "tld": "dad",
+      "ascii": "dad",
+      "alreadyInExplore": false,
+      "registeredDomains": 3728,
+      "reportingMonth": 202606,
+      "zoneDomains": 3786,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dad"
+    },
+    {
+      "tld": "dance",
+      "ascii": "dance",
+      "alreadyInExplore": false,
+      "registeredDomains": 9046,
+      "reportingMonth": 202606,
+      "zoneDomains": 8636,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dance"
+    },
+    {
+      "tld": "date",
+      "ascii": "date",
+      "alreadyInExplore": false,
+      "registeredDomains": 12040,
+      "reportingMonth": 202606,
+      "zoneDomains": 10489,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/date"
+    },
+    {
+      "tld": "dating",
+      "ascii": "dating",
+      "alreadyInExplore": false,
+      "registeredDomains": 4612,
+      "reportingMonth": 202606,
+      "zoneDomains": 4351,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dating"
+    },
+    {
+      "tld": "day",
+      "ascii": "day",
+      "alreadyInExplore": false,
+      "registeredDomains": 13094,
+      "reportingMonth": 202606,
+      "zoneDomains": 14115,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/day"
+    },
+    {
+      "tld": "deal",
+      "ascii": "deal",
+      "alreadyInExplore": false,
+      "registeredDomains": 1314,
+      "reportingMonth": 202606,
+      "zoneDomains": 1337,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/deal"
+    },
+    {
+      "tld": "dealer",
+      "ascii": "dealer",
+      "alreadyInExplore": false,
+      "registeredDomains": 222,
+      "reportingMonth": 202606,
+      "zoneDomains": 189,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dealer"
+    },
+    {
+      "tld": "deals",
+      "ascii": "deals",
+      "alreadyInExplore": false,
+      "registeredDomains": 9914,
+      "reportingMonth": 202606,
+      "zoneDomains": 9107,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/deals"
+    },
+    {
+      "tld": "degree",
+      "ascii": "degree",
+      "alreadyInExplore": false,
+      "registeredDomains": 1254,
+      "reportingMonth": 202606,
+      "zoneDomains": 986,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/degree"
+    },
+    {
+      "tld": "delivery",
+      "ascii": "delivery",
+      "alreadyInExplore": false,
+      "registeredDomains": 14125,
+      "reportingMonth": 202606,
+      "zoneDomains": 14702,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/delivery"
+    },
+    {
+      "tld": "democrat",
+      "ascii": "democrat",
+      "alreadyInExplore": false,
+      "registeredDomains": 1120,
+      "reportingMonth": 202606,
+      "zoneDomains": 997,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/democrat"
+    },
+    {
+      "tld": "dental",
+      "ascii": "dental",
+      "alreadyInExplore": false,
+      "registeredDomains": 9091,
+      "reportingMonth": 202606,
+      "zoneDomains": 8803,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dental"
+    },
+    {
+      "tld": "dentist",
+      "ascii": "dentist",
+      "alreadyInExplore": false,
+      "registeredDomains": 2832,
+      "reportingMonth": 202606,
+      "zoneDomains": 2567,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dentist"
+    },
+    {
+      "tld": "desi",
+      "ascii": "desi",
+      "alreadyInExplore": false,
+      "registeredDomains": 1921,
+      "reportingMonth": 202606,
+      "zoneDomains": 1851,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/desi"
+    },
+    {
+      "tld": "design",
+      "ascii": "design",
+      "alreadyInExplore": false,
+      "registeredDomains": 118808,
+      "reportingMonth": 202606,
+      "zoneDomains": 115096,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/design"
+    },
+    {
+      "tld": "dev",
+      "ascii": "dev",
+      "alreadyInExplore": false,
+      "registeredDomains": 712600,
+      "reportingMonth": 202606,
+      "zoneDomains": 777928,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dev"
+    },
+    {
+      "tld": "diamonds",
+      "ascii": "diamonds",
+      "alreadyInExplore": false,
+      "registeredDomains": 2187,
+      "reportingMonth": 202606,
+      "zoneDomains": 1955,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/diamonds"
+    },
+    {
+      "tld": "diet",
+      "ascii": "diet",
+      "alreadyInExplore": false,
+      "registeredDomains": 1391,
+      "reportingMonth": 202606,
+      "zoneDomains": 970,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/diet"
+    },
+    {
+      "tld": "digital",
+      "ascii": "digital",
+      "alreadyInExplore": false,
+      "registeredDomains": 418641,
+      "reportingMonth": 202606,
+      "zoneDomains": 456309,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/digital"
+    },
+    {
+      "tld": "direct",
+      "ascii": "direct",
+      "alreadyInExplore": false,
+      "registeredDomains": 13048,
+      "reportingMonth": 202606,
+      "zoneDomains": 12276,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/direct"
+    },
+    {
+      "tld": "directory",
+      "ascii": "directory",
+      "alreadyInExplore": false,
+      "registeredDomains": 16309,
+      "reportingMonth": 202606,
+      "zoneDomains": 15063,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/directory"
+    },
+    {
+      "tld": "discount",
+      "ascii": "discount",
+      "alreadyInExplore": false,
+      "registeredDomains": 3612,
+      "reportingMonth": 202606,
+      "zoneDomains": 3334,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/discount"
+    },
+    {
+      "tld": "diy",
+      "ascii": "diy",
+      "alreadyInExplore": false,
+      "registeredDomains": 8159,
+      "reportingMonth": 202606,
+      "zoneDomains": 7886,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/diy"
+    },
+    {
+      "tld": "doctor",
+      "ascii": "doctor",
+      "alreadyInExplore": false,
+      "registeredDomains": 8676,
+      "reportingMonth": 202606,
+      "zoneDomains": 8416,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/doctor"
+    },
+    {
+      "tld": "dog",
+      "ascii": "dog",
+      "alreadyInExplore": false,
+      "registeredDomains": 18780,
+      "reportingMonth": 202606,
+      "zoneDomains": 18032,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/dog"
+    },
+    {
+      "tld": "domains",
+      "ascii": "domains",
+      "alreadyInExplore": false,
+      "registeredDomains": 7993,
+      "reportingMonth": 202606,
+      "zoneDomains": 7365,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/domains"
+    },
+    {
+      "tld": "download",
+      "ascii": "download",
+      "alreadyInExplore": false,
+      "registeredDomains": 8808,
+      "reportingMonth": 202606,
+      "zoneDomains": 8703,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/download"
+    },
+    {
+      "tld": "durban",
+      "ascii": "durban",
+      "alreadyInExplore": false,
+      "registeredDomains": 1640,
+      "reportingMonth": 202606,
+      "zoneDomains": 1603,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/durban"
+    },
+    {
+      "tld": "earth",
+      "ascii": "earth",
+      "alreadyInExplore": false,
+      "registeredDomains": 41706,
+      "reportingMonth": 202606,
+      "zoneDomains": 40911,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/earth"
+    },
+    {
+      "tld": "eat",
+      "ascii": "eat",
+      "alreadyInExplore": false,
+      "registeredDomains": 3,
+      "reportingMonth": 202606,
+      "zoneDomains": 61,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/eat"
+    },
+    {
+      "tld": "eco",
+      "ascii": "eco",
+      "alreadyInExplore": false,
+      "registeredDomains": 9939,
+      "reportingMonth": 202606,
+      "zoneDomains": 6900,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/eco"
+    },
+    {
+      "tld": "education",
+      "ascii": "education",
+      "alreadyInExplore": false,
+      "registeredDomains": 31416,
+      "reportingMonth": 202606,
+      "zoneDomains": 29971,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/education"
+    },
+    {
+      "tld": "email",
+      "ascii": "email",
+      "alreadyInExplore": false,
+      "registeredDomains": 130078,
+      "reportingMonth": 202606,
+      "zoneDomains": 125005,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/email"
+    },
+    {
+      "tld": "energy",
+      "ascii": "energy",
+      "alreadyInExplore": false,
+      "registeredDomains": 28937,
+      "reportingMonth": 202606,
+      "zoneDomains": 28865,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/energy"
+    },
+    {
+      "tld": "engineer",
+      "ascii": "engineer",
+      "alreadyInExplore": false,
+      "registeredDomains": 8018,
+      "reportingMonth": 202606,
+      "zoneDomains": 7669,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/engineer"
+    },
+    {
+      "tld": "engineering",
+      "ascii": "engineering",
+      "alreadyInExplore": false,
+      "registeredDomains": 11436,
+      "reportingMonth": 202606,
+      "zoneDomains": 11276,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/engineering"
+    },
+    {
+      "tld": "enterprises",
+      "ascii": "enterprises",
+      "alreadyInExplore": false,
+      "registeredDomains": 9644,
+      "reportingMonth": 202606,
+      "zoneDomains": 10219,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/enterprises"
+    },
+    {
+      "tld": "equipment",
+      "ascii": "equipment",
+      "alreadyInExplore": false,
+      "registeredDomains": 4944,
+      "reportingMonth": 202606,
+      "zoneDomains": 4283,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/equipment"
+    },
+    {
+      "tld": "esq",
+      "ascii": "esq",
+      "alreadyInExplore": false,
+      "registeredDomains": 2473,
+      "reportingMonth": 202606,
+      "zoneDomains": 2401,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/esq"
+    },
+    {
+      "tld": "estate",
+      "ascii": "estate",
+      "alreadyInExplore": false,
+      "registeredDomains": 11819,
+      "reportingMonth": 202606,
+      "zoneDomains": 11217,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/estate"
+    },
+    {
+      "tld": "eus",
+      "ascii": "eus",
+      "alreadyInExplore": false,
+      "registeredDomains": 16281,
+      "reportingMonth": 202606,
+      "zoneDomains": 16156,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/eus"
+    },
+    {
+      "tld": "events",
+      "ascii": "events",
+      "alreadyInExplore": false,
+      "registeredDomains": 37305,
+      "reportingMonth": 202606,
+      "zoneDomains": 36652,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/events"
+    },
+    {
+      "tld": "exchange",
+      "ascii": "exchange",
+      "alreadyInExplore": false,
+      "registeredDomains": 20093,
+      "reportingMonth": 202606,
+      "zoneDomains": 18956,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/exchange"
+    },
+    {
+      "tld": "expert",
+      "ascii": "expert",
+      "alreadyInExplore": false,
+      "registeredDomains": 28534,
+      "reportingMonth": 202606,
+      "zoneDomains": 26884,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/expert"
+    },
+    {
+      "tld": "exposed",
+      "ascii": "exposed",
+      "alreadyInExplore": false,
+      "registeredDomains": 3267,
+      "reportingMonth": 202606,
+      "zoneDomains": 2933,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/exposed"
+    },
+    {
+      "tld": "express",
+      "ascii": "express",
+      "alreadyInExplore": false,
+      "registeredDomains": 8967,
+      "reportingMonth": 202606,
+      "zoneDomains": 8460,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/express"
+    },
+    {
+      "tld": "fail",
+      "ascii": "fail",
+      "alreadyInExplore": false,
+      "registeredDomains": 4774,
+      "reportingMonth": 202606,
+      "zoneDomains": 4332,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fail"
+    },
+    {
+      "tld": "faith",
+      "ascii": "faith",
+      "alreadyInExplore": false,
+      "registeredDomains": 5558,
+      "reportingMonth": 202606,
+      "zoneDomains": 5356,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/faith"
+    },
+    {
+      "tld": "family",
+      "ascii": "family",
+      "alreadyInExplore": false,
+      "registeredDomains": 36757,
+      "reportingMonth": 202606,
+      "zoneDomains": 38318,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/family"
+    },
+    {
+      "tld": "fan",
+      "ascii": "fan",
+      "alreadyInExplore": true,
+      "registeredDomains": 9611,
+      "reportingMonth": 202606,
+      "zoneDomains": 8299,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fan"
+    },
+    {
+      "tld": "fans",
+      "ascii": "fans",
+      "alreadyInExplore": false,
+      "registeredDomains": 10454,
+      "reportingMonth": 202606,
+      "zoneDomains": 9519,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fans"
+    },
+    {
+      "tld": "farm",
+      "ascii": "farm",
+      "alreadyInExplore": false,
+      "registeredDomains": 27960,
+      "reportingMonth": 202606,
+      "zoneDomains": 27571,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/farm"
+    },
+    {
+      "tld": "fashion",
+      "ascii": "fashion",
+      "alreadyInExplore": false,
+      "registeredDomains": 13250,
+      "reportingMonth": 202606,
+      "zoneDomains": 13712,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fashion"
+    },
+    {
+      "tld": "fast",
+      "ascii": "fast",
+      "alreadyInExplore": false,
+      "registeredDomains": 2447,
+      "reportingMonth": 202606,
+      "zoneDomains": 2736,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fast"
+    },
+    {
+      "tld": "feedback",
+      "ascii": "feedback",
+      "alreadyInExplore": false,
+      "registeredDomains": 15150,
+      "reportingMonth": 202606,
+      "zoneDomains": 14822,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/feedback"
+    },
+    {
+      "tld": "film",
+      "ascii": "film",
+      "alreadyInExplore": false,
+      "registeredDomains": 7217,
+      "reportingMonth": 202606,
+      "zoneDomains": 7326,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/film"
+    },
+    {
+      "tld": "finance",
+      "ascii": "finance",
+      "alreadyInExplore": false,
+      "registeredDomains": 36590,
+      "reportingMonth": 202606,
+      "zoneDomains": 34506,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/finance"
+    },
+    {
+      "tld": "financial",
+      "ascii": "financial",
+      "alreadyInExplore": false,
+      "registeredDomains": 8533,
+      "reportingMonth": 202606,
+      "zoneDomains": 7912,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/financial"
+    },
+    {
+      "tld": "fish",
+      "ascii": "fish",
+      "alreadyInExplore": false,
+      "registeredDomains": 6189,
+      "reportingMonth": 202606,
+      "zoneDomains": 5869,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fish"
+    },
+    {
+      "tld": "fishing",
+      "ascii": "fishing",
+      "alreadyInExplore": false,
+      "registeredDomains": 2581,
+      "reportingMonth": 202606,
+      "zoneDomains": 1800,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fishing"
+    },
+    {
+      "tld": "fit",
+      "ascii": "fit",
+      "alreadyInExplore": false,
+      "registeredDomains": 81056,
+      "reportingMonth": 202606,
+      "zoneDomains": 89744,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fit"
+    },
+    {
+      "tld": "fitness",
+      "ascii": "fitness",
+      "alreadyInExplore": false,
+      "registeredDomains": 14229,
+      "reportingMonth": 202606,
+      "zoneDomains": 14542,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fitness"
+    },
+    {
+      "tld": "flights",
+      "ascii": "flights",
+      "alreadyInExplore": false,
+      "registeredDomains": 2473,
+      "reportingMonth": 202606,
+      "zoneDomains": 2313,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/flights"
+    },
+    {
+      "tld": "florist",
+      "ascii": "florist",
+      "alreadyInExplore": false,
+      "registeredDomains": 1899,
+      "reportingMonth": 202606,
+      "zoneDomains": 1736,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/florist"
+    },
+    {
+      "tld": "flowers",
+      "ascii": "flowers",
+      "alreadyInExplore": false,
+      "registeredDomains": 1240,
+      "reportingMonth": 202606,
+      "zoneDomains": 998,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/flowers"
+    },
+    {
+      "tld": "fly",
+      "ascii": "fly",
+      "alreadyInExplore": false,
+      "registeredDomains": 4,
+      "reportingMonth": 202606,
+      "zoneDomains": 35,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fly"
+    },
+    {
+      "tld": "foo",
+      "ascii": "foo",
+      "alreadyInExplore": false,
+      "registeredDomains": 4650,
+      "reportingMonth": 202606,
+      "zoneDomains": 4798,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/foo"
+    },
+    {
+      "tld": "food",
+      "ascii": "food",
+      "alreadyInExplore": false,
+      "registeredDomains": 27168,
+      "reportingMonth": 202606,
+      "zoneDomains": 21299,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/food"
+    },
+    {
+      "tld": "football",
+      "ascii": "football",
+      "alreadyInExplore": false,
+      "registeredDomains": 6958,
+      "reportingMonth": 202606,
+      "zoneDomains": 6521,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/football"
+    },
+    {
+      "tld": "forex",
+      "ascii": "forex",
+      "alreadyInExplore": false,
+      "registeredDomains": 1350,
+      "reportingMonth": 202606,
+      "zoneDomains": 1139,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/forex"
+    },
+    {
+      "tld": "forsale",
+      "ascii": "forsale",
+      "alreadyInExplore": false,
+      "registeredDomains": 4310,
+      "reportingMonth": 202606,
+      "zoneDomains": 3932,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/forsale"
+    },
+    {
+      "tld": "forum",
+      "ascii": "forum",
+      "alreadyInExplore": false,
+      "registeredDomains": 66291,
+      "reportingMonth": 202606,
+      "zoneDomains": 61723,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/forum"
+    },
+    {
+      "tld": "foundation",
+      "ascii": "foundation",
+      "alreadyInExplore": false,
+      "registeredDomains": 32578,
+      "reportingMonth": 202606,
+      "zoneDomains": 31191,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/foundation"
+    },
+    {
+      "tld": "free",
+      "ascii": "free",
+      "alreadyInExplore": false,
+      "registeredDomains": 2878,
+      "reportingMonth": 202606,
+      "zoneDomains": 3031,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/free"
+    },
+    {
+      "tld": "frl",
+      "ascii": "frl",
+      "alreadyInExplore": false,
+      "registeredDomains": 10001,
+      "reportingMonth": 202606,
+      "zoneDomains": 9952,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/frl"
+    },
+    {
+      "tld": "fun",
+      "ascii": "fun",
+      "alreadyInExplore": false,
+      "registeredDomains": 446583,
+      "reportingMonth": 202606,
+      "zoneDomains": 394678,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fun"
+    },
+    {
+      "tld": "fund",
+      "ascii": "fund",
+      "alreadyInExplore": false,
+      "registeredDomains": 23421,
+      "reportingMonth": 202606,
+      "zoneDomains": 22286,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fund"
+    },
+    {
+      "tld": "furniture",
+      "ascii": "furniture",
+      "alreadyInExplore": true,
+      "registeredDomains": 2591,
+      "reportingMonth": 202606,
+      "zoneDomains": 2342,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/furniture"
+    },
+    {
+      "tld": "futbol",
+      "ascii": "futbol",
+      "alreadyInExplore": false,
+      "registeredDomains": 2322,
+      "reportingMonth": 202606,
+      "zoneDomains": 2331,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/futbol"
+    },
+    {
+      "tld": "fyi",
+      "ascii": "fyi",
+      "alreadyInExplore": false,
+      "registeredDomains": 71480,
+      "reportingMonth": 202606,
+      "zoneDomains": 63003,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/fyi"
+    },
+    {
+      "tld": "gal",
+      "ascii": "gal",
+      "alreadyInExplore": false,
+      "registeredDomains": 7746,
+      "reportingMonth": 202606,
+      "zoneDomains": 7827,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gal"
+    },
+    {
+      "tld": "gallery",
+      "ascii": "gallery",
+      "alreadyInExplore": false,
+      "registeredDomains": 18655,
+      "reportingMonth": 202606,
+      "zoneDomains": 17762,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gallery"
+    },
+    {
+      "tld": "game",
+      "ascii": "game",
+      "alreadyInExplore": false,
+      "registeredDomains": 8391,
+      "reportingMonth": 202606,
+      "zoneDomains": 8120,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/game"
+    },
+    {
+      "tld": "games",
+      "ascii": "games",
+      "alreadyInExplore": false,
+      "registeredDomains": 70261,
+      "reportingMonth": 202606,
+      "zoneDomains": 80761,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/games"
+    },
+    {
+      "tld": "garden",
+      "ascii": "garden",
+      "alreadyInExplore": false,
+      "registeredDomains": 155040,
+      "reportingMonth": 202606,
+      "zoneDomains": 209120,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/garden"
+    },
+    {
+      "tld": "gay",
+      "ascii": "gay",
+      "alreadyInExplore": false,
+      "registeredDomains": 19110,
+      "reportingMonth": 202606,
+      "zoneDomains": 19091,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gay"
+    },
+    {
+      "tld": "gdn",
+      "ascii": "gdn",
+      "alreadyInExplore": false,
+      "registeredDomains": 11315,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/gdn"
+    },
+    {
+      "tld": "gent",
+      "ascii": "gent",
+      "alreadyInExplore": false,
+      "registeredDomains": 3775,
+      "reportingMonth": 202606,
+      "zoneDomains": 3693,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gent"
+    },
+    {
+      "tld": "gg",
+      "ascii": "gg",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "gift",
+      "ascii": "gift",
+      "alreadyInExplore": false,
+      "registeredDomains": 5328,
+      "reportingMonth": 202606,
+      "zoneDomains": 5150,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gift"
+    },
+    {
+      "tld": "gifts",
+      "ascii": "gifts",
+      "alreadyInExplore": false,
+      "registeredDomains": 6134,
+      "reportingMonth": 202606,
+      "zoneDomains": 5625,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gifts"
+    },
+    {
+      "tld": "gives",
+      "ascii": "gives",
+      "alreadyInExplore": false,
+      "registeredDomains": 4222,
+      "reportingMonth": 202606,
+      "zoneDomains": 3514,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gives"
+    },
+    {
+      "tld": "giving",
+      "ascii": "giving",
+      "alreadyInExplore": false,
+      "registeredDomains": 2023,
+      "reportingMonth": 202606,
+      "zoneDomains": 2059,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/giving"
+    },
+    {
+      "tld": "glass",
+      "ascii": "glass",
+      "alreadyInExplore": false,
+      "registeredDomains": 3810,
+      "reportingMonth": 202606,
+      "zoneDomains": 3556,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/glass"
+    },
+    {
+      "tld": "global",
+      "ascii": "global",
+      "alreadyInExplore": false,
+      "registeredDomains": 70622,
+      "reportingMonth": 202606,
+      "zoneDomains": 78624,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/global"
+    },
+    {
+      "tld": "gmbh",
+      "ascii": "gmbh",
+      "alreadyInExplore": false,
+      "registeredDomains": 34007,
+      "reportingMonth": 202606,
+      "zoneDomains": 33107,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gmbh"
+    },
+    {
+      "tld": "gold",
+      "ascii": "gold",
+      "alreadyInExplore": false,
+      "registeredDomains": 16170,
+      "reportingMonth": 202606,
+      "zoneDomains": 14932,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gold"
+    },
+    {
+      "tld": "golf",
+      "ascii": "golf",
+      "alreadyInExplore": false,
+      "registeredDomains": 18892,
+      "reportingMonth": 202606,
+      "zoneDomains": 19216,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/golf"
+    },
+    {
+      "tld": "gop",
+      "ascii": "gop",
+      "alreadyInExplore": false,
+      "registeredDomains": 984,
+      "reportingMonth": 202606,
+      "zoneDomains": 877,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gop"
+    },
+    {
+      "tld": "graphics",
+      "ascii": "graphics",
+      "alreadyInExplore": false,
+      "registeredDomains": 5915,
+      "reportingMonth": 202606,
+      "zoneDomains": 5368,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/graphics"
+    },
+    {
+      "tld": "gratis",
+      "ascii": "gratis",
+      "alreadyInExplore": false,
+      "registeredDomains": 3424,
+      "reportingMonth": 202606,
+      "zoneDomains": 3044,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gratis"
+    },
+    {
+      "tld": "green",
+      "ascii": "green",
+      "alreadyInExplore": false,
+      "registeredDomains": 9228,
+      "reportingMonth": 202606,
+      "zoneDomains": 8367,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/green"
+    },
+    {
+      "tld": "gripe",
+      "ascii": "gripe",
+      "alreadyInExplore": false,
+      "registeredDomains": 1669,
+      "reportingMonth": 202606,
+      "zoneDomains": 1906,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/gripe"
+    },
+    {
+      "tld": "group",
+      "ascii": "group",
+      "alreadyInExplore": false,
+      "registeredDomains": 127061,
+      "reportingMonth": 202606,
+      "zoneDomains": 125668,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/group"
+    },
+    {
+      "tld": "guide",
+      "ascii": "guide",
+      "alreadyInExplore": false,
+      "registeredDomains": 21059,
+      "reportingMonth": 202606,
+      "zoneDomains": 20221,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/guide"
+    },
+    {
+      "tld": "guitars",
+      "ascii": "guitars",
+      "alreadyInExplore": false,
+      "registeredDomains": 691,
+      "reportingMonth": 202606,
+      "zoneDomains": 513,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/guitars"
+    },
+    {
+      "tld": "guru",
+      "ascii": "guru",
+      "alreadyInExplore": false,
+      "registeredDomains": 60916,
+      "reportingMonth": 202606,
+      "zoneDomains": 57889,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/guru"
+    },
+    {
+      "tld": "hair",
+      "ascii": "hair",
+      "alreadyInExplore": false,
+      "registeredDomains": 64950,
+      "reportingMonth": 202606,
+      "zoneDomains": 61949,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hair"
+    },
+    {
+      "tld": "hamburg",
+      "ascii": "hamburg",
+      "alreadyInExplore": false,
+      "registeredDomains": 15498,
+      "reportingMonth": 202606,
+      "zoneDomains": 14857,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hamburg"
+    },
+    {
+      "tld": "haus",
+      "ascii": "haus",
+      "alreadyInExplore": false,
+      "registeredDomains": 8745,
+      "reportingMonth": 202606,
+      "zoneDomains": 8583,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/haus"
+    },
+    {
+      "tld": "health",
+      "ascii": "health",
+      "alreadyInExplore": false,
+      "registeredDomains": 61435,
+      "reportingMonth": 202606,
+      "zoneDomains": 65973,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/health"
+    },
+    {
+      "tld": "healthcare",
+      "ascii": "healthcare",
+      "alreadyInExplore": false,
+      "registeredDomains": 9703,
+      "reportingMonth": 202606,
+      "zoneDomains": 9078,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/healthcare"
+    },
+    {
+      "tld": "help",
+      "ascii": "help",
+      "alreadyInExplore": false,
+      "registeredDomains": 225417,
+      "reportingMonth": 202606,
+      "zoneDomains": 182164,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/help"
+    },
+    {
+      "tld": "here",
+      "ascii": "here",
+      "alreadyInExplore": false,
+      "registeredDomains": 4,
+      "reportingMonth": 202606,
+      "zoneDomains": 50,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/here"
+    },
+    {
+      "tld": "hiphop",
+      "ascii": "hiphop",
+      "alreadyInExplore": false,
+      "registeredDomains": 1313,
+      "reportingMonth": 202606,
+      "zoneDomains": 1185,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hiphop"
+    },
+    {
+      "tld": "hiv",
+      "ascii": "hiv",
+      "alreadyInExplore": false,
+      "registeredDomains": 208,
+      "reportingMonth": 202606,
+      "zoneDomains": 192,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hiv"
+    },
+    {
+      "tld": "hockey",
+      "ascii": "hockey",
+      "alreadyInExplore": false,
+      "registeredDomains": 1984,
+      "reportingMonth": 202606,
+      "zoneDomains": 1857,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hockey"
+    },
+    {
+      "tld": "holdings",
+      "ascii": "holdings",
+      "alreadyInExplore": false,
+      "registeredDomains": 9377,
+      "reportingMonth": 202606,
+      "zoneDomains": 9204,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/holdings"
+    },
+    {
+      "tld": "holiday",
+      "ascii": "holiday",
+      "alreadyInExplore": false,
+      "registeredDomains": 4140,
+      "reportingMonth": 202606,
+      "zoneDomains": 3428,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/holiday"
+    },
+    {
+      "tld": "homes",
+      "ascii": "homes",
+      "alreadyInExplore": false,
+      "registeredDomains": 107725,
+      "reportingMonth": 202606,
+      "zoneDomains": 121449,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/homes"
+    },
+    {
+      "tld": "horse",
+      "ascii": "horse",
+      "alreadyInExplore": false,
+      "registeredDomains": 5031,
+      "reportingMonth": 202606,
+      "zoneDomains": 4938,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/horse"
+    },
+    {
+      "tld": "hospital",
+      "ascii": "hospital",
+      "alreadyInExplore": false,
+      "registeredDomains": 2156,
+      "reportingMonth": 202606,
+      "zoneDomains": 1987,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hospital"
+    },
+    {
+      "tld": "host",
+      "ascii": "host",
+      "alreadyInExplore": false,
+      "registeredDomains": 24089,
+      "reportingMonth": 202606,
+      "zoneDomains": 25793,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/host"
+    },
+    {
+      "tld": "hosting",
+      "ascii": "hosting",
+      "alreadyInExplore": false,
+      "registeredDomains": 2731,
+      "reportingMonth": 202606,
+      "zoneDomains": 2259,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hosting"
+    },
+    {
+      "tld": "hot",
+      "ascii": "hot",
+      "alreadyInExplore": false,
+      "registeredDomains": 1185,
+      "reportingMonth": 202606,
+      "zoneDomains": 1109,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/hot"
+    },
+    {
+      "tld": "house",
+      "ascii": "house",
+      "alreadyInExplore": false,
+      "registeredDomains": 26173,
+      "reportingMonth": 202606,
+      "zoneDomains": 24463,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/house"
+    },
+    {
+      "tld": "how",
+      "ascii": "how",
+      "alreadyInExplore": false,
+      "registeredDomains": 3596,
+      "reportingMonth": 202606,
+      "zoneDomains": 3802,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/how"
+    },
+    {
+      "tld": "icu",
+      "ascii": "icu",
+      "alreadyInExplore": false,
+      "registeredDomains": 641320,
+      "reportingMonth": 202606,
+      "zoneDomains": 551866,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/icu"
+    },
+    {
+      "tld": "immo",
+      "ascii": "immo",
+      "alreadyInExplore": false,
+      "registeredDomains": 22085,
+      "reportingMonth": 202606,
+      "zoneDomains": 21872,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/immo"
+    },
+    {
+      "tld": "immobilien",
+      "ascii": "immobilien",
+      "alreadyInExplore": false,
+      "registeredDomains": 7810,
+      "reportingMonth": 202606,
+      "zoneDomains": 7478,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/immobilien"
+    },
+    {
+      "tld": "inc",
+      "ascii": "inc",
+      "alreadyInExplore": false,
+      "registeredDomains": 7630,
+      "reportingMonth": 202606,
+      "zoneDomains": 7501,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/inc"
+    },
+    {
+      "tld": "industries",
+      "ascii": "industries",
+      "alreadyInExplore": false,
+      "registeredDomains": 7519,
+      "reportingMonth": 202606,
+      "zoneDomains": 7299,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/industries"
+    },
+    {
+      "tld": "info",
+      "ascii": "info",
+      "alreadyInExplore": false,
+      "registeredDomains": 5631786,
+      "reportingMonth": 202606,
+      "zoneDomains": 5154013,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/info"
+    },
+    {
+      "tld": "ing",
+      "ascii": "ing",
+      "alreadyInExplore": false,
+      "registeredDomains": 21039,
+      "reportingMonth": 202606,
+      "zoneDomains": 22634,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ing"
+    },
+    {
+      "tld": "ink",
+      "ascii": "ink",
+      "alreadyInExplore": false,
+      "registeredDomains": 134917,
+      "reportingMonth": 202606,
+      "zoneDomains": 143165,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ink"
+    },
+    {
+      "tld": "institute",
+      "ascii": "institute",
+      "alreadyInExplore": false,
+      "registeredDomains": 21484,
+      "reportingMonth": 202606,
+      "zoneDomains": 22738,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/institute"
+    },
+    {
+      "tld": "insurance",
+      "ascii": "insurance",
+      "alreadyInExplore": false,
+      "registeredDomains": 675,
+      "reportingMonth": 202606,
+      "zoneDomains": 159,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/insurance"
+    },
+    {
+      "tld": "insure",
+      "ascii": "insure",
+      "alreadyInExplore": false,
+      "registeredDomains": 6564,
+      "reportingMonth": 202606,
+      "zoneDomains": 6350,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/insure"
+    },
+    {
+      "tld": "international",
+      "ascii": "international",
+      "alreadyInExplore": false,
+      "registeredDomains": 27382,
+      "reportingMonth": 202606,
+      "zoneDomains": 25574,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/international"
+    },
+    {
+      "tld": "investments",
+      "ascii": "investments",
+      "alreadyInExplore": false,
+      "registeredDomains": 7926,
+      "reportingMonth": 202606,
+      "zoneDomains": 7212,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/investments"
+    },
+    {
+      "tld": "io",
+      "ascii": "io",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "irish",
+      "ascii": "irish",
+      "alreadyInExplore": false,
+      "registeredDomains": 22580,
+      "reportingMonth": 202606,
+      "zoneDomains": 4631,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/irish"
+    },
+    {
+      "tld": "ist",
+      "ascii": "ist",
+      "alreadyInExplore": false,
+      "registeredDomains": 7845,
+      "reportingMonth": 202606,
+      "zoneDomains": 7793,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ist"
+    },
+    {
+      "tld": "istanbul",
+      "ascii": "istanbul",
+      "alreadyInExplore": false,
+      "registeredDomains": 5044,
+      "reportingMonth": 202606,
+      "zoneDomains": 4875,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/istanbul"
+    },
+    {
+      "tld": "jetzt",
+      "ascii": "jetzt",
+      "alreadyInExplore": false,
+      "registeredDomains": 11997,
+      "reportingMonth": 202606,
+      "zoneDomains": 11685,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/jetzt"
+    },
+    {
+      "tld": "jewelry",
+      "ascii": "jewelry",
+      "alreadyInExplore": false,
+      "registeredDomains": 4038,
+      "reportingMonth": 202606,
+      "zoneDomains": 3592,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/jewelry"
+    },
+    {
+      "tld": "jobs",
+      "ascii": "jobs",
+      "alreadyInExplore": false,
+      "registeredDomains": 10978,
+      "reportingMonth": 202606,
+      "zoneDomains": 10867,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/jobs"
+    },
+    {
+      "tld": "joburg",
+      "ascii": "joburg",
+      "alreadyInExplore": false,
+      "registeredDomains": 2214,
+      "reportingMonth": 202606,
+      "zoneDomains": 2158,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/joburg"
+    },
+    {
+      "tld": "juegos",
+      "ascii": "juegos",
+      "alreadyInExplore": false,
+      "registeredDomains": 643,
+      "reportingMonth": 202606,
+      "zoneDomains": 474,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/juegos"
+    },
+    {
+      "tld": "kaufen",
+      "ascii": "kaufen",
+      "alreadyInExplore": false,
+      "registeredDomains": 4880,
+      "reportingMonth": 202606,
+      "zoneDomains": 4444,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kaufen"
+    },
+    {
+      "tld": "kids",
+      "ascii": "kids",
+      "alreadyInExplore": false,
+      "registeredDomains": 7176,
+      "reportingMonth": 202606,
+      "zoneDomains": 7427,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kids"
+    },
+    {
+      "tld": "kim",
+      "ascii": "kim",
+      "alreadyInExplore": false,
+      "registeredDomains": 8369,
+      "reportingMonth": 202606,
+      "zoneDomains": 7920,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kim"
+    },
+    {
+      "tld": "kitchen",
+      "ascii": "kitchen",
+      "alreadyInExplore": false,
+      "registeredDomains": 7824,
+      "reportingMonth": 202606,
+      "zoneDomains": 7565,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kitchen"
+    },
+    {
+      "tld": "kiwi",
+      "ascii": "kiwi",
+      "alreadyInExplore": false,
+      "registeredDomains": 12948,
+      "reportingMonth": 202606,
+      "zoneDomains": 13096,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kiwi"
+    },
+    {
+      "tld": "koeln",
+      "ascii": "koeln",
+      "alreadyInExplore": false,
+      "registeredDomains": 17224,
+      "reportingMonth": 202606,
+      "zoneDomains": 16696,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/koeln"
+    },
+    {
+      "tld": "krd",
+      "ascii": "krd",
+      "alreadyInExplore": false,
+      "registeredDomains": 1987,
+      "reportingMonth": 202606,
+      "zoneDomains": 2055,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/krd"
+    },
+    {
+      "tld": "kred",
+      "ascii": "kred",
+      "alreadyInExplore": false,
+      "registeredDomains": 1762,
+      "reportingMonth": 202606,
+      "zoneDomains": 2643,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kred"
+    },
+    {
+      "tld": "kyoto",
+      "ascii": "kyoto",
+      "alreadyInExplore": false,
+      "registeredDomains": 963,
+      "reportingMonth": 202606,
+      "zoneDomains": 962,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/kyoto"
+    },
+    {
+      "tld": "land",
+      "ascii": "land",
+      "alreadyInExplore": false,
+      "registeredDomains": 22680,
+      "reportingMonth": 202606,
+      "zoneDomains": 21687,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/land"
+    },
+    {
+      "tld": "lat",
+      "ascii": "lat",
+      "alreadyInExplore": false,
+      "registeredDomains": 212251,
+      "reportingMonth": 202606,
+      "zoneDomains": 212840,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lat"
+    },
+    {
+      "tld": "latino",
+      "ascii": "latino",
+      "alreadyInExplore": false,
+      "registeredDomains": 800,
+      "reportingMonth": 202606,
+      "zoneDomains": 872,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/latino"
+    },
+    {
+      "tld": "law",
+      "ascii": "law",
+      "alreadyInExplore": false,
+      "registeredDomains": 26466,
+      "reportingMonth": 202606,
+      "zoneDomains": 25173,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/law"
+    },
+    {
+      "tld": "lawyer",
+      "ascii": "lawyer",
+      "alreadyInExplore": false,
+      "registeredDomains": 8609,
+      "reportingMonth": 202606,
+      "zoneDomains": 8181,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lawyer"
+    },
+    {
+      "tld": "lease",
+      "ascii": "lease",
+      "alreadyInExplore": false,
+      "registeredDomains": 2034,
+      "reportingMonth": 202606,
+      "zoneDomains": 1814,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lease"
+    },
+    {
+      "tld": "legal",
+      "ascii": "legal",
+      "alreadyInExplore": false,
+      "registeredDomains": 22833,
+      "reportingMonth": 202606,
+      "zoneDomains": 22895,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/legal"
+    },
+    {
+      "tld": "lgbt",
+      "ascii": "lgbt",
+      "alreadyInExplore": false,
+      "registeredDomains": 7299,
+      "reportingMonth": 202606,
+      "zoneDomains": 3473,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lgbt"
+    },
+    {
+      "tld": "life",
+      "ascii": "life",
+      "alreadyInExplore": false,
+      "registeredDomains": 474179,
+      "reportingMonth": 202606,
+      "zoneDomains": 434346,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/life"
+    },
+    {
+      "tld": "lifestyle",
+      "ascii": "lifestyle",
+      "alreadyInExplore": false,
+      "registeredDomains": 7568,
+      "reportingMonth": 202606,
+      "zoneDomains": 13302,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lifestyle"
+    },
+    {
+      "tld": "lighting",
+      "ascii": "lighting",
+      "alreadyInExplore": false,
+      "registeredDomains": 5926,
+      "reportingMonth": 202606,
+      "zoneDomains": 5411,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lighting"
+    },
+    {
+      "tld": "limited",
+      "ascii": "limited",
+      "alreadyInExplore": false,
+      "registeredDomains": 7373,
+      "reportingMonth": 202606,
+      "zoneDomains": 6625,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/limited"
+    },
+    {
+      "tld": "limo",
+      "ascii": "limo",
+      "alreadyInExplore": false,
+      "registeredDomains": 2410,
+      "reportingMonth": 202606,
+      "zoneDomains": 2205,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/limo"
+    },
+    {
+      "tld": "link",
+      "ascii": "link",
+      "alreadyInExplore": false,
+      "registeredDomains": 310085,
+      "reportingMonth": 202606,
+      "zoneDomains": 273131,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/link"
+    },
+    {
+      "tld": "live",
+      "ascii": "live",
+      "alreadyInExplore": false,
+      "registeredDomains": 671869,
+      "reportingMonth": 202606,
+      "zoneDomains": 612068,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/live"
+    },
+    {
+      "tld": "living",
+      "ascii": "living",
+      "alreadyInExplore": false,
+      "registeredDomains": 18717,
+      "reportingMonth": 202606,
+      "zoneDomains": 26044,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/living"
+    },
+    {
+      "tld": "llc",
+      "ascii": "llc",
+      "alreadyInExplore": false,
+      "registeredDomains": 56545,
+      "reportingMonth": 202606,
+      "zoneDomains": 57874,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/llc"
+    },
+    {
+      "tld": "loan",
+      "ascii": "loan",
+      "alreadyInExplore": false,
+      "registeredDomains": 53845,
+      "reportingMonth": 202606,
+      "zoneDomains": 20869,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/loan"
+    },
+    {
+      "tld": "loans",
+      "ascii": "loans",
+      "alreadyInExplore": false,
+      "registeredDomains": 6443,
+      "reportingMonth": 202606,
+      "zoneDomains": 5299,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/loans"
+    },
+    {
+      "tld": "locker",
+      "ascii": "locker",
+      "alreadyInExplore": false,
+      "registeredDomains": 9128,
+      "reportingMonth": 202606,
+      "zoneDomains": 7239,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/locker"
+    },
+    {
+      "tld": "lol",
+      "ascii": "lol",
+      "alreadyInExplore": false,
+      "registeredDomains": 1126763,
+      "reportingMonth": 202606,
+      "zoneDomains": 1106477,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lol"
+    },
+    {
+      "tld": "london",
+      "ascii": "london",
+      "alreadyInExplore": false,
+      "registeredDomains": 36940,
+      "reportingMonth": 202606,
+      "zoneDomains": 35676,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/london"
+    },
+    {
+      "tld": "lotto",
+      "ascii": "lotto",
+      "alreadyInExplore": false,
+      "registeredDomains": 270,
+      "reportingMonth": 202606,
+      "zoneDomains": 126,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/lotto"
+    },
+    {
+      "tld": "love",
+      "ascii": "love",
+      "alreadyInExplore": false,
+      "registeredDomains": 68867,
+      "reportingMonth": 202606,
+      "zoneDomains": 63343,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/love"
+    },
+    {
+      "tld": "ltd",
+      "ascii": "ltd",
+      "alreadyInExplore": false,
+      "registeredDomains": 119045,
+      "reportingMonth": 202606,
+      "zoneDomains": 112620,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ltd"
+    },
+    {
+      "tld": "ltda",
+      "ascii": "ltda",
+      "alreadyInExplore": false,
+      "registeredDomains": 561,
+      "reportingMonth": 202606,
+      "zoneDomains": 566,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ltda"
+    },
+    {
+      "tld": "luxe",
+      "ascii": "luxe",
+      "alreadyInExplore": false,
+      "registeredDomains": 10898,
+      "reportingMonth": 202606,
+      "zoneDomains": 12591,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/luxe"
+    },
+    {
+      "tld": "luxury",
+      "ascii": "luxury",
+      "alreadyInExplore": false,
+      "registeredDomains": 4281,
+      "reportingMonth": 202606,
+      "zoneDomains": 4187,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/luxury"
+    },
+    {
+      "tld": "madrid",
+      "ascii": "madrid",
+      "alreadyInExplore": false,
+      "registeredDomains": 3278,
+      "reportingMonth": 202606,
+      "zoneDomains": 3231,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/madrid"
+    },
+    {
+      "tld": "maison",
+      "ascii": "maison",
+      "alreadyInExplore": false,
+      "registeredDomains": 1697,
+      "reportingMonth": 202606,
+      "zoneDomains": 1544,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/maison"
+    },
+    {
+      "tld": "makeup",
+      "ascii": "makeup",
+      "alreadyInExplore": false,
+      "registeredDomains": 130952,
+      "reportingMonth": 202606,
+      "zoneDomains": 113077,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/makeup"
+    },
+    {
+      "tld": "management",
+      "ascii": "management",
+      "alreadyInExplore": false,
+      "registeredDomains": 13261,
+      "reportingMonth": 202606,
+      "zoneDomains": 12207,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/management"
+    },
+    {
+      "tld": "market",
+      "ascii": "market",
+      "alreadyInExplore": false,
+      "registeredDomains": 20973,
+      "reportingMonth": 202606,
+      "zoneDomains": 19263,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/market"
+    },
+    {
+      "tld": "marketing",
+      "ascii": "marketing",
+      "alreadyInExplore": false,
+      "registeredDomains": 29572,
+      "reportingMonth": 202606,
+      "zoneDomains": 28173,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/marketing"
+    },
+    {
+      "tld": "markets",
+      "ascii": "markets",
+      "alreadyInExplore": false,
+      "registeredDomains": 6510,
+      "reportingMonth": 202606,
+      "zoneDomains": 6929,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/markets"
+    },
+    {
+      "tld": "mba",
+      "ascii": "mba",
+      "alreadyInExplore": false,
+      "registeredDomains": 5366,
+      "reportingMonth": 202606,
+      "zoneDomains": 5036,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mba"
+    },
+    {
+      "tld": "md",
+      "ascii": "md",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "me",
+      "ascii": "me",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "med",
+      "ascii": "med",
+      "alreadyInExplore": false,
+      "registeredDomains": 2941,
+      "reportingMonth": 202606,
+      "zoneDomains": 2939,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/med"
+    },
+    {
+      "tld": "media",
+      "ascii": "media",
+      "alreadyInExplore": false,
+      "registeredDomains": 100775,
+      "reportingMonth": 202606,
+      "zoneDomains": 101933,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/media"
+    },
+    {
+      "tld": "melbourne",
+      "ascii": "melbourne",
+      "alreadyInExplore": false,
+      "registeredDomains": 5190,
+      "reportingMonth": 202606,
+      "zoneDomains": 4837,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/melbourne"
+    },
+    {
+      "tld": "meme",
+      "ascii": "meme",
+      "alreadyInExplore": false,
+      "registeredDomains": 5806,
+      "reportingMonth": 202606,
+      "zoneDomains": 6116,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/meme"
+    },
+    {
+      "tld": "memorial",
+      "ascii": "memorial",
+      "alreadyInExplore": false,
+      "registeredDomains": 1016,
+      "reportingMonth": 202606,
+      "zoneDomains": 857,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/memorial"
+    },
+    {
+      "tld": "men",
+      "ascii": "men",
+      "alreadyInExplore": false,
+      "registeredDomains": 11850,
+      "reportingMonth": 202606,
+      "zoneDomains": 11723,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/men"
+    },
+    {
+      "tld": "menu",
+      "ascii": "menu",
+      "alreadyInExplore": false,
+      "registeredDomains": 5583,
+      "reportingMonth": 202606,
+      "zoneDomains": 5526,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/menu"
+    },
+    {
+      "tld": "miami",
+      "ascii": "miami",
+      "alreadyInExplore": false,
+      "registeredDomains": 12356,
+      "reportingMonth": 202606,
+      "zoneDomains": 11974,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/miami"
+    },
+    {
+      "tld": "mobi",
+      "ascii": "mobi",
+      "alreadyInExplore": false,
+      "registeredDomains": 403590,
+      "reportingMonth": 202606,
+      "zoneDomains": 208633,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mobi"
+    },
+    {
+      "tld": "mobile",
+      "ascii": "mobile",
+      "alreadyInExplore": false,
+      "registeredDomains": 4954,
+      "reportingMonth": 202606,
+      "zoneDomains": 5557,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mobile"
+    },
+    {
+      "tld": "moda",
+      "ascii": "moda",
+      "alreadyInExplore": false,
+      "registeredDomains": 2500,
+      "reportingMonth": 202606,
+      "zoneDomains": 2224,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/moda"
+    },
+    {
+      "tld": "moe",
+      "ascii": "moe",
+      "alreadyInExplore": false,
+      "registeredDomains": 17541,
+      "reportingMonth": 202606,
+      "zoneDomains": 17455,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/moe"
+    },
+    {
+      "tld": "moi",
+      "ascii": "moi",
+      "alreadyInExplore": false,
+      "registeredDomains": 924,
+      "reportingMonth": 202606,
+      "zoneDomains": 911,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/moi"
+    },
+    {
+      "tld": "mom",
+      "ascii": "mom",
+      "alreadyInExplore": false,
+      "registeredDomains": 84879,
+      "reportingMonth": 202606,
+      "zoneDomains": 82800,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mom"
+    },
+    {
+      "tld": "money",
+      "ascii": "money",
+      "alreadyInExplore": false,
+      "registeredDomains": 22522,
+      "reportingMonth": 202606,
+      "zoneDomains": 22224,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/money"
+    },
+    {
+      "tld": "monster",
+      "ascii": "monster",
+      "alreadyInExplore": false,
+      "registeredDomains": 41040,
+      "reportingMonth": 202606,
+      "zoneDomains": 45241,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/monster"
+    },
+    {
+      "tld": "mortgage",
+      "ascii": "mortgage",
+      "alreadyInExplore": false,
+      "registeredDomains": 4150,
+      "reportingMonth": 202606,
+      "zoneDomains": 3566,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mortgage"
+    },
+    {
+      "tld": "moscow",
+      "ascii": "moscow",
+      "alreadyInExplore": false,
+      "registeredDomains": 18396,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/moscow"
+    },
+    {
+      "tld": "motorcycles",
+      "ascii": "motorcycles",
+      "alreadyInExplore": false,
+      "registeredDomains": 17283,
+      "reportingMonth": 202606,
+      "zoneDomains": 12359,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/motorcycles"
+    },
+    {
+      "tld": "mov",
+      "ascii": "mov",
+      "alreadyInExplore": false,
+      "registeredDomains": 5408,
+      "reportingMonth": 202606,
+      "zoneDomains": 5537,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/mov"
+    },
+    {
+      "tld": "movie",
+      "ascii": "movie",
+      "alreadyInExplore": false,
+      "registeredDomains": 4597,
+      "reportingMonth": 202606,
+      "zoneDomains": 4355,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/movie"
+    },
+    {
+      "tld": "museum",
+      "ascii": "museum",
+      "alreadyInExplore": false,
+      "registeredDomains": 1165,
+      "reportingMonth": 202606,
+      "zoneDomains": 1096,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/museum"
+    },
+    {
+      "tld": "music",
+      "ascii": "music",
+      "alreadyInExplore": false,
+      "registeredDomains": 27436,
+      "reportingMonth": 202606,
+      "zoneDomains": 13459,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/music"
+    },
+    {
+      "tld": "nagoya",
+      "ascii": "nagoya",
+      "alreadyInExplore": false,
+      "registeredDomains": 3342,
+      "reportingMonth": 202606,
+      "zoneDomains": 3216,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/nagoya"
+    },
+    {
+      "tld": "name",
+      "ascii": "name",
+      "alreadyInExplore": false,
+      "registeredDomains": 95242,
+      "reportingMonth": 202606,
+      "zoneDomains": 71978,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/name"
+    },
+    {
+      "tld": "navy",
+      "ascii": "navy",
+      "alreadyInExplore": false,
+      "registeredDomains": 1399,
+      "reportingMonth": 202606,
+      "zoneDomains": 1180,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/navy"
+    },
+    {
+      "tld": "net",
+      "ascii": "net",
+      "alreadyInExplore": false,
+      "registeredDomains": 12745973,
+      "reportingMonth": 202606,
+      "zoneDomains": 12419976,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/net"
+    },
+    {
+      "tld": "network",
+      "ascii": "network",
+      "alreadyInExplore": false,
+      "registeredDomains": 80112,
+      "reportingMonth": 202606,
+      "zoneDomains": 78965,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/network"
+    },
+    {
+      "tld": "new",
+      "ascii": "new",
+      "alreadyInExplore": false,
+      "registeredDomains": 2233,
+      "reportingMonth": 202606,
+      "zoneDomains": 2076,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/new"
+    },
+    {
+      "tld": "news",
+      "ascii": "news",
+      "alreadyInExplore": false,
+      "registeredDomains": 80178,
+      "reportingMonth": 202606,
+      "zoneDomains": 76220,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/news"
+    },
+    {
+      "tld": "nexus",
+      "ascii": "nexus",
+      "alreadyInExplore": false,
+      "registeredDomains": 4378,
+      "reportingMonth": 202606,
+      "zoneDomains": 4670,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/nexus"
+    },
+    {
+      "tld": "ngo",
+      "ascii": "ngo",
+      "alreadyInExplore": false,
+      "registeredDomains": 6547,
+      "reportingMonth": 202606,
+      "zoneDomains": 4558,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ngo"
+    },
+    {
+      "tld": "ninja",
+      "ascii": "ninja",
+      "alreadyInExplore": false,
+      "registeredDomains": 25488,
+      "reportingMonth": 202606,
+      "zoneDomains": 23788,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ninja"
+    },
+    {
+      "tld": "now",
+      "ascii": "now",
+      "alreadyInExplore": false,
+      "registeredDomains": 27481,
+      "reportingMonth": 202606,
+      "zoneDomains": 27574,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/now"
+    },
+    {
+      "tld": "nrw",
+      "ascii": "nrw",
+      "alreadyInExplore": false,
+      "registeredDomains": 21439,
+      "reportingMonth": 202606,
+      "zoneDomains": 17967,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/nrw"
+    },
+    {
+      "tld": "nyc",
+      "ascii": "nyc",
+      "alreadyInExplore": false,
+      "registeredDomains": 60718,
+      "reportingMonth": 202606,
+      "zoneDomains": 60409,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/nyc"
+    },
+    {
+      "tld": "observer",
+      "ascii": "observer",
+      "alreadyInExplore": false,
+      "registeredDomains": 2811,
+      "reportingMonth": 202606,
+      "zoneDomains": 3103,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/observer"
+    },
+    {
+      "tld": "okinawa",
+      "ascii": "okinawa",
+      "alreadyInExplore": false,
+      "registeredDomains": 4165,
+      "reportingMonth": 202606,
+      "zoneDomains": 4011,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/okinawa"
+    },
+    {
+      "tld": "one",
+      "ascii": "one",
+      "alreadyInExplore": false,
+      "registeredDomains": 283638,
+      "reportingMonth": 202606,
+      "zoneDomains": 262091,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/one"
+    },
+    {
+      "tld": "ong",
+      "ascii": "ong",
+      "alreadyInExplore": false,
+      "registeredDomains": 4162,
+      "reportingMonth": 202606,
+      "zoneDomains": 1968,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ong"
+    },
+    {
+      "tld": "onl",
+      "ascii": "onl",
+      "alreadyInExplore": false,
+      "registeredDomains": 42367,
+      "reportingMonth": 202606,
+      "zoneDomains": 65225,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/onl"
+    },
+    {
+      "tld": "online",
+      "ascii": "online",
+      "alreadyInExplore": false,
+      "registeredDomains": 3963748,
+      "reportingMonth": 202606,
+      "zoneDomains": 3578478,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/online"
+    },
+    {
+      "tld": "ooo",
+      "ascii": "ooo",
+      "alreadyInExplore": false,
+      "registeredDomains": 14213,
+      "reportingMonth": 202606,
+      "zoneDomains": 13820,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ooo"
+    },
+    {
+      "tld": "org",
+      "ascii": "org",
+      "alreadyInExplore": false,
+      "registeredDomains": 12604255,
+      "reportingMonth": 202606,
+      "zoneDomains": 12173240,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/org"
+    },
+    {
+      "tld": "organic",
+      "ascii": "organic",
+      "alreadyInExplore": false,
+      "registeredDomains": 1774,
+      "reportingMonth": 202606,
+      "zoneDomains": 1539,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/organic"
+    },
+    {
+      "tld": "osaka",
+      "ascii": "osaka",
+      "alreadyInExplore": false,
+      "registeredDomains": 1053,
+      "reportingMonth": 202606,
+      "zoneDomains": 1001,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/osaka"
+    },
+    {
+      "tld": "page",
+      "ascii": "page",
+      "alreadyInExplore": false,
+      "registeredDomains": 40684,
+      "reportingMonth": 202606,
+      "zoneDomains": 39847,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/page"
+    },
+    {
+      "tld": "paris",
+      "ascii": "paris",
+      "alreadyInExplore": false,
+      "registeredDomains": 19159,
+      "reportingMonth": 202606,
+      "zoneDomains": 19103,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/paris"
+    },
+    {
+      "tld": "partners",
+      "ascii": "partners",
+      "alreadyInExplore": false,
+      "registeredDomains": 17901,
+      "reportingMonth": 202606,
+      "zoneDomains": 17595,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/partners"
+    },
+    {
+      "tld": "parts",
+      "ascii": "parts",
+      "alreadyInExplore": false,
+      "registeredDomains": 8017,
+      "reportingMonth": 202606,
+      "zoneDomains": 7508,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/parts"
+    },
+    {
+      "tld": "party",
+      "ascii": "party",
+      "alreadyInExplore": false,
+      "registeredDomains": 21594,
+      "reportingMonth": 202606,
+      "zoneDomains": 22858,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/party"
+    },
+    {
+      "tld": "pay",
+      "ascii": "pay",
+      "alreadyInExplore": false,
+      "registeredDomains": 882,
+      "reportingMonth": 202606,
+      "zoneDomains": 1044,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pay"
+    },
+    {
+      "tld": "pet",
+      "ascii": "pet",
+      "alreadyInExplore": false,
+      "registeredDomains": 21139,
+      "reportingMonth": 202606,
+      "zoneDomains": 20280,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pet"
+    },
+    {
+      "tld": "pharmacy",
+      "ascii": "pharmacy",
+      "alreadyInExplore": false,
+      "registeredDomains": 1231,
+      "reportingMonth": 202606,
+      "zoneDomains": 1174,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pharmacy"
+    },
+    {
+      "tld": "phd",
+      "ascii": "phd",
+      "alreadyInExplore": false,
+      "registeredDomains": 2536,
+      "reportingMonth": 202606,
+      "zoneDomains": 2542,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/phd"
+    },
+    {
+      "tld": "photo",
+      "ascii": "photo",
+      "alreadyInExplore": false,
+      "registeredDomains": 16503,
+      "reportingMonth": 202606,
+      "zoneDomains": 16355,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/photo"
+    },
+    {
+      "tld": "photography",
+      "ascii": "photography",
+      "alreadyInExplore": false,
+      "registeredDomains": 35091,
+      "reportingMonth": 202606,
+      "zoneDomains": 33124,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/photography"
+    },
+    {
+      "tld": "photos",
+      "ascii": "photos",
+      "alreadyInExplore": false,
+      "registeredDomains": 19909,
+      "reportingMonth": 202606,
+      "zoneDomains": 18997,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/photos"
+    },
+    {
+      "tld": "physio",
+      "ascii": "physio",
+      "alreadyInExplore": false,
+      "registeredDomains": 972,
+      "reportingMonth": 202606,
+      "zoneDomains": 945,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/physio"
+    },
+    {
+      "tld": "pics",
+      "ascii": "pics",
+      "alreadyInExplore": false,
+      "registeredDomains": 114308,
+      "reportingMonth": 202606,
+      "zoneDomains": 120643,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pics"
+    },
+    {
+      "tld": "pictures",
+      "ascii": "pictures",
+      "alreadyInExplore": false,
+      "registeredDomains": 8417,
+      "reportingMonth": 202606,
+      "zoneDomains": 8331,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pictures"
+    },
+    {
+      "tld": "pink",
+      "ascii": "pink",
+      "alreadyInExplore": false,
+      "registeredDomains": 7604,
+      "reportingMonth": 202606,
+      "zoneDomains": 6719,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pink"
+    },
+    {
+      "tld": "pizza",
+      "ascii": "pizza",
+      "alreadyInExplore": false,
+      "registeredDomains": 10742,
+      "reportingMonth": 202606,
+      "zoneDomains": 10090,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pizza"
+    },
+    {
+      "tld": "place",
+      "ascii": "place",
+      "alreadyInExplore": false,
+      "registeredDomains": 10899,
+      "reportingMonth": 202606,
+      "zoneDomains": 10486,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/place"
+    },
+    {
+      "tld": "plumbing",
+      "ascii": "plumbing",
+      "alreadyInExplore": false,
+      "registeredDomains": 2723,
+      "reportingMonth": 202606,
+      "zoneDomains": 2436,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/plumbing"
+    },
+    {
+      "tld": "plus",
+      "ascii": "plus",
+      "alreadyInExplore": false,
+      "registeredDomains": 36539,
+      "reportingMonth": 202606,
+      "zoneDomains": 39595,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/plus"
+    },
+    {
+      "tld": "poker",
+      "ascii": "poker",
+      "alreadyInExplore": false,
+      "registeredDomains": 5861,
+      "reportingMonth": 202606,
+      "zoneDomains": 5712,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/poker"
+    },
+    {
+      "tld": "porn",
+      "ascii": "porn",
+      "alreadyInExplore": false,
+      "registeredDomains": 8196,
+      "reportingMonth": 202606,
+      "zoneDomains": 7714,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/porn"
+    },
+    {
+      "tld": "post",
+      "ascii": "post",
+      "alreadyInExplore": false,
+      "registeredDomains": 282,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/post"
+    },
+    {
+      "tld": "press",
+      "ascii": "press",
+      "alreadyInExplore": false,
+      "registeredDomains": 20260,
+      "reportingMonth": 202606,
+      "zoneDomains": 18835,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/press"
+    },
+    {
+      "tld": "pro",
+      "ascii": "pro",
+      "alreadyInExplore": false,
+      "registeredDomains": 1250659,
+      "reportingMonth": 202606,
+      "zoneDomains": 1141518,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pro"
+    },
+    {
+      "tld": "productions",
+      "ascii": "productions",
+      "alreadyInExplore": false,
+      "registeredDomains": 11493,
+      "reportingMonth": 202606,
+      "zoneDomains": 10782,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/productions"
+    },
+    {
+      "tld": "prof",
+      "ascii": "prof",
+      "alreadyInExplore": false,
+      "registeredDomains": 888,
+      "reportingMonth": 202606,
+      "zoneDomains": 896,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/prof"
+    },
+    {
+      "tld": "promo",
+      "ascii": "promo",
+      "alreadyInExplore": false,
+      "registeredDomains": 7222,
+      "reportingMonth": 202606,
+      "zoneDomains": 6721,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/promo"
+    },
+    {
+      "tld": "properties",
+      "ascii": "properties",
+      "alreadyInExplore": false,
+      "registeredDomains": 13972,
+      "reportingMonth": 202606,
+      "zoneDomains": 12962,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/properties"
+    },
+    {
+      "tld": "property",
+      "ascii": "property",
+      "alreadyInExplore": false,
+      "registeredDomains": 5586,
+      "reportingMonth": 202606,
+      "zoneDomains": 4828,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/property"
+    },
+    {
+      "tld": "protection",
+      "ascii": "protection",
+      "alreadyInExplore": false,
+      "registeredDomains": 114,
+      "reportingMonth": 202606,
+      "zoneDomains": 103,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/protection"
+    },
+    {
+      "tld": "pub",
+      "ascii": "pub",
+      "alreadyInExplore": false,
+      "registeredDomains": 20890,
+      "reportingMonth": 202606,
+      "zoneDomains": 17222,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/pub"
+    },
+    {
+      "tld": "qpon",
+      "ascii": "qpon",
+      "alreadyInExplore": false,
+      "registeredDomains": 88309,
+      "reportingMonth": 202606,
+      "zoneDomains": 67471,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/qpon"
+    },
+    {
+      "tld": "quebec",
+      "ascii": "quebec",
+      "alreadyInExplore": false,
+      "registeredDomains": 6280,
+      "reportingMonth": 202606,
+      "zoneDomains": 7195,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/quebec"
+    },
+    {
+      "tld": "quest",
+      "ascii": "quest",
+      "alreadyInExplore": false,
+      "registeredDomains": 61773,
+      "reportingMonth": 202606,
+      "zoneDomains": 64014,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/quest"
+    },
+    {
+      "tld": "racing",
+      "ascii": "racing",
+      "alreadyInExplore": false,
+      "registeredDomains": 4691,
+      "reportingMonth": 202606,
+      "zoneDomains": 4671,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/racing"
+    },
+    {
+      "tld": "radio",
+      "ascii": "radio",
+      "alreadyInExplore": false,
+      "registeredDomains": 2996,
+      "reportingMonth": 202606,
+      "zoneDomains": 2937,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/radio"
+    },
+    {
+      "tld": "realestate",
+      "ascii": "realestate",
+      "alreadyInExplore": false,
+      "registeredDomains": 14190,
+      "reportingMonth": 202606,
+      "zoneDomains": 13534,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/realestate"
+    },
+    {
+      "tld": "realtor",
+      "ascii": "realtor",
+      "alreadyInExplore": false,
+      "registeredDomains": 25366,
+      "reportingMonth": 202606,
+      "zoneDomains": 22135,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/realtor"
+    },
+    {
+      "tld": "realty",
+      "ascii": "realty",
+      "alreadyInExplore": false,
+      "registeredDomains": 1488,
+      "reportingMonth": 202606,
+      "zoneDomains": 1252,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/realty"
+    },
+    {
+      "tld": "recipes",
+      "ascii": "recipes",
+      "alreadyInExplore": false,
+      "registeredDomains": 4293,
+      "reportingMonth": 202606,
+      "zoneDomains": 4059,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/recipes"
+    },
+    {
+      "tld": "red",
+      "ascii": "red",
+      "alreadyInExplore": false,
+      "registeredDomains": 20697,
+      "reportingMonth": 202606,
+      "zoneDomains": 18266,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/red"
+    },
+    {
+      "tld": "rehab",
+      "ascii": "rehab",
+      "alreadyInExplore": false,
+      "registeredDomains": 2343,
+      "reportingMonth": 202606,
+      "zoneDomains": 2074,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rehab"
+    },
+    {
+      "tld": "reise",
+      "ascii": "reise",
+      "alreadyInExplore": false,
+      "registeredDomains": 1013,
+      "reportingMonth": 202606,
+      "zoneDomains": 816,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/reise"
+    },
+    {
+      "tld": "reisen",
+      "ascii": "reisen",
+      "alreadyInExplore": false,
+      "registeredDomains": 4398,
+      "reportingMonth": 202606,
+      "zoneDomains": 4108,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/reisen"
+    },
+    {
+      "tld": "reit",
+      "ascii": "reit",
+      "alreadyInExplore": false,
+      "registeredDomains": 836,
+      "reportingMonth": 202606,
+      "zoneDomains": 81,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/reit"
+    },
+    {
+      "tld": "ren",
+      "ascii": "ren",
+      "alreadyInExplore": false,
+      "registeredDomains": 13065,
+      "reportingMonth": 202606,
+      "zoneDomains": 12657,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ren"
+    },
+    {
+      "tld": "rent",
+      "ascii": "rent",
+      "alreadyInExplore": false,
+      "registeredDomains": 10458,
+      "reportingMonth": 202606,
+      "zoneDomains": 11254,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rent"
+    },
+    {
+      "tld": "rentals",
+      "ascii": "rentals",
+      "alreadyInExplore": false,
+      "registeredDomains": 13440,
+      "reportingMonth": 202606,
+      "zoneDomains": 12502,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rentals"
+    },
+    {
+      "tld": "repair",
+      "ascii": "repair",
+      "alreadyInExplore": false,
+      "registeredDomains": 8943,
+      "reportingMonth": 202606,
+      "zoneDomains": 8810,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/repair"
+    },
+    {
+      "tld": "report",
+      "ascii": "report",
+      "alreadyInExplore": false,
+      "registeredDomains": 12520,
+      "reportingMonth": 202606,
+      "zoneDomains": 11991,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/report"
+    },
+    {
+      "tld": "republican",
+      "ascii": "republican",
+      "alreadyInExplore": false,
+      "registeredDomains": 1291,
+      "reportingMonth": 202606,
+      "zoneDomains": 1163,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/republican"
+    },
+    {
+      "tld": "rest",
+      "ascii": "rest",
+      "alreadyInExplore": false,
+      "registeredDomains": 102749,
+      "reportingMonth": 202606,
+      "zoneDomains": 109255,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rest"
+    },
+    {
+      "tld": "restaurant",
+      "ascii": "restaurant",
+      "alreadyInExplore": false,
+      "registeredDomains": 8890,
+      "reportingMonth": 202606,
+      "zoneDomains": 8473,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/restaurant"
+    },
+    {
+      "tld": "review",
+      "ascii": "review",
+      "alreadyInExplore": false,
+      "registeredDomains": 7822,
+      "reportingMonth": 202606,
+      "zoneDomains": 7428,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/review"
+    },
+    {
+      "tld": "reviews",
+      "ascii": "reviews",
+      "alreadyInExplore": false,
+      "registeredDomains": 12459,
+      "reportingMonth": 202606,
+      "zoneDomains": 11062,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/reviews"
+    },
+    {
+      "tld": "rich",
+      "ascii": "rich",
+      "alreadyInExplore": false,
+      "registeredDomains": 482,
+      "reportingMonth": 202606,
+      "zoneDomains": 641,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rich"
+    },
+    {
+      "tld": "rio",
+      "ascii": "rio",
+      "alreadyInExplore": false,
+      "registeredDomains": 688,
+      "reportingMonth": 202606,
+      "zoneDomains": 656,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rio"
+    },
+    {
+      "tld": "rip",
+      "ascii": "rip",
+      "alreadyInExplore": false,
+      "registeredDomains": 13578,
+      "reportingMonth": 202606,
+      "zoneDomains": 11092,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rip"
+    },
+    {
+      "tld": "rocks",
+      "ascii": "rocks",
+      "alreadyInExplore": false,
+      "registeredDomains": 62901,
+      "reportingMonth": 202606,
+      "zoneDomains": 52571,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rocks"
+    },
+    {
+      "tld": "rodeo",
+      "ascii": "rodeo",
+      "alreadyInExplore": false,
+      "registeredDomains": 3086,
+      "reportingMonth": 202606,
+      "zoneDomains": 3045,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rodeo"
+    },
+    {
+      "tld": "rsvp",
+      "ascii": "rsvp",
+      "alreadyInExplore": false,
+      "registeredDomains": 2765,
+      "reportingMonth": 202606,
+      "zoneDomains": 2852,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rsvp"
+    },
+    {
+      "tld": "rugby",
+      "ascii": "rugby",
+      "alreadyInExplore": false,
+      "registeredDomains": 797,
+      "reportingMonth": 202606,
+      "zoneDomains": 517,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/rugby"
+    },
+    {
+      "tld": "ruhr",
+      "ascii": "ruhr",
+      "alreadyInExplore": false,
+      "registeredDomains": 4407,
+      "reportingMonth": 202606,
+      "zoneDomains": 4332,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ruhr"
+    },
+    {
+      "tld": "run",
+      "ascii": "run",
+      "alreadyInExplore": false,
+      "registeredDomains": 140139,
+      "reportingMonth": 202606,
+      "zoneDomains": 126512,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/run"
+    },
+    {
+      "tld": "ryukyu",
+      "ascii": "ryukyu",
+      "alreadyInExplore": false,
+      "registeredDomains": 641,
+      "reportingMonth": 202606,
+      "zoneDomains": 619,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ryukyu"
+    },
+    {
+      "tld": "saarland",
+      "ascii": "saarland",
+      "alreadyInExplore": false,
+      "registeredDomains": 3775,
+      "reportingMonth": 202606,
+      "zoneDomains": 3724,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/saarland"
+    },
+    {
+      "tld": "sale",
+      "ascii": "sale",
+      "alreadyInExplore": false,
+      "registeredDomains": 15940,
+      "reportingMonth": 202606,
+      "zoneDomains": 14450,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sale"
+    },
+    {
+      "tld": "salon",
+      "ascii": "salon",
+      "alreadyInExplore": false,
+      "registeredDomains": 4466,
+      "reportingMonth": 202606,
+      "zoneDomains": 4296,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/salon"
+    },
+    {
+      "tld": "sarl",
+      "ascii": "sarl",
+      "alreadyInExplore": false,
+      "registeredDomains": 1870,
+      "reportingMonth": 202606,
+      "zoneDomains": 2249,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sarl"
+    },
+    {
+      "tld": "sbs",
+      "ascii": "sbs",
+      "alreadyInExplore": false,
+      "registeredDomains": 1446730,
+      "reportingMonth": 202606,
+      "zoneDomains": 1080640,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sbs"
+    },
+    {
+      "tld": "school",
+      "ascii": "school",
+      "alreadyInExplore": false,
+      "registeredDomains": 24838,
+      "reportingMonth": 202606,
+      "zoneDomains": 24778,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/school"
+    },
+    {
+      "tld": "schule",
+      "ascii": "schule",
+      "alreadyInExplore": false,
+      "registeredDomains": 5022,
+      "reportingMonth": 202606,
+      "zoneDomains": 4653,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/schule"
+    },
+    {
+      "tld": "science",
+      "ascii": "science",
+      "alreadyInExplore": false,
+      "registeredDomains": 12113,
+      "reportingMonth": 202606,
+      "zoneDomains": 11926,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/science"
+    },
+    {
+      "tld": "scot",
+      "ascii": "scot",
+      "alreadyInExplore": false,
+      "registeredDomains": 13559,
+      "reportingMonth": 202606,
+      "zoneDomains": 13464,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/scot"
+    },
+    {
+      "tld": "security",
+      "ascii": "security",
+      "alreadyInExplore": false,
+      "registeredDomains": 931,
+      "reportingMonth": 202606,
+      "zoneDomains": 953,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/security"
+    },
+    {
+      "tld": "select",
+      "ascii": "select",
+      "alreadyInExplore": false,
+      "registeredDomains": 792,
+      "reportingMonth": 202606,
+      "zoneDomains": 801,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/select"
+    },
+    {
+      "tld": "services",
+      "ascii": "services",
+      "alreadyInExplore": false,
+      "registeredDomains": 91844,
+      "reportingMonth": 202606,
+      "zoneDomains": 85124,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/services"
+    },
+    {
+      "tld": "sex",
+      "ascii": "sex",
+      "alreadyInExplore": false,
+      "registeredDomains": 7048,
+      "reportingMonth": 202606,
+      "zoneDomains": 6841,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sex"
+    },
+    {
+      "tld": "sexy",
+      "ascii": "sexy",
+      "alreadyInExplore": false,
+      "registeredDomains": 2987,
+      "reportingMonth": 202606,
+      "zoneDomains": 2789,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sexy"
+    },
+    {
+      "tld": "shiksha",
+      "ascii": "shiksha",
+      "alreadyInExplore": false,
+      "registeredDomains": 752,
+      "reportingMonth": 202606,
+      "zoneDomains": 625,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/shiksha"
+    },
+    {
+      "tld": "shoes",
+      "ascii": "shoes",
+      "alreadyInExplore": false,
+      "registeredDomains": 4065,
+      "reportingMonth": 202606,
+      "zoneDomains": 3705,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/shoes"
+    },
+    {
+      "tld": "shop",
+      "ascii": "shop",
+      "alreadyInExplore": false,
+      "registeredDomains": 4716233,
+      "reportingMonth": 202606,
+      "zoneDomains": 4318887,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/shop"
+    },
+    {
+      "tld": "shopping",
+      "ascii": "shopping",
+      "alreadyInExplore": false,
+      "registeredDomains": 8388,
+      "reportingMonth": 202606,
+      "zoneDomains": 7552,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/shopping"
+    },
+    {
+      "tld": "show",
+      "ascii": "show",
+      "alreadyInExplore": false,
+      "registeredDomains": 18933,
+      "reportingMonth": 202606,
+      "zoneDomains": 19040,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/show"
+    },
+    {
+      "tld": "singles",
+      "ascii": "singles",
+      "alreadyInExplore": false,
+      "registeredDomains": 3008,
+      "reportingMonth": 202606,
+      "zoneDomains": 3008,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/singles"
+    },
+    {
+      "tld": "site",
+      "ascii": "site",
+      "alreadyInExplore": false,
+      "registeredDomains": 2103869,
+      "reportingMonth": 202606,
+      "zoneDomains": 1914184,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/site"
+    },
+    {
+      "tld": "ski",
+      "ascii": "ski",
+      "alreadyInExplore": false,
+      "registeredDomains": 6603,
+      "reportingMonth": 202606,
+      "zoneDomains": 6391,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ski"
+    },
+    {
+      "tld": "skin",
+      "ascii": "skin",
+      "alreadyInExplore": false,
+      "registeredDomains": 175239,
+      "reportingMonth": 202606,
+      "zoneDomains": 138659,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/skin"
+    },
+    {
+      "tld": "soccer",
+      "ascii": "soccer",
+      "alreadyInExplore": false,
+      "registeredDomains": 4062,
+      "reportingMonth": 202606,
+      "zoneDomains": 3687,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/soccer"
+    },
+    {
+      "tld": "social",
+      "ascii": "social",
+      "alreadyInExplore": false,
+      "registeredDomains": 50268,
+      "reportingMonth": 202606,
+      "zoneDomains": 48384,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/social"
+    },
+    {
+      "tld": "software",
+      "ascii": "software",
+      "alreadyInExplore": false,
+      "registeredDomains": 27350,
+      "reportingMonth": 202606,
+      "zoneDomains": 26295,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/software"
+    },
+    {
+      "tld": "solar",
+      "ascii": "solar",
+      "alreadyInExplore": false,
+      "registeredDomains": 10063,
+      "reportingMonth": 202606,
+      "zoneDomains": 9280,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/solar"
+    },
+    {
+      "tld": "solutions",
+      "ascii": "solutions",
+      "alreadyInExplore": false,
+      "registeredDomains": 106975,
+      "reportingMonth": 202606,
+      "zoneDomains": 101149,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/solutions"
+    },
+    {
+      "tld": "soy",
+      "ascii": "soy",
+      "alreadyInExplore": true,
+      "registeredDomains": 1860,
+      "reportingMonth": 202606,
+      "zoneDomains": 1861,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/soy"
+    },
+    {
+      "tld": "spa",
+      "ascii": "spa",
+      "alreadyInExplore": false,
+      "registeredDomains": 1830,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/spa"
+    },
+    {
+      "tld": "space",
+      "ascii": "space",
+      "alreadyInExplore": false,
+      "registeredDomains": 634547,
+      "reportingMonth": 202606,
+      "zoneDomains": 581922,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/space"
+    },
+    {
+      "tld": "sport",
+      "ascii": "sport",
+      "alreadyInExplore": false,
+      "registeredDomains": 9879,
+      "reportingMonth": 202606,
+      "zoneDomains": 9731,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sport"
+    },
+    {
+      "tld": "spot",
+      "ascii": "spot",
+      "alreadyInExplore": false,
+      "registeredDomains": 1606,
+      "reportingMonth": 202606,
+      "zoneDomains": 1535,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/spot"
+    },
+    {
+      "tld": "srl",
+      "ascii": "srl",
+      "alreadyInExplore": false,
+      "registeredDomains": 11905,
+      "reportingMonth": 202606,
+      "zoneDomains": 12795,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/srl"
+    },
+    {
+      "tld": "storage",
+      "ascii": "storage",
+      "alreadyInExplore": true,
+      "registeredDomains": 651,
+      "reportingMonth": 202606,
+      "zoneDomains": 625,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/storage"
+    },
+    {
+      "tld": "store",
+      "ascii": "store",
+      "alreadyInExplore": false,
+      "registeredDomains": 2335965,
+      "reportingMonth": 202606,
+      "zoneDomains": 2080229,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/store"
+    },
+    {
+      "tld": "stream",
+      "ascii": "stream",
+      "alreadyInExplore": false,
+      "registeredDomains": 15464,
+      "reportingMonth": 202606,
+      "zoneDomains": 18209,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/stream"
+    },
+    {
+      "tld": "studio",
+      "ascii": "studio",
+      "alreadyInExplore": false,
+      "registeredDomains": 196756,
+      "reportingMonth": 202606,
+      "zoneDomains": 206298,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/studio"
+    },
+    {
+      "tld": "study",
+      "ascii": "study",
+      "alreadyInExplore": false,
+      "registeredDomains": 13037,
+      "reportingMonth": 202606,
+      "zoneDomains": 30700,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/study"
+    },
+    {
+      "tld": "style",
+      "ascii": "style",
+      "alreadyInExplore": false,
+      "registeredDomains": 12070,
+      "reportingMonth": 202606,
+      "zoneDomains": 11535,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/style"
+    },
+    {
+      "tld": "sucks",
+      "ascii": "sucks",
+      "alreadyInExplore": false,
+      "registeredDomains": 9055,
+      "reportingMonth": 202606,
+      "zoneDomains": 8543,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sucks"
+    },
+    {
+      "tld": "supplies",
+      "ascii": "supplies",
+      "alreadyInExplore": false,
+      "registeredDomains": 3151,
+      "reportingMonth": 202606,
+      "zoneDomains": 2722,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/supplies"
+    },
+    {
+      "tld": "supply",
+      "ascii": "supply",
+      "alreadyInExplore": false,
+      "registeredDomains": 8623,
+      "reportingMonth": 202606,
+      "zoneDomains": 7984,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/supply"
+    },
+    {
+      "tld": "support",
+      "ascii": "support",
+      "alreadyInExplore": false,
+      "registeredDomains": 43314,
+      "reportingMonth": 202606,
+      "zoneDomains": 39523,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/support"
+    },
+    {
+      "tld": "surf",
+      "ascii": "surf",
+      "alreadyInExplore": false,
+      "registeredDomains": 48685,
+      "reportingMonth": 202606,
+      "zoneDomains": 86914,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/surf"
+    },
+    {
+      "tld": "surgery",
+      "ascii": "surgery",
+      "alreadyInExplore": false,
+      "registeredDomains": 1830,
+      "reportingMonth": 202606,
+      "zoneDomains": 1629,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/surgery"
+    },
+    {
+      "tld": "swiss",
+      "ascii": "swiss",
+      "alreadyInExplore": false,
+      "registeredDomains": 23184,
+      "reportingMonth": 202606,
+      "zoneDomains": 22973,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/swiss"
+    },
+    {
+      "tld": "sydney",
+      "ascii": "sydney",
+      "alreadyInExplore": false,
+      "registeredDomains": 6065,
+      "reportingMonth": 202606,
+      "zoneDomains": 5671,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/sydney"
+    },
+    {
+      "tld": "systems",
+      "ascii": "systems",
+      "alreadyInExplore": false,
+      "registeredDomains": 44956,
+      "reportingMonth": 202606,
+      "zoneDomains": 45931,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/systems"
+    },
+    {
+      "tld": "taipei",
+      "ascii": "taipei",
+      "alreadyInExplore": false,
+      "registeredDomains": 4147,
+      "reportingMonth": 202606,
+      "zoneDomains": 4139,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/taipei"
+    },
+    {
+      "tld": "talk",
+      "ascii": "talk",
+      "alreadyInExplore": false,
+      "registeredDomains": 1425,
+      "reportingMonth": 202606,
+      "zoneDomains": 1658,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/talk"
+    },
+    {
+      "tld": "tatar",
+      "ascii": "tatar",
+      "alreadyInExplore": false,
+      "registeredDomains": 1306,
+      "reportingMonth": 202606,
+      "zoneDomains": 1194,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tatar"
+    },
+    {
+      "tld": "tattoo",
+      "ascii": "tattoo",
+      "alreadyInExplore": false,
+      "registeredDomains": 8276,
+      "reportingMonth": 202606,
+      "zoneDomains": 9578,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tattoo"
+    },
+    {
+      "tld": "tax",
+      "ascii": "tax",
+      "alreadyInExplore": false,
+      "registeredDomains": 17946,
+      "reportingMonth": 202606,
+      "zoneDomains": 15869,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tax"
+    },
+    {
+      "tld": "taxi",
+      "ascii": "taxi",
+      "alreadyInExplore": false,
+      "registeredDomains": 7283,
+      "reportingMonth": 202606,
+      "zoneDomains": 6864,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/taxi"
+    },
+    {
+      "tld": "team",
+      "ascii": "team",
+      "alreadyInExplore": false,
+      "registeredDomains": 67162,
+      "reportingMonth": 202606,
+      "zoneDomains": 72313,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/team"
+    },
+    {
+      "tld": "tech",
+      "ascii": "tech",
+      "alreadyInExplore": false,
+      "registeredDomains": 570630,
+      "reportingMonth": 202606,
+      "zoneDomains": 583955,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tech"
+    },
+    {
+      "tld": "technology",
+      "ascii": "technology",
+      "alreadyInExplore": false,
+      "registeredDomains": 34830,
+      "reportingMonth": 202606,
+      "zoneDomains": 33647,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/technology"
+    },
+    {
+      "tld": "tel",
+      "ascii": "tel",
+      "alreadyInExplore": false,
+      "registeredDomains": 38495,
+      "reportingMonth": 202606,
+      "zoneDomains": 35908,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tel"
+    },
+    {
+      "tld": "tennis",
+      "ascii": "tennis",
+      "alreadyInExplore": false,
+      "registeredDomains": 2107,
+      "reportingMonth": 202606,
+      "zoneDomains": 1967,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tennis"
+    },
+    {
+      "tld": "theater",
+      "ascii": "theater",
+      "alreadyInExplore": false,
+      "registeredDomains": 1562,
+      "reportingMonth": 202606,
+      "zoneDomains": 1409,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/theater"
+    },
+    {
+      "tld": "theatre",
+      "ascii": "theatre",
+      "alreadyInExplore": false,
+      "registeredDomains": 176,
+      "reportingMonth": 202606,
+      "zoneDomains": 167,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/theatre"
+    },
+    {
+      "tld": "tickets",
+      "ascii": "tickets",
+      "alreadyInExplore": false,
+      "registeredDomains": 1159,
+      "reportingMonth": 202606,
+      "zoneDomains": 1103,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tickets"
+    },
+    {
+      "tld": "tienda",
+      "ascii": "tienda",
+      "alreadyInExplore": false,
+      "registeredDomains": 2274,
+      "reportingMonth": 202606,
+      "zoneDomains": 1964,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tienda"
+    },
+    {
+      "tld": "tips",
+      "ascii": "tips",
+      "alreadyInExplore": false,
+      "registeredDomains": 19603,
+      "reportingMonth": 202606,
+      "zoneDomains": 18539,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tips"
+    },
+    {
+      "tld": "tires",
+      "ascii": "tires",
+      "alreadyInExplore": false,
+      "registeredDomains": 1365,
+      "reportingMonth": 202606,
+      "zoneDomains": 1177,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tires"
+    },
+    {
+      "tld": "tirol",
+      "ascii": "tirol",
+      "alreadyInExplore": false,
+      "registeredDomains": 8122,
+      "reportingMonth": 202606,
+      "zoneDomains": 8007,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tirol"
+    },
+    {
+      "tld": "today",
+      "ascii": "today",
+      "alreadyInExplore": false,
+      "registeredDomains": 135011,
+      "reportingMonth": 202606,
+      "zoneDomains": 119074,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/today"
+    },
+    {
+      "tld": "tokyo",
+      "ascii": "tokyo",
+      "alreadyInExplore": false,
+      "registeredDomains": 93966,
+      "reportingMonth": 202606,
+      "zoneDomains": 81108,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tokyo"
+    },
+    {
+      "tld": "tools",
+      "ascii": "tools",
+      "alreadyInExplore": false,
+      "registeredDomains": 30491,
+      "reportingMonth": 202606,
+      "zoneDomains": 31200,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tools"
+    },
+    {
+      "tld": "top",
+      "ascii": "top",
+      "alreadyInExplore": false,
+      "registeredDomains": 7433320,
+      "reportingMonth": 202606,
+      "zoneDomains": 6311087,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/top"
+    },
+    {
+      "tld": "tours",
+      "ascii": "tours",
+      "alreadyInExplore": false,
+      "registeredDomains": 13453,
+      "reportingMonth": 202606,
+      "zoneDomains": 13194,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tours"
+    },
+    {
+      "tld": "town",
+      "ascii": "town",
+      "alreadyInExplore": false,
+      "registeredDomains": 18596,
+      "reportingMonth": 202606,
+      "zoneDomains": 7682,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/town"
+    },
+    {
+      "tld": "toys",
+      "ascii": "toys",
+      "alreadyInExplore": false,
+      "registeredDomains": 5768,
+      "reportingMonth": 202606,
+      "zoneDomains": 5187,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/toys"
+    },
+    {
+      "tld": "trade",
+      "ascii": "trade",
+      "alreadyInExplore": false,
+      "registeredDomains": 24960,
+      "reportingMonth": 202606,
+      "zoneDomains": 27262,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/trade"
+    },
+    {
+      "tld": "trading",
+      "ascii": "trading",
+      "alreadyInExplore": false,
+      "registeredDomains": 5391,
+      "reportingMonth": 202606,
+      "zoneDomains": 5325,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/trading"
+    },
+    {
+      "tld": "training",
+      "ascii": "training",
+      "alreadyInExplore": false,
+      "registeredDomains": 23492,
+      "reportingMonth": 202606,
+      "zoneDomains": 22902,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/training"
+    },
+    {
+      "tld": "travel",
+      "ascii": "travel",
+      "alreadyInExplore": false,
+      "registeredDomains": 28443,
+      "reportingMonth": 202606,
+      "zoneDomains": 28632,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/travel"
+    },
+    {
+      "tld": "tube",
+      "ascii": "tube",
+      "alreadyInExplore": false,
+      "registeredDomains": 5483,
+      "reportingMonth": 202606,
+      "zoneDomains": 3474,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/tube"
+    },
+    {
+      "tld": "tv",
+      "ascii": "tv",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": null
+    },
+    {
+      "tld": "university",
+      "ascii": "university",
+      "alreadyInExplore": false,
+      "registeredDomains": 9028,
+      "reportingMonth": 202606,
+      "zoneDomains": 7948,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/university"
+    },
+    {
+      "tld": "uno",
+      "ascii": "uno",
+      "alreadyInExplore": false,
+      "registeredDomains": 43433,
+      "reportingMonth": 202606,
+      "zoneDomains": 28212,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/uno"
+    },
+    {
+      "tld": "vacations",
+      "ascii": "vacations",
+      "alreadyInExplore": false,
+      "registeredDomains": 5225,
+      "reportingMonth": 202606,
+      "zoneDomains": 3145,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vacations"
+    },
+    {
+      "tld": "vana",
+      "ascii": "vana",
+      "alreadyInExplore": false,
+      "registeredDomains": 50,
+      "reportingMonth": 202606,
+      "zoneDomains": 47,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vana"
+    },
+    {
+      "tld": "vegas",
+      "ascii": "vegas",
+      "alreadyInExplore": false,
+      "registeredDomains": 11749,
+      "reportingMonth": 202606,
+      "zoneDomains": 11421,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vegas"
+    },
+    {
+      "tld": "ventures",
+      "ascii": "ventures",
+      "alreadyInExplore": false,
+      "registeredDomains": 24546,
+      "reportingMonth": 202606,
+      "zoneDomains": 23991,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/ventures"
+    },
+    {
+      "tld": "versicherung",
+      "ascii": "versicherung",
+      "alreadyInExplore": false,
+      "registeredDomains": 1280,
+      "reportingMonth": 202606,
+      "zoneDomains": 1233,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/versicherung"
+    },
+    {
+      "tld": "vet",
+      "ascii": "vet",
+      "alreadyInExplore": false,
+      "registeredDomains": 12565,
+      "reportingMonth": 202606,
+      "zoneDomains": 11838,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vet"
+    },
+    {
+      "tld": "viajes",
+      "ascii": "viajes",
+      "alreadyInExplore": false,
+      "registeredDomains": 836,
+      "reportingMonth": 202606,
+      "zoneDomains": 667,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/viajes"
+    },
+    {
+      "tld": "video",
+      "ascii": "video",
+      "alreadyInExplore": false,
+      "registeredDomains": 26934,
+      "reportingMonth": 202606,
+      "zoneDomains": 25809,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/video"
+    },
+    {
+      "tld": "villas",
+      "ascii": "villas",
+      "alreadyInExplore": false,
+      "registeredDomains": 7685,
+      "reportingMonth": 202606,
+      "zoneDomains": 7376,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/villas"
+    },
+    {
+      "tld": "vin",
+      "ascii": "vin",
+      "alreadyInExplore": false,
+      "registeredDomains": 10594,
+      "reportingMonth": 202606,
+      "zoneDomains": 16708,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vin"
+    },
+    {
+      "tld": "vip",
+      "ascii": "vip",
+      "alreadyInExplore": false,
+      "registeredDomains": 1963466,
+      "reportingMonth": 202606,
+      "zoneDomains": 1962604,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vip"
+    },
+    {
+      "tld": "vision",
+      "ascii": "vision",
+      "alreadyInExplore": false,
+      "registeredDomains": 12532,
+      "reportingMonth": 202606,
+      "zoneDomains": 11429,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vision"
+    },
+    {
+      "tld": "vlaanderen",
+      "ascii": "vlaanderen",
+      "alreadyInExplore": false,
+      "registeredDomains": 5490,
+      "reportingMonth": 202606,
+      "zoneDomains": 5151,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vlaanderen"
+    },
+    {
+      "tld": "vodka",
+      "ascii": "vodka",
+      "alreadyInExplore": false,
+      "registeredDomains": 1803,
+      "reportingMonth": 202606,
+      "zoneDomains": 1729,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vodka"
+    },
+    {
+      "tld": "vote",
+      "ascii": "vote",
+      "alreadyInExplore": false,
+      "registeredDomains": 6680,
+      "reportingMonth": 202606,
+      "zoneDomains": 6295,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/vote"
+    },
+    {
+      "tld": "voting",
+      "ascii": "voting",
+      "alreadyInExplore": false,
+      "registeredDomains": 173,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/voting"
+    },
+    {
+      "tld": "voto",
+      "ascii": "voto",
+      "alreadyInExplore": false,
+      "registeredDomains": 1238,
+      "reportingMonth": 202606,
+      "zoneDomains": 1039,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/voto"
+    },
+    {
+      "tld": "voyage",
+      "ascii": "voyage",
+      "alreadyInExplore": false,
+      "registeredDomains": 3837,
+      "reportingMonth": 202606,
+      "zoneDomains": 5154,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/voyage"
+    },
+    {
+      "tld": "wales",
+      "ascii": "wales",
+      "alreadyInExplore": false,
+      "registeredDomains": 13544,
+      "reportingMonth": 202606,
+      "zoneDomains": 12983,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wales"
+    },
+    {
+      "tld": "wang",
+      "ascii": "wang",
+      "alreadyInExplore": false,
+      "registeredDomains": 46154,
+      "reportingMonth": 202606,
+      "zoneDomains": 41181,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wang"
+    },
+    {
+      "tld": "watch",
+      "ascii": "watch",
+      "alreadyInExplore": false,
+      "registeredDomains": 22022,
+      "reportingMonth": 202606,
+      "zoneDomains": 14635,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/watch"
+    },
+    {
+      "tld": "watches",
+      "ascii": "watches",
+      "alreadyInExplore": false,
+      "registeredDomains": 480,
+      "reportingMonth": 202606,
+      "zoneDomains": 462,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/watches"
+    },
+    {
+      "tld": "web",
+      "ascii": "web",
+      "alreadyInExplore": false,
+      "registeredDomains": null,
+      "reportingMonth": null,
+      "zoneDomains": 1,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/web"
+    },
+    {
+      "tld": "webcam",
+      "ascii": "webcam",
+      "alreadyInExplore": false,
+      "registeredDomains": 2205,
+      "reportingMonth": 202606,
+      "zoneDomains": 2025,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/webcam"
+    },
+    {
+      "tld": "website",
+      "ascii": "website",
+      "alreadyInExplore": false,
+      "registeredDomains": 283860,
+      "reportingMonth": 202606,
+      "zoneDomains": 239453,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/website"
+    },
+    {
+      "tld": "wedding",
+      "ascii": "wedding",
+      "alreadyInExplore": false,
+      "registeredDomains": 12292,
+      "reportingMonth": 202606,
+      "zoneDomains": 12297,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wedding"
+    },
+    {
+      "tld": "whoswho",
+      "ascii": "whoswho",
+      "alreadyInExplore": false,
+      "registeredDomains": 910,
+      "reportingMonth": 202606,
+      "zoneDomains": 905,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/whoswho"
+    },
+    {
+      "tld": "wien",
+      "ascii": "wien",
+      "alreadyInExplore": false,
+      "registeredDomains": 15175,
+      "reportingMonth": 202606,
+      "zoneDomains": 14728,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wien"
+    },
+    {
+      "tld": "wiki",
+      "ascii": "wiki",
+      "alreadyInExplore": false,
+      "registeredDomains": 110638,
+      "reportingMonth": 202606,
+      "zoneDomains": 149439,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wiki"
+    },
+    {
+      "tld": "win",
+      "ascii": "win",
+      "alreadyInExplore": false,
+      "registeredDomains": 157852,
+      "reportingMonth": 202606,
+      "zoneDomains": 172332,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/win"
+    },
+    {
+      "tld": "wine",
+      "ascii": "wine",
+      "alreadyInExplore": false,
+      "registeredDomains": 21079,
+      "reportingMonth": 202606,
+      "zoneDomains": 24108,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wine"
+    },
+    {
+      "tld": "work",
+      "ascii": "work",
+      "alreadyInExplore": false,
+      "registeredDomains": 363488,
+      "reportingMonth": 202606,
+      "zoneDomains": 347950,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/work"
+    },
+    {
+      "tld": "works",
+      "ascii": "works",
+      "alreadyInExplore": false,
+      "registeredDomains": 38635,
+      "reportingMonth": 202606,
+      "zoneDomains": 39081,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/works"
+    },
+    {
+      "tld": "world",
+      "ascii": "world",
+      "alreadyInExplore": false,
+      "registeredDomains": 444273,
+      "reportingMonth": 202606,
+      "zoneDomains": 422082,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/world"
+    },
+    {
+      "tld": "wtf",
+      "ascii": "wtf",
+      "alreadyInExplore": false,
+      "registeredDomains": 40448,
+      "reportingMonth": 202606,
+      "zoneDomains": 44843,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/wtf"
+    },
+    {
+      "tld": "xin",
+      "ascii": "xin",
+      "alreadyInExplore": false,
+      "registeredDomains": 77463,
+      "reportingMonth": 202606,
+      "zoneDomains": 61126,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xin"
+    },
+    {
+      "tld": "集团",
+      "ascii": "xn--3bst00m",
+      "alreadyInExplore": false,
+      "registeredDomains": 2171,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--3bst00m"
+    },
+    {
+      "tld": "在线",
+      "ascii": "xn--3ds443g",
+      "alreadyInExplore": false,
+      "registeredDomains": 47077,
+      "reportingMonth": 202606,
+      "zoneDomains": 34818,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--3ds443g"
+    },
+    {
+      "tld": "八卦",
+      "ascii": "xn--45q11c",
+      "alreadyInExplore": false,
+      "registeredDomains": 35,
+      "reportingMonth": 202606,
+      "zoneDomains": 39,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--45q11c"
+    },
+    {
+      "tld": "公司",
+      "ascii": "xn--55qx5d",
+      "alreadyInExplore": false,
+      "registeredDomains": 22915,
+      "reportingMonth": 202606,
+      "zoneDomains": 20076,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--55qx5d"
+    },
+    {
+      "tld": "网站",
+      "ascii": "xn--5tzm5g",
+      "alreadyInExplore": false,
+      "registeredDomains": 3388,
+      "reportingMonth": 202606,
+      "zoneDomains": 3083,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--5tzm5g"
+    },
+    {
+      "tld": "移动",
+      "ascii": "xn--6frz82g",
+      "alreadyInExplore": false,
+      "registeredDomains": 3144,
+      "reportingMonth": 202606,
+      "zoneDomains": 2415,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--6frz82g"
+    },
+    {
+      "tld": "我爱你",
+      "ascii": "xn--6qq986b3xl",
+      "alreadyInExplore": false,
+      "registeredDomains": 7203,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--6qq986b3xl"
+    },
+    {
+      "tld": "москва",
+      "ascii": "xn--80adxhks",
+      "alreadyInExplore": false,
+      "registeredDomains": 9905,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--80adxhks"
+    },
+    {
+      "tld": "онлайн",
+      "ascii": "xn--80asehdb",
+      "alreadyInExplore": false,
+      "registeredDomains": 2034,
+      "reportingMonth": 202606,
+      "zoneDomains": 1887,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--80asehdb"
+    },
+    {
+      "tld": "сайт",
+      "ascii": "xn--80aswg",
+      "alreadyInExplore": false,
+      "registeredDomains": 1611,
+      "reportingMonth": 202606,
+      "zoneDomains": 1014,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--80aswg"
+    },
+    {
+      "tld": "קום",
+      "ascii": "xn--9dbq2a",
+      "alreadyInExplore": false,
+      "registeredDomains": 1030,
+      "reportingMonth": 202606,
+      "zoneDomains": 984,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--9dbq2a"
+    },
+    {
+      "tld": "орг",
+      "ascii": "xn--c1avg",
+      "alreadyInExplore": false,
+      "registeredDomains": 1820,
+      "reportingMonth": 202606,
+      "zoneDomains": 816,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--c1avg"
+    },
+    {
+      "tld": "商标",
+      "ascii": "xn--czr694b",
+      "alreadyInExplore": false,
+      "registeredDomains": 28298,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--czr694b"
+    },
+    {
+      "tld": "商店",
+      "ascii": "xn--czrs0t",
+      "alreadyInExplore": false,
+      "registeredDomains": 1530,
+      "reportingMonth": 202606,
+      "zoneDomains": 1339,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--czrs0t"
+    },
+    {
+      "tld": "商城",
+      "ascii": "xn--czru2d",
+      "alreadyInExplore": false,
+      "registeredDomains": 24064,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--czru2d"
+    },
+    {
+      "tld": "дети",
+      "ascii": "xn--d1acj3b",
+      "alreadyInExplore": false,
+      "registeredDomains": 1322,
+      "reportingMonth": 202606,
+      "zoneDomains": 1026,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--d1acj3b"
+    },
+    {
+      "tld": "中文网",
+      "ascii": "xn--fiq228c5hs",
+      "alreadyInExplore": false,
+      "registeredDomains": 15644,
+      "reportingMonth": 202606,
+      "zoneDomains": 2787,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--fiq228c5hs"
+    },
+    {
+      "tld": "娱乐",
+      "ascii": "xn--fjq720a",
+      "alreadyInExplore": false,
+      "registeredDomains": 297,
+      "reportingMonth": 202606,
+      "zoneDomains": 211,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--fjq720a"
+    },
+    {
+      "tld": "购物",
+      "ascii": "xn--g2xx48c",
+      "alreadyInExplore": false,
+      "registeredDomains": 4768,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--g2xx48c"
+    },
+    {
+      "tld": "网店",
+      "ascii": "xn--hxt814e",
+      "alreadyInExplore": false,
+      "registeredDomains": 2672,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--hxt814e"
+    },
+    {
+      "tld": "संगठन",
+      "ascii": "xn--i1b6b1a6a2e",
+      "alreadyInExplore": false,
+      "registeredDomains": 1325,
+      "reportingMonth": 202606,
+      "zoneDomains": 78,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--i1b6b1a6a2e"
+    },
+    {
+      "tld": "餐厅",
+      "ascii": "xn--imr513n",
+      "alreadyInExplore": false,
+      "registeredDomains": 241,
+      "reportingMonth": 202606,
+      "zoneDomains": 138,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--imr513n"
+    },
+    {
+      "tld": "网络",
+      "ascii": "xn--io0a7i",
+      "alreadyInExplore": false,
+      "registeredDomains": 17001,
+      "reportingMonth": 202606,
+      "zoneDomains": 14788,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--io0a7i"
+    },
+    {
+      "tld": "手机",
+      "ascii": "xn--kput3i",
+      "alreadyInExplore": false,
+      "registeredDomains": 25519,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--kput3i"
+    },
+    {
+      "tld": "بازار",
+      "ascii": "xn--mgbab2bd",
+      "alreadyInExplore": false,
+      "registeredDomains": 602,
+      "reportingMonth": 202606,
+      "zoneDomains": 589,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--mgbab2bd"
+    },
+    {
+      "tld": "닷컴",
+      "ascii": "xn--mk1bu44c",
+      "alreadyInExplore": false,
+      "registeredDomains": 3452,
+      "reportingMonth": 202606,
+      "zoneDomains": 2854,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--mk1bu44c"
+    },
+    {
+      "tld": "شبكة",
+      "ascii": "xn--ngbc5azd",
+      "alreadyInExplore": false,
+      "registeredDomains": 433,
+      "reportingMonth": 202606,
+      "zoneDomains": 408,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--ngbc5azd"
+    },
+    {
+      "tld": "机构",
+      "ascii": "xn--nqv7f",
+      "alreadyInExplore": false,
+      "registeredDomains": 1541,
+      "reportingMonth": 202606,
+      "zoneDomains": 516,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--nqv7f"
+    },
+    {
+      "tld": "健康",
+      "ascii": "xn--nyqy26a",
+      "alreadyInExplore": false,
+      "registeredDomains": 27,
+      "reportingMonth": 202606,
+      "zoneDomains": 17,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--nyqy26a"
+    },
+    {
+      "tld": "招聘",
+      "ascii": "xn--otu796d",
+      "alreadyInExplore": false,
+      "registeredDomains": 51,
+      "reportingMonth": 202606,
+      "zoneDomains": 66,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--otu796d"
+    },
+    {
+      "tld": "рус",
+      "ascii": "xn--p1acf",
+      "alreadyInExplore": false,
+      "registeredDomains": 19044,
+      "reportingMonth": 202606,
+      "zoneDomains": 16852,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--p1acf"
+    },
+    {
+      "tld": "みんな",
+      "ascii": "xn--q9jyb4c",
+      "alreadyInExplore": false,
+      "registeredDomains": 1732,
+      "reportingMonth": 202606,
+      "zoneDomains": 1717,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--q9jyb4c"
+    },
+    {
+      "tld": "世界",
+      "ascii": "xn--rhqv96g",
+      "alreadyInExplore": false,
+      "registeredDomains": 408,
+      "reportingMonth": 202606,
+      "zoneDomains": 477,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--rhqv96g"
+    },
+    {
+      "tld": "网址",
+      "ascii": "xn--ses554g",
+      "alreadyInExplore": false,
+      "registeredDomains": 84389,
+      "reportingMonth": 202606,
+      "zoneDomains": null,
+      "zoneSnapshotDate": null,
+      "source": "https://ntlddata.com/api/v1/tld/xn--ses554g"
+    },
+    {
+      "tld": "닷넷",
+      "ascii": "xn--t60b56a",
+      "alreadyInExplore": false,
+      "registeredDomains": 1297,
+      "reportingMonth": 202606,
+      "zoneDomains": 1123,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--t60b56a"
+    },
+    {
+      "tld": "コム",
+      "ascii": "xn--tckwe",
+      "alreadyInExplore": false,
+      "registeredDomains": 1804,
+      "reportingMonth": 202606,
+      "zoneDomains": 1643,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--tckwe"
+    },
+    {
+      "tld": "游戏",
+      "ascii": "xn--unup4y",
+      "alreadyInExplore": false,
+      "registeredDomains": 349,
+      "reportingMonth": 202606,
+      "zoneDomains": 269,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--unup4y"
+    },
+    {
+      "tld": "企业",
+      "ascii": "xn--vhquv",
+      "alreadyInExplore": false,
+      "registeredDomains": 3230,
+      "reportingMonth": 202606,
+      "zoneDomains": 2801,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--vhquv"
+    },
+    {
+      "tld": "信息",
+      "ascii": "xn--vuq861b",
+      "alreadyInExplore": false,
+      "registeredDomains": 2243,
+      "reportingMonth": 202606,
+      "zoneDomains": 2110,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xn--vuq861b"
+    },
+    {
+      "tld": "xxx",
+      "ascii": "xxx",
+      "alreadyInExplore": false,
+      "registeredDomains": 42254,
+      "reportingMonth": 202606,
+      "zoneDomains": 35658,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xxx"
+    },
+    {
+      "tld": "xyz",
+      "ascii": "xyz",
+      "alreadyInExplore": false,
+      "registeredDomains": 9153912,
+      "reportingMonth": 202606,
+      "zoneDomains": 10349664,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/xyz"
+    },
+    {
+      "tld": "yachts",
+      "ascii": "yachts",
+      "alreadyInExplore": false,
+      "registeredDomains": 90100,
+      "reportingMonth": 202606,
+      "zoneDomains": 20363,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/yachts"
+    },
+    {
+      "tld": "yoga",
+      "ascii": "yoga",
+      "alreadyInExplore": false,
+      "registeredDomains": 33745,
+      "reportingMonth": 202606,
+      "zoneDomains": 26935,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/yoga"
+    },
+    {
+      "tld": "yokohama",
+      "ascii": "yokohama",
+      "alreadyInExplore": false,
+      "registeredDomains": 3372,
+      "reportingMonth": 202606,
+      "zoneDomains": 3302,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/yokohama"
+    },
+    {
+      "tld": "you",
+      "ascii": "you",
+      "alreadyInExplore": false,
+      "registeredDomains": 8547,
+      "reportingMonth": 202606,
+      "zoneDomains": 9865,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/you"
+    },
+    {
+      "tld": "zip",
+      "ascii": "zip",
+      "alreadyInExplore": false,
+      "registeredDomains": 14562,
+      "reportingMonth": 202606,
+      "zoneDomains": 13543,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/zip"
+    },
+    {
+      "tld": "zone",
+      "ascii": "zone",
+      "alreadyInExplore": false,
+      "registeredDomains": 52525,
+      "reportingMonth": 202606,
+      "zoneDomains": 30907,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/zone"
+    },
+    {
+      "tld": "zuerich",
+      "ascii": "zuerich",
+      "alreadyInExplore": false,
+      "registeredDomains": 1652,
+      "reportingMonth": 202606,
+      "zoneDomains": 1306,
+      "zoneSnapshotDate": "2026-10-05",
+      "source": "https://ntlddata.com/api/v1/tld/zuerich"
+    }
+  ],
+  "retailListedPendingReview": [],
+  "shortlist": {
+    "count": 290,
+    "rule": "Informational 10000-registration subset plus the seven country-code exceptions. No minimum count applies to the selected Explore catalog; .web remains an upcoming exception.",
+    "file": "10000-plus-with-cc-exceptions.txt"
+  }
+}

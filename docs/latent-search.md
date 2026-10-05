@@ -14,13 +14,21 @@ The single-line search bar uses an inline text button and a small character coun
 Ten result pills appear by default, with inline buttons to show 10 or 25.
 Selecting a pill submits that string as a new query. The browser requests the top 25 once per search;
 changing the number of visible results makes no new API request.
+New / Both / Existing selects which category to show; New is the default.
+Switching categories preserves the 10/25 choice and uses the same search.
+Existing strings use gold text, with available registration counts below the name.
+The registration source, reporting month, and license appear in the Explore footer only.
 Previous results remain visible while the next search runs. Loading feedback
-shares the fixed-height character-count row; completed results are announced only
+appears below the category controls; completed results are announced only
 to screen readers, keeping the visible layout compact.
 
-`POST /api/explore` accepts `{ "query": "ski", "limit": 25 }` and returns `query`, ranked
+`POST /api/explore` accepts `{ "query": "ski", "limit": 25, "scope": "new", "stream": true }`.
+For fresh New or Existing searches, newline-delimited JSON returns the selected
+category first (`complete: false`), then both categories (`complete: true`).
+The remaining category loads quietly; if it fails, the first results stay usable.
+Both searches and full cache hits return ordinary JSON. Responses contain `query`, ranked
 `results` (`tld`, optional `gloss`, and `score`), and `metrics` (`serverMs` and
-`evaluated`). Scores are estimates of a connection, not proof of a domain's
+`evaluated`), plus independent `resultSets.new` and `resultSets.existing` lists. Scores are estimates of a connection, not proof of a domain's
 availability. The API defaults to 10 results and caps the response at 25.
 
 Scores and timing remain available in the API response for analysis, but are
