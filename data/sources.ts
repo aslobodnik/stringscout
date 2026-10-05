@@ -324,6 +324,15 @@ const handSources: Source[] = [
     date: "2026-07-05",
     kind: "applicant",
   },
+  {
+    id: "verisign-informed",
+    outlet: "Verisign",
+    title:
+      "Introducing Verisign Informed™: A High-Assurance Solution for Validating Trust at the Speed of Modern Threats",
+    url: "https://blog.verisign.com/security/introducing-verisign-informed/",
+    date: "2026-10-05",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

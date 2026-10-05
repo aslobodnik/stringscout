@@ -267,6 +267,11 @@ export const claims: Claim[] = dedupe([
   // applied on its own site. Primary/replacement split not stated.
   ...expand(["human", "agent", "robot"], "ilc", ["ilc"]),
 
+  // Verisign, Inc. — .pki, stated as applied for in its own blog post
+  // announcing Verisign Informed. Single-string applicant naming its
+  // application, so primary.
+  ...expand(["pki"], "verisign", ["verisign-informed"], "primary"),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.

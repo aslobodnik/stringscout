@@ -1,9 +1,9 @@
 // Every TLD in the IANA root zone, A-labels, lowercased.
 // Source: https://data.iana.org/TLD/tlds-alpha-by-domain.txt
-// Version 2026092500, Last Updated Fri Sep 25 07:07:01 2026 UTC
+// Version 2026100500, Last Updated Mon Oct  5 07:07:01 2026 UTC
 // Refresh by re-fetching that file; lib/derive.ts flags any disclosed string
 // that is already delegated, or that is the singular/plural of one.
-export const rootZoneVersion = "2026092500";
+export const rootZoneVersion = "2026100500";
 
 export const rootZone: string[] = [
   "aaa", "aarp", "abb", "abbott", "abbvie", "abc", "able", "abogado",
@@ -81,13 +81,13 @@ export const rootZone: string[] = [
   "iq", "ir", "irish", "is", "ismaili", "ist", "istanbul", "it", "itau", "itv",
   "jaguar", "java", "jcb", "je", "jeep", "jetzt", "jewelry", "jio", "jll",
   "jm", "jmp", "jnj", "jo", "jobs", "joburg", "jot", "joy", "jp", "jpmorgan",
-  "jprs", "juegos", "juniper", "kaufen", "kddi", "ke", "kerryhotels",
-  "kerryproperties", "kfh", "kg", "kh", "ki", "kia", "kids", "kim", "kindle",
-  "kitchen", "kiwi", "km", "kn", "koeln", "komatsu", "kosher", "kp", "kpmg",
-  "kpn", "kr", "krd", "kred", "kuokgroup", "kw", "ky", "kyoto", "kz", "la",
-  "lacaixa", "lamborghini", "lamer", "land", "landrover", "lanxess", "lasalle",
-  "lat", "latino", "latrobe", "law", "lawyer", "lb", "lc", "lds", "lease",
-  "leclerc", "lefrak", "legal", "lego", "lexus", "lgbt", "li", "lidl", "life",
+  "jprs", "juegos", "kaufen", "kddi", "ke", "kerryhotels", "kerryproperties",
+  "kfh", "kg", "kh", "ki", "kia", "kids", "kim", "kindle", "kitchen", "kiwi",
+  "km", "kn", "koeln", "komatsu", "kosher", "kp", "kpmg", "kpn", "kr", "krd",
+  "kred", "kuokgroup", "kw", "ky", "kyoto", "kz", "la", "lacaixa",
+  "lamborghini", "lamer", "land", "landrover", "lanxess", "lasalle", "lat",
+  "latino", "latrobe", "law", "lawyer", "lb", "lc", "lds", "lease", "leclerc",
+  "lefrak", "legal", "lego", "lexus", "lgbt", "li", "lidl", "life",
   "lifeinsurance", "lifestyle", "lighting", "like", "lilly", "limited", "limo",
   "lincoln", "link", "live", "living", "lk", "llc", "llp", "loan", "loans",
   "locker", "locus", "lol", "london", "lotte", "lotto", "love", "lpl",

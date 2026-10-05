@@ -368,6 +368,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["ilc"],
   },
+  {
+    slug: "verisign",
+    status: "disclosed",
+    name: "Verisign, Inc.",
+    backers: "Jim Bidzos, Founder, Chairman & CEO",
+    feesPaid: null,
+    revealedOn: "2026-10-05",
+    note: null,
+    sourceIds: ["verisign-informed"],
+  },
 ];
 
 export const applicants: Applicant[] = [
