@@ -277,6 +277,11 @@ export const claims: Claim[] = dedupe([
   // The Applicant Auction row for the same entity joins via ALIASES.
   ...expand(["meow"], "dotmeow", ["dotmeow-what", "dotmeow-toot"], "primary"),
 
+  // DreamHost, LLC — .dream, per its own press release, which states it was
+  // the only string applied for. Single-string applicant naming its
+  // application, so primary.
+  ...expand(["dream"], "dreamhost", ["dreamhost-pr"], "primary"),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.

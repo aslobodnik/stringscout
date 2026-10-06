@@ -388,6 +388,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["dotmeow-what", "dotmeow-toot"],
   },
+  {
+    slug: "dreamhost",
+    status: "disclosed",
+    name: "DreamHost, LLC",
+    backers: "Dallas Kashuba, Co-founder",
+    feesPaid: null,
+    revealedOn: "2026-10-06",
+    note: null,
+    sourceIds: ["dreamhost-pr"],
+  },
 ];
 
 export const applicants: Applicant[] = [

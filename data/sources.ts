@@ -351,6 +351,14 @@ const handSources: Source[] = [
     date: "2026-06-16",
     kind: "applicant",
   },
+  {
+    id: "dreamhost-pr",
+    outlet: "DreamHost",
+    title: "DreamHost Applies to Operate .dream Top-Level Domain",
+    url: "https://www.dreamhost.com/news/press-releases/dreamhost-applies-to-operate-dream-top-level-domain/",
+    date: "2026-10-06",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and
