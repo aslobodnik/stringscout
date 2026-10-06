@@ -378,6 +378,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["verisign-informed"],
   },
+  {
+    slug: "dotmeow",
+    status: "disclosed",
+    name: "dotMeow",
+    backers: "Aeryn Van Daele, CEO · TQ Hirsch, CFO",
+    feesPaid: null,
+    revealedOn: "2026-06-16",
+    note: null,
+    sourceIds: ["dotmeow-what", "dotmeow-toot"],
+  },
 ];
 
 export const applicants: Applicant[] = [

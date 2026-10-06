@@ -333,6 +333,24 @@ const handSources: Source[] = [
     date: "2026-10-05",
     kind: "applicant",
   },
+  {
+    id: "dotmeow-what",
+    outlet: "dotMeow",
+    title:
+      "The Project — \"We have applied to run our own generic top-level domain\" (.meow)",
+    url: "https://dotmeow.org/en/what/",
+    date: "2026-06-16",
+    kind: "applicant",
+  },
+  {
+    id: "dotmeow-toot",
+    outlet: "dotMeow (@dotmeow@hachyderm.io)",
+    title:
+      "End of April the new gTLD application submission period opened and we got up extra early ... to apply",
+    url: "https://hachyderm.io/@dotmeow/116758861366865336",
+    date: "2026-06-16",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and
