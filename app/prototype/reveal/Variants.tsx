@@ -13,7 +13,7 @@ import { memo, useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Tld from "@/components/Tld";
 import KindRule from "./KindRule";
-import Choice from "@/app/codex/Choice";
+import Choice from "./Choice";
 import Tip from "@/components/Tip";
 import { pressDelay } from "@/lib/press";
 import { DASH, ENTITIES, Hover, LINK, MockTag, Replacement, TAG, TH, inferred } from "./bits";
