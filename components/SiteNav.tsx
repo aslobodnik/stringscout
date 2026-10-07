@@ -9,7 +9,7 @@ const NAV = [
   { href: "/explore", label: "Explore" },
   { href: "/applicants", label: "Applicants" },
   { href: "/people", label: "People" },
-  { href: "/sources", label: "Sources" },
+  // /sources stays up for the pre-reveal record; it is off the nav since reveal day
 ];
 
 export default function SiteNav({ current }: { current: string }) {
