@@ -15,6 +15,7 @@ import {
   withdrawnClaims,
 } from "@/data/announcedAdapter";
 import { handWithdrawn } from "@/data/withdrawn";
+import { rootZone } from "@/data/rootZone";
 import {
   applicantBackers,
   applicantMarks,
@@ -23,7 +24,7 @@ import {
   stringCount,
   stringRows,
 } from "@/lib/derive";
-import { matches } from "@/lib/search";
+import { matches, type Searchable } from "@/lib/search";
 import { formatDate } from "@/lib/format";
 
 const rows = stringRows();
@@ -42,15 +43,27 @@ describe("search", () => {
   });
 
   it("treats a dotted query as the string only", () => {
-    // "anime" is a substring of backer "Animecoin Foundation"
-    expect(find("anime").length).toBeGreaterThan(find(".anime").length);
-    expect(find(".anime").every((r) => r.tld.includes("anime"))).toBe(true);
+    // a query without a leading dot also reaches a gloss; one with it doesn't
+    const row: Searchable = {
+      tld: "dongman",
+      gloss: "anime",
+      overlap: false,
+      issues: [],
+      applicants: [],
+    };
+    expect(matches(row, { ...NONE, q: "anime" })).toBe(true);
+    expect(matches(row, { ...NONE, q: ".anime" })).toBe(false);
   });
 
-  it("reaches the English gloss of a CJK string", () => {
-    const hits = find("sports");
-    expect(hits.length).toBeGreaterThan(0);
-    expect(hits.some((r) => /[一-鿿]/.test(r.tld))).toBe(true);
+  it("reaches the English gloss of a non-Latin string", () => {
+    const row: Searchable = {
+      tld: "电竞",
+      gloss: "esports",
+      overlap: false,
+      issues: [],
+      applicants: [],
+    };
+    expect(matches(row, { ...NONE, q: "esports" })).toBe(true);
   });
 
   it("reaches the people behind an applicant", () => {
@@ -125,14 +138,18 @@ describe("strings", () => {
   const row = (tld: string) => rows.find((r) => r.tld === tld)!;
 
   it("flags a string already in the root zone, by its A-label", () => {
-    expect(row("fan").issues).toEqual([{ kind: "delegated" }]);
-    expect(row("公益").punycode).toBe("xn--55qw42g");
-    expect(row("公益").issues).toEqual([{ kind: "delegated" }]);
+    // No currently disclosed string happens to collide with the root zone;
+    // this checks the flag tracks membership for every row regardless.
+    const rootSet = new Set(rootZone);
+    for (const r of rows) {
+      const flagged = r.issues.some((i) => i.kind === "delegated");
+      expect(flagged, `.${r.tld}`).toBe(rootSet.has(r.punycode));
+    }
   });
 
   it("flags the singular or plural of a delegated string, never a ccTLD", () => {
     expect(row("farms").issues).toEqual([{ kind: "plural", other: "farm" }]);
-    expect(row("tire").issues).toEqual([{ kind: "plural", other: "tires" }]);
+    expect(row("toy").issues).toEqual([{ kind: "plural", other: "toys" }]);
     // .es is delegated; .e is not a plural collision
     const others = rows.flatMap((r) => r.issues).filter((i) => i.kind === "plural").map((i) => i.other!);
     expect(others.filter((o) => o.length === 2)).toEqual([]);

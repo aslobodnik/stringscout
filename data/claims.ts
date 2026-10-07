@@ -1,5 +1,4 @@
 import { lfgStrings } from "./lfgStrings";
-import { jttwPrimary, jttwOther } from "./jttwStrings";
 import { identityDigitalStrings } from "./identityDigitalStrings";
 import { announcedClaims } from "./announcedAdapter";
 
@@ -98,13 +97,6 @@ export const claims: Claim[] = dedupe([
 
   // USA Made in America — .factory, stated as its only primary string.
   ...expand(["factory"], "usamade", ["gnw-factory"], "primary"),
-
-  // Journey To The West — 323 strings from xiyou.domains, which presents them
-  // under one heading, "Our Primary and Replacements", without saying which are
-  // which. The split in the site's own data file is a display grouping, not a
-  // primary/replacement designation.
-  ...expand(jttwPrimary, "jttw", ["xiyou"]),
-  ...expand(jttwOther, "jttw", ["xiyou"]),
 
   // Phoenix Domain Partners — 13 disclosed strings via Domain Name Wire.
   ...expand(

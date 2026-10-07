@@ -57,16 +57,6 @@ export const handApplicants: Applicant[] = [
     sourceIds: ["endpoint"],
   },
   {
-    slug: "jttw",
-    status: "disclosed",
-    name: "Journey To The West Corporation",
-    backers: "China-based · people undisclosed",
-    feesPaid: null,
-    revealedOn: "2026-08-17",
-    note: null,
-    sourceIds: ["xiyou"],
-  },
-  {
     slug: "phoenix",
     status: "disclosed",
     name: "Phoenix Domain Partners",

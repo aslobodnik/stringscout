@@ -90,14 +90,6 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
-    id: "xiyou",
-    outlet: "Journey To The West Corporation",
-    title: "xiyou.domains — 323 applied-for strings",
-    url: "https://xiyou.domains/",
-    date: "2026-08-17",
-    kind: "applicant",
-  },
-  {
     id: "dnw-sp",
     outlet: "Domain Name Wire",
     title: "Two more applicants disclose their top level domain strings",
