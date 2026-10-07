@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE } from "@/data/meta";
 import type { Metadata } from "next";
 import { Jost, Old_Standard_TT } from "next/font/google";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
           </div>
         </div>
+        <Analytics />
       </body>
     </html>
   );
