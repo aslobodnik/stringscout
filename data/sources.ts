@@ -367,6 +367,38 @@ const handSources: Source[] = [
     date: "2026-10-07",
     kind: "applicant",
   },
+  {
+    id: "dnw-pir",
+    outlet: "Domain Name Wire",
+    title: ".Org registry applies for eight top level domain names",
+    url: "https://domainnamewire.com/2026/10/07/org-registry-applies-for-eight-top-level-domain-names/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-squarespace",
+    outlet: "Domain Name Wire",
+    title: "Squarespace gets into the domain registry business",
+    url: "https://domainnamewire.com/2026/10/07/squarespace-gets-into-the-domain-registry-business/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-amazon",
+    outlet: "Domain Name Wire",
+    title: "Amazon dials back top level domain ambitions in 2026 round",
+    url: "https://domainnamewire.com/2026/10/07/amazon-dials-back-top-level-domain-ambitions-in-2026-round/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-intercap",
+    outlet: "Domain Name Wire",
+    title: "Surprise? Intercap registry is one of biggest new TLD applicants",
+    url: "https://domainnamewire.com/2026/10/07/surprise-intercap-registry-is-one-of-biggest-new-tld-applicants/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

@@ -287,6 +287,55 @@ export const claims: Claim[] = dedupe([
   // published on its own site. Primary/replacement split not stated.
   ...expand(identityDigitalStrings, "identitydigital", ["identitydigital"]),
 
+  // Public Interest Registry (.org registry) — eight strings named to Domain
+  // Name Wire, which reports six of them also carry an unnamed backup
+  // string. Named strings are therefore primary, same reasoning as Oinkadot.
+  ...expand(
+    ["aid", "cause", "donate", "hope", "impact", "mission", "nonprofit", "organization"],
+    "pir",
+    ["dnw-pir"],
+    "primary"
+  ),
+
+  // Squarespace — 15 strings named to Domain Name Wire as its full 2026-round
+  // application list; primary/backup split not stated.
+  ...expand(
+    [
+      "brand", "chef", "class", "firm", "goods", "gym", "hub", "lab", "learn",
+      "member", "planner", "pod", "skill", "trainer", "venue",
+    ],
+    "squarespace",
+    ["dnw-squarespace"]
+  ),
+
+  // Amazon — eight dot-brand strings named to Domain Name Wire as its full
+  // 2026-round application list; primary/backup split not stated.
+  ...expand(
+    ["alexa", "echo", "eero", "kgs", "kuiper", "leo", "ring", "twitch"],
+    "amazon",
+    ["dnw-amazon"]
+  ),
+
+  // Intercap Registry (.inc, .dealer, .box registry) — 71 strings named to
+  // Domain Name Wire as its full 2026-round application list; primary/backup
+  // split not stated.
+  ...expand(
+    [
+      "agent", "brand", "hub", "good", "robot", "max", "pod", "zen", "ask",
+      "mind", "vibe", "gaming", "omg", "portal", "share", "wealth", "crypto",
+      "get", "hello", "list", "merch", "project", "yes", "all", "big",
+      "brain", "cart", "cast", "donate", "forms", "learn", "pal", "real",
+      "wallet", "well", "corporation", "creator", "demo", "find", "hire",
+      "platform", "product", "profile", "sell", "trip", "url", "visit",
+      "wiz", "commerce", "consult", "create", "fam", "files", "impact",
+      "nft", "owl", "slides", "vid", "account", "backup", "comedy", "globe",
+      "great", "invite", "legacy", "lend", "look", "plex", "say", "stats",
+      "stupid",
+    ],
+    "intercap",
+    ["dnw-intercap"]
+  ),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.
