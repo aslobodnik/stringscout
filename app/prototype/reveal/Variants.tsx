@@ -9,21 +9,32 @@
 //   a dash                     = none named, or no parent
 
 import Link from "next/link";
-import { memo, useDeferredValue, useMemo, useState } from "react";
+import { Fragment, memo, useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Tld from "@/components/Tld";
 import KindRule from "./KindRule";
 import Choice from "./Choice";
 import Tip from "@/components/Tip";
 import { pressDelay } from "@/lib/press";
-import { DASH, ENTITIES, Hover, LINK, MockTag, Replacement, TAG, TH, inferred } from "./bits";
+import {
+  DASH,
+  ENTITIES,
+  Hover,
+  LINK,
+  MockTag,
+  Replacement,
+  TAG,
+  TH,
+  inferred,
+} from "./bits";
 import type { MockApp, MockData, MockGroup } from "./mock";
 
 const INPUT =
   "border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out";
 // replacement, applicant, parent: the head and every line share it
 // minmax(0,1fr): a long applicant name truncates instead of widening the column
-const LINE = "grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[11rem_minmax(0,1fr)_16rem] gap-x-4";
+const LINE =
+  "grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[11rem_minmax(0,1fr)_16rem] gap-x-4";
 
 // What the applicant designated the string as (AGB Q179, Q158, Module 1),
 // else open. A registry that asked to keep every name for itself without a
@@ -53,7 +64,13 @@ const kindOfRow = (apps: MockApp[]): Kind => {
   const have = new Set(apps.map(kindOf));
   return KIND_ORDER.find((k) => have.has(k))!;
 };
-const KIND_TAG: Record<Kind, string> = { open: "", brand: ".brand", community: "community", geo: "geo", closed: "closed" };
+const KIND_TAG: Record<Kind, string> = {
+  open: "",
+  brand: ".brand",
+  community: "community",
+  geo: "geo",
+  closed: "closed",
+};
 
 // what the search box reads: everything, or one column
 type By = "all" | "string" | "applicant" | "parent";
@@ -63,12 +80,19 @@ const BY: { value: By; label: string }[] = [
   { value: "applicant", label: "Applicant" },
   { value: "parent", label: "Parent" },
 ];
-const matches = (a: MockApp, q: string, group: MockGroup | undefined, by: By) => {
+const matches = (
+  a: MockApp,
+  q: string,
+  group: MockGroup | undefined,
+  by: By,
+) => {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (!t) return true;
   const string = a.tld.includes(t); // the primary; replacements are a filter, not a search
   const applicant = a.applicant.toLowerCase().includes(t);
-  const parent = (a.entity.parent ?? "").toLowerCase().includes(t) || (group?.link === "parent" && group.name.toLowerCase().includes(t));
+  const parent =
+    (a.entity.parent ?? "").toLowerCase().includes(t) ||
+    (group?.link === "parent" && group.name.toLowerCase().includes(t));
   switch (by) {
     case "string":
       return string;
@@ -91,19 +115,56 @@ const SCOPE_LABEL: Record<Scope, string> = {
 // The replacement legend, the shipped table's marker legend copied: the
 // definition and the way to isolate it in one control. A mark per state.
 type RMark = "live" | "blocked" | "none";
-const RMARKS: { mark: RMark; glyph: string; label: string; detail: string }[] = [
-  { mark: "live", glyph: "r", label: "replacement live", detail: "Replacement named, and nobody else applied for it or named it (AGB §5.1)." },
-  { mark: "blocked", glyph: "r", label: "replacement blocked", detail: "Replacement named, but another applicant applied for it or named it too (AGB §5.1)." },
-  { mark: "none", glyph: "–", label: "no replacement", detail: "No replacement string named." },
-];
-const RBLOCK: Record<RMark, string> = {
+type CMark = "contention" | "uncontested";
+type LMark = RMark | CMark;
+const RMARKS: { mark: LMark; glyph: string; label: string; detail: string }[] =
+  [
+    {
+      mark: "contention",
+      glyph: "n",
+      label: "contested",
+      detail: "Two or more applications for the string: a contention set.",
+    },
+    {
+      mark: "uncontested",
+      glyph: "1",
+      label: "uncontested",
+      detail: "One application for the string.",
+    },
+    {
+      mark: "live",
+      glyph: "r",
+      label: "replacement live",
+      detail:
+        "Replacement named, and nobody else applied for it or named it (AGB §5.1).",
+    },
+    {
+      mark: "blocked",
+      glyph: "r",
+      label: "replacement blocked",
+      detail:
+        "Replacement named, but another applicant applied for it or named it too (AGB §5.1).",
+    },
+    {
+      mark: "none",
+      glyph: "–",
+      label: "no replacement",
+      detail: "No replacement string named.",
+    },
+  ];
+const RBLOCK: Record<LMark, string> = {
+  contention: "border-oxblood text-oxblood",
+  uncontested: "border-ink text-ink",
   live: "bg-ink text-paper border-ink",
   blocked: "border-oxblood text-oxblood line-through",
   none: "border-rule-faint text-ink-soft",
 };
-const rmarkOf = (a: MockApp): RMark => (!a.replacement ? "none" : a.blockers.length ? "blocked" : "live");
+const isScope = (m: LMark): m is CMark =>
+  m === "contention" || m === "uncontested";
+const rmarkOf = (a: MockApp): RMark =>
+  !a.replacement ? "none" : a.blockers.length ? "blocked" : "live";
 
-function RBlock({ mark, inverted }: { mark: RMark; inverted?: boolean }) {
+function RBlock({ mark, inverted }: { mark: LMark; inverted?: boolean }) {
   const m = RMARKS.find((x) => x.mark === mark)!;
   return (
     <span
@@ -117,33 +178,63 @@ function RBlock({ mark, inverted }: { mark: RMark; inverted?: boolean }) {
   );
 }
 
-function RLegend({ active, onToggle }: { active: RMark | null; onToggle: (m: RMark) => void }) {
+// Contention on the left, replacement state on the right, a rule between:
+// one of each may be on, since they are different questions.
+function RLegend({
+  scope,
+  rmark,
+  onScope,
+  onMark,
+}: {
+  scope: Scope;
+  rmark: RMark | null;
+  onScope: (m: CMark) => void;
+  onMark: (m: RMark) => void;
+}) {
   return (
     <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-      {RMARKS.map(({ mark, label, detail }) => {
-        const on = active === mark;
+      {RMARKS.map(({ mark, label, detail }, i) => {
+        const on = isScope(mark) ? scope === mark : rmark === mark;
         return (
-          <button
-            key={mark}
-            type="button"
-            aria-pressed={on}
-            aria-label={`${on ? "Show every replacement state" : `Show only ${label}`}. ${detail}`}
-            onClick={() => onToggle(mark)}
-            className={`group relative flex items-center gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-1 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
-              on ? "bg-ink text-paper" : "hover:bg-paper-deep"
-            }`}
-          >
-            <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">{detail}</Tip>
-            <RBlock mark={mark} inverted={on} />
-            <span className={`label !text-[10px] !tracking-[0.08em] ${on ? "text-paper" : "text-ink-soft"}`}>{label}</span>
-          </button>
+          <Fragment key={mark}>
+            {i === 2 && (
+              <span aria-hidden className="hidden sm:block w-px h-4 bg-rule" />
+            )}
+            <button
+              type="button"
+              aria-pressed={on}
+              aria-label={`${on ? "Show every string" : `Show only ${label}`}. ${detail}`}
+              onClick={() => (isScope(mark) ? onScope(mark) : onMark(mark))}
+              className={`group relative flex items-center gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-1 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+                on ? "bg-ink text-paper" : "hover:bg-paper-deep"
+              }`}
+            >
+              <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">
+                {detail}
+              </Tip>
+              <RBlock mark={mark} inverted={on} />
+              <span
+                className={`label !text-[10px] !tracking-[0.08em] ${on ? "text-paper" : "text-ink-soft"}`}
+              >
+                {label}
+              </span>
+            </button>
+          </Fragment>
         );
       })}
     </div>
   );
 }
 
-function Chip({ label, verbatim, onClear }: { label: string; verbatim?: boolean; onClear: () => void }) {
+function Chip({
+  label,
+  verbatim,
+  onClear,
+}: {
+  label: string;
+  verbatim?: boolean;
+  onClear: () => void;
+}) {
   return (
     <button
       type="button"
@@ -152,7 +243,11 @@ function Chip({ label, verbatim, onClear }: { label: string; verbatim?: boolean;
       className="group relative label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
     >
       <Tip>Clear the {label.toLowerCase()} filter</Tip>
-      {verbatim ? <span className="normal-case tracking-normal text-xs">{label}</span> : label}
+      {verbatim ? (
+        <span className="normal-case tracking-normal text-xs">{label}</span>
+      ) : (
+        label
+      )}
       <span aria-hidden className="text-[11px] leading-none">
         ×
       </span>
@@ -177,7 +272,10 @@ function Parent({ a, g }: { a: MockApp; g: MockGroup }) {
   const others = g.entities.filter((e) => e.slug !== a.slug);
   return (
     <Link href={href} className={`${LINK} serif italic text-ink-soft`}>
-      {g.link === "person" ? "shares a director with" : "shares an address with"} {others[0].name}
+      {g.link === "person"
+        ? "shares a director with"
+        : "shares an address with"}{" "}
+      {others[0].name}
       {others.length > 1 && ` + ${others.length - 1}`}
     </Link>
   );
@@ -192,22 +290,41 @@ function Above({ g }: { a: MockApp; g: MockGroup }) {
     for (const r of e.roles ?? []) {
       const have = byRole.get(r.role) ?? [];
       for (const n of r.names)
-        if (n.toLowerCase() !== g.name.toLowerCase() && !have.some((h) => h.toLowerCase() === n.toLowerCase())) have.push(n);
+        if (
+          n.toLowerCase() !== g.name.toLowerCase() &&
+          !have.some((h) => h.toLowerCase() === n.toLowerCase())
+        )
+          have.push(n);
       byRole.set(r.role, have);
     }
   // keep the record's own role order
-  const order = ["Directors", "Officers & partners", "Executive responsibility", "Material shareholders", "Ultimate control"];
-  const roles = [...byRole.entries()].filter(([, names]) => names.length).sort((x, y) => order.indexOf(x[0]) - order.indexOf(y[0]));
+  const order = [
+    "Directors",
+    "Officers & partners",
+    "Executive responsibility",
+    "Material shareholders",
+    "Ultimate control",
+  ];
+  const roles = [...byRole.entries()]
+    .filter(([, names]) => names.length)
+    .sort((x, y) => order.indexOf(x[0]) - order.indexOf(y[0]));
   if (!roles.length) return null;
   const n = g.entities.length;
   return (
     <Tip side="right" className="!whitespace-normal w-max max-w-[28rem]">
       {roles.map(([role, names]) => (
         <span key={role} className="block">
-          <span className="serif italic text-ink-soft">{role.toLowerCase()}</span> {names.join(", ")}
+          <span className="serif italic text-ink-soft">
+            {role.toLowerCase()}
+          </span>{" "}
+          {names.join(", ")}
         </span>
       ))}
-      {n > 1 && <span className="block text-ink-soft">as named across {n} entities</span>}
+      {n > 1 && (
+        <span className="block text-ink-soft">
+          as named across {n} entities
+        </span>
+      )}
     </Tip>
   );
 }
@@ -224,7 +341,10 @@ function Behind({ a }: { a: MockApp }) {
       {long && <span className="block font-medium">{a.applicant}</span>}
       {roles.map((r) => (
         <span key={r.role} className="block">
-          <span className="serif italic text-ink-soft">{r.role.toLowerCase()}</span> {r.names.join(", ")}
+          <span className="serif italic text-ink-soft">
+            {r.role.toLowerCase()}
+          </span>{" "}
+          {r.names.join(", ")}
         </span>
       ))}
     </Tip>
@@ -236,16 +356,19 @@ function Behind({ a }: { a: MockApp }) {
 // one puts the whole name in the box and narrows the search to its column.
 type Suggestion = { kind: Exclude<By, "all">; text: string };
 const SUGGEST = 8;
-function suggest(q: string, by: By, names: Record<Exclude<By, "all">, string[]>): Suggestion[] {
+function suggest(
+  q: string,
+  names: Record<Exclude<By, "all">, string[]>,
+): Suggestion[] {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (t.length < 2) return [];
-  const kinds: Exclude<By, "all">[] = by === "all" ? ["string", "applicant", "parent"] : [by];
+  // every column, whatever the box is set to read: picking one sets the column
+  const kinds: Exclude<By, "all">[] = ["string", "applicant", "parent"];
   const starts: Suggestion[] = [];
   const within: Suggestion[] = [];
   for (const kind of kinds)
     for (const text of names[kind]) {
       const l = text.toLowerCase();
-      if (l === t) continue;
       if (l.startsWith(t)) starts.push({ kind, text });
       else if (l.includes(t)) within.push({ kind, text });
     }
@@ -285,12 +408,18 @@ const Row = memo(function Row({
           const g = groupOf.get(a.group)!;
           const dim = dims[li] === "1";
           return (
-            <div key={a.id} className={`${LINE} ${li ? "mt-1.5" : ""} ${dim ? "opacity-40" : ""} transition-opacity duration-200 ease-in-out`}>
+            <div
+              key={a.id}
+              className={`${LINE} ${li ? "mt-1.5" : ""} ${dim ? "opacity-40" : ""} transition-opacity duration-200 ease-in-out`}
+            >
               <span>
                 <Replacement a={a} />
               </span>
               <span>
-                <Hover tip={() => <Behind a={a} />} className="inline-block max-w-full align-bottom">
+                <Hover
+                  tip={() => <Behind a={a} />}
+                  className="inline-block max-w-full align-bottom"
+                >
                   <button
                     type="button"
                     aria-current={applicant === a.applicant || undefined}
@@ -302,7 +431,11 @@ const Row = memo(function Row({
                   </button>
                 </Hover>
                 {/* the designation is the applicant's, so it sits by the name */}
-                {kindOf(a) !== "open" && <span className={`${TAG} text-gold ml-2`}>{KIND_TAG[kindOf(a)]}</span>}
+                {kindOf(a) !== "open" && (
+                  <span className={`${TAG} text-gold ml-2`}>
+                    {KIND_TAG[kindOf(a)]}
+                  </span>
+                )}
                 <MockTag on={a.fixture} />
                 {/* below sm the parent has no column: it sits under the name */}
                 {g.link && (
@@ -338,7 +471,10 @@ export default function Reveal({ data: d }: { data: MockData }) {
   const [cursor, setCursor] = useState(-1); // highlighted suggestion
   const [suggesting, setSuggesting] = useState(false);
 
-  const groupOf = useMemo(() => new Map(d.groups.map((g) => [g.slug, g])), [d.groups]);
+  const groupOf = useMemo(
+    () => new Map(d.groups.map((g) => [g.slug, g])),
+    [d.groups],
+  );
   // the box updates on every key; the table filters on the deferred value,
   // so typing never waits for 986 rows to re-render
   const dq = useDeferredValue(q);
@@ -346,11 +482,14 @@ export default function Reveal({ data: d }: { data: MockData }) {
     () => ({
       string: [...new Set(d.apps.map((a) => a.tld))].sort(),
       applicant: [...new Set(d.apps.map((a) => a.applicant))].sort(),
-      parent: d.groups.filter((g) => g.link === "parent").map((g) => g.name).sort(),
+      parent: d.groups
+        .filter((g) => g.link === "parent")
+        .map((g) => g.name)
+        .sort(),
     }),
-    [d.apps, d.groups]
+    [d.apps, d.groups],
   );
-  const suggestions = suggesting ? suggest(q, by, names) : [];
+  const suggestions = suggesting ? suggest(q, names) : [];
   const pick = (sg: Suggestion) => {
     setQ(sg.kind === "string" ? `.${sg.text}` : sg.text);
     setBy(sg.kind);
@@ -364,7 +503,11 @@ export default function Reveal({ data: d }: { data: MockData }) {
     const order = (a: MockApp) => a.replacement ?? "~";
     return [...m.entries()].map(([tld, apps]) => ({
       tld,
-      apps: [...apps].sort((x, y) => order(x).localeCompare(order(y)) || x.applicant.localeCompare(y.applicant)),
+      apps: [...apps].sort(
+        (x, y) =>
+          order(x).localeCompare(order(y)) ||
+          x.applicant.localeCompare(y.applicant),
+      ),
     }));
   }, [d.apps]);
 
@@ -372,7 +515,9 @@ export default function Reveal({ data: d }: { data: MockData }) {
   // lines meets them all, not when each is met by some line or other
   const keep = useMemo(() => {
     const hit = (a: MockApp) =>
-      scope === "all" || (scope === "contention" && a.setSize > 1) || (scope === "uncontested" && a.setSize === 1);
+      scope === "all" ||
+      (scope === "contention" && a.setSize > 1) ||
+      (scope === "uncontested" && a.setSize === 1);
     return (a: MockApp) =>
       hit(a) &&
       matches(a, dq, groupOf.get(a.group), by) &&
@@ -380,10 +525,15 @@ export default function Reveal({ data: d }: { data: MockData }) {
       (!applicant || a.applicant === applicant) &&
       (kind === "all" || kindOf(a) === kind);
   }, [scope, dq, by, rmark, applicant, kind, groupOf]);
-  const filtering = scope !== "all" || dq.trim() || rmark || applicant || kind !== "all";
-  const rows = useMemo(() => strings.filter((r) => r.apps.some(keep)), [strings, keep]);
+  const filtering =
+    scope !== "all" || dq.trim() || rmark || applicant || kind !== "all";
+  const rows = useMemo(
+    () => strings.filter((r) => r.apps.some(keep)),
+    [strings, keep],
+  );
   const stale = dq !== q; // the table is still catching up with the box
-  const pickApplicant = (name: string) => setApplicant((cur) => (cur === name ? null : name));
+  const pickApplicant = (name: string) =>
+    setApplicant((cur) => (cur === name ? null : name));
 
   // row one: what state the strings are in; row two: what kind they are
   const tiles: { v: number; s: Scope }[] = [
@@ -400,9 +550,33 @@ export default function Reveal({ data: d }: { data: MockData }) {
     `p-3 sm:p-4 text-left w-full cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${rules} ${
       on ? "bg-paper-deep" : "hover:bg-paper-deep"
     }`;
-  const Tile = ({ v, label, on, accent, i, rules = "", onClick }: { v: number; label: string; on: boolean; accent: boolean; i: number; rules?: string; onClick: () => void }) => (
-    <button type="button" aria-pressed={on} onClick={onClick} className={tileClass(on, rules)}>
-      <div className={`text-2xl sm:text-3xl font-light press-word ${accent ? "text-oxblood" : ""}`} style={pressDelay(150 + i * 120)}>
+  const Tile = ({
+    v,
+    label,
+    on,
+    accent,
+    i,
+    rules = "",
+    onClick,
+  }: {
+    v: number;
+    label: string;
+    on: boolean;
+    accent: boolean;
+    i: number;
+    rules?: string;
+    onClick: () => void;
+  }) => (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={tileClass(on, rules)}
+    >
+      <div
+        className={`text-2xl sm:text-3xl font-light press-word ${accent ? "text-oxblood" : ""}`}
+        style={pressDelay(150 + i * 120)}
+      >
         {v}
       </div>
       <div
@@ -421,12 +595,24 @@ export default function Reveal({ data: d }: { data: MockData }) {
           {tiles.map((t, i) => {
             const on = scope === t.s;
             return (
-              <Tile key={t.s} v={t.v} label={SCOPE_LABEL[t.s]} on={on} accent={on && t.s !== "all"} i={i} onClick={() => setScope(on ? "all" : t.s)} />
+              <Tile
+                key={t.s}
+                v={t.v}
+                label={SCOPE_LABEL[t.s]}
+                on={on}
+                accent={on && t.s !== "all"}
+                i={i}
+                onClick={() => setScope(on ? "all" : t.s)}
+              />
             );
           })}
         </div>
       </div>
-      <KindRule shares={kinds.map((k) => ({ key: k.k, label: k.label, count: k.v }))} active={kind} onPick={(k) => setKind(kind === k ? "all" : (k as Kind))} />
+      <KindRule
+        shares={kinds.map((k) => ({ key: k.k, label: k.label, count: k.v }))}
+        active={kind}
+        onPick={(k) => setKind(kind === k ? "all" : (k as Kind))}
+      />
 
       <div className="double-rule mb-5" />
       <div className="mb-5">
@@ -473,7 +659,11 @@ export default function Reveal({ data: d }: { data: MockData }) {
                 className="absolute left-0 right-0 top-full mt-1 z-30 border border-ink bg-paper text-sm"
               >
                 {suggestions.map((sg, i) => (
-                  <li key={`${sg.kind}|${sg.text}`} role="option" aria-selected={i === cursor}>
+                  <li
+                    key={`${sg.kind}|${sg.text}`}
+                    role="option"
+                    aria-selected={i === cursor}
+                  >
                     <button
                       type="button"
                       tabIndex={-1}
@@ -484,8 +674,12 @@ export default function Reveal({ data: d }: { data: MockData }) {
                         i === cursor ? "bg-paper-deep" : ""
                       }`}
                     >
-                      <span className="truncate">{sg.kind === "string" ? `.${sg.text}` : sg.text}</span>
-                      <span className="label !text-[9px] text-ink-soft shrink-0">{sg.kind}</span>
+                      <span className="truncate">
+                        {sg.kind === "string" ? `.${sg.text}` : sg.text}
+                      </span>
+                      <span className="label !text-[9px] text-ink-soft shrink-0">
+                        {sg.kind}
+                      </span>
                     </button>
                   </li>
                 ))}
@@ -493,19 +687,57 @@ export default function Reveal({ data: d }: { data: MockData }) {
             )}
           </div>
           <div className="w-36 shrink-0">
-            <Choice label="Search by" value={by} options={BY} onChange={(v) => setBy(v as By)} />
+            <Choice
+              label="Search by"
+              value={by}
+              options={BY}
+              onChange={(v) => setBy(v as By)}
+            />
           </div>
         </div>
-        <RLegend active={rmark} onToggle={(m) => setRmark(rmark === m ? null : m)} />
+        <RLegend
+          scope={scope}
+          rmark={rmark}
+          onScope={(m) => setScope(scope === m ? "all" : m)}
+          onMark={(m) => setRmark(rmark === m ? null : m)}
+        />
         <div className="flex flex-wrap items-center gap-3 mt-3 min-h-7">
           <span className="label text-ink-soft tabular-nums shrink-0 sm:w-80">
             {rows.length} {rows.length === 1 ? "string" : "strings"}
           </span>
-          {scope !== "all" && <Chip label={SCOPE_LABEL[scope]} onClear={() => setScope("all")} />}
-          {kind !== "all" && <Chip label={KINDS.find((k) => k.value === kind)!.label} onClear={() => setKind("all")} />}
-          {rmark && <Chip label={RMARKS.find((m) => m.mark === rmark)!.label} onClear={() => setRmark(null)} />}
-          {applicant && <Chip label={applicant} verbatim onClear={() => setApplicant(null)} />}
-          {q.trim() && <Chip label={by === "all" ? q.trim() : `${BY.find((b) => b.value === by)!.label}: ${q.trim()}`} verbatim onClear={() => setQ("")} />}
+          {scope !== "all" && (
+            <Chip label={SCOPE_LABEL[scope]} onClear={() => setScope("all")} />
+          )}
+          {kind !== "all" && (
+            <Chip
+              label={KINDS.find((k) => k.value === kind)!.label}
+              onClear={() => setKind("all")}
+            />
+          )}
+          {rmark && (
+            <Chip
+              label={RMARKS.find((m) => m.mark === rmark)!.label}
+              onClear={() => setRmark(null)}
+            />
+          )}
+          {applicant && (
+            <Chip
+              label={applicant}
+              verbatim
+              onClear={() => setApplicant(null)}
+            />
+          )}
+          {q.trim() && (
+            <Chip
+              label={
+                by === "all"
+                  ? q.trim()
+                  : `${BY.find((b) => b.value === by)!.label}: ${q.trim()}`
+              }
+              verbatim
+              onClear={() => setQ("")}
+            />
+          )}
         </div>
       </div>
 
@@ -521,18 +753,27 @@ export default function Reveal({ data: d }: { data: MockData }) {
               <span className={LINE}>
                 <span className={`${TH} !pb-0 !pr-0`}>Replacement</span>
                 <span className={`${TH} !pb-0 !pr-0`}>Applicant</span>
-                <span className={`${TH} !pb-0 !pr-0 hidden sm:block`}>Parent</span>
+                <span className={`${TH} !pb-0 !pr-0 hidden sm:block`}>
+                  Parent
+                </span>
               </span>
             </th>
           </tr>
         </thead>
-        <tbody key={`${scope}|${by}|${rmark}|${applicant}|${kind}`} className={`transition-opacity duration-200 ease-in-out ${stale ? "opacity-60" : ""}`}>
+        <tbody
+          key={`${scope}|${by}|${rmark}|${applicant}|${kind}`}
+          className={`transition-opacity duration-200 ease-in-out ${stale ? "opacity-60" : ""}`}
+        >
           {rows.map((r, vi) => (
             <Row
               key={r.tld}
               r={r}
               vi={vi}
-              dims={filtering ? r.apps.map((a) => (keep(a) ? "0" : "1")).join("") : ""}
+              dims={
+                filtering
+                  ? r.apps.map((a) => (keep(a) ? "0" : "1")).join("")
+                  : ""
+              }
               applicant={applicant}
               groupOf={groupOf}
               onPick={pickApplicant}
