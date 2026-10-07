@@ -359,6 +359,14 @@ const handSources: Source[] = [
     date: "2026-10-06",
     kind: "applicant",
   },
+  {
+    id: "identitydigital",
+    outlet: "Identity Digital",
+    title: "Next Round — \"All applications\", 216 strings",
+    url: "https://www.identity.digital/newgtld",
+    date: "2026-10-07",
+    kind: "applicant",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

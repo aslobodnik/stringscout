@@ -398,6 +398,16 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["dreamhost-pr"],
   },
+  {
+    slug: "identitydigital",
+    status: "disclosed",
+    name: "Identity Digital Inc.",
+    backers: "Matt Overman, Chief Revenue Officer",
+    feesPaid: null,
+    revealedOn: "2026-10-07",
+    note: null,
+    sourceIds: ["identitydigital"],
+  },
 ];
 
 export const applicants: Applicant[] = [

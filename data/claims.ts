@@ -1,5 +1,6 @@
 import { lfgStrings } from "./lfgStrings";
 import { jttwPrimary, jttwOther } from "./jttwStrings";
+import { identityDigitalStrings } from "./identityDigitalStrings";
 import { announcedClaims } from "./announcedAdapter";
 
 // "intent" = stated an intention to apply, application not confirmed.
@@ -281,6 +282,10 @@ export const claims: Claim[] = dedupe([
   // the only string applied for. Single-string applicant naming its
   // application, so primary.
   ...expand(["dream"], "dreamhost", ["dreamhost-pr"], "primary"),
+
+  // Identity Digital Inc. — full 216-string "All applications" list
+  // published on its own site. Primary/replacement split not stated.
+  ...expand(identityDigitalStrings, "identitydigital", ["identitydigital"]),
 
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
