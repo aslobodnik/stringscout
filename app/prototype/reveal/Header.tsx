@@ -5,16 +5,15 @@ import NextDate from "./NextDate";
 import { ENTITIES, LINK, STRINGS } from "./bits";
 import type { MockData } from "./mock";
 
-// stands in for the APS list URL, which ICANN has not published yet
-const ICANN_SOURCE =
-  "https://www.icann.org/en/announcements/details/icann-announces-date-for-reveal-day-and-other-2026-round-milestones-29-09-2026-en";
+// ICANN's Application Publication and Statistics site, the record itself
+const ICANN_SOURCE = "https://newgtldprogram-aps.icann.org/applications";
 
-export default function Header({ stats, current }: { stats: MockData["stats"]; current: "strings" | "groups" }) {
+export default function Header({ stats, current }: { stats: MockData["stats"]; current: "strings" | "groups" | "people" }) {
   const strings = `${stats.strings} strings`;
-  const groups = `${stats.groups} groups`;
+  const groups = `${stats.groups} parent companies`;
   return (
     <header className="pt-6 pb-7">
-      <h1 className="serif italic text-lg sm:text-xl text-ink max-w-3xl">
+      <h1 className="serif italic text-lg sm:text-xl text-ink">
         ICANN revealed{" "}
         {current === "strings" ? strings : <Link href={STRINGS} className={LINK}>{strings}</Link>} in{" "}
         {stats.applications} applications from{" "}

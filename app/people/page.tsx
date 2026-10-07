@@ -1,0 +1,22 @@
+// The post-reveal people view on APS data: everyone the records name as a
+// director, officer or executive, and what they stand behind.
+import type { Metadata } from "next";
+import { TopBar } from "@/components/PageHeader";
+import { buildReal } from "@/app/prototype/reveal/real";
+import Header from "@/app/prototype/reveal/Header";
+import People from "@/app/prototype/reveal/people/People";
+
+export const metadata: Metadata = {
+  title: "People",
+};
+
+export default function Page() {
+  const data = buildReal();
+  return (
+    <>
+      <TopBar current="/people" />
+      <Header stats={data.stats} current="people" />
+      <People data={data} />
+    </>
+  );
+}

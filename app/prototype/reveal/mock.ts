@@ -12,6 +12,13 @@ import { rootZone } from "@/data/rootZone";
 
 export type Status = "open" | "blocked-applied" | "blocked-twin" | "none";
 export type AppType = "standard" | "brand" | "geo" | "community";
+// who can register: anyone (open), the applicant and its affiliates only
+// (brand, AGB Q179), or a registry that asked to keep every name for itself
+// (closed: Code of Conduct exemption, AGB Q185-187)
+export type Registration = "open" | "brand" | "closed";
+
+// people as the record names them, by the AGB question that asked
+export type Role = { role: string; names: string[] };
 
 export type MockApp = {
   id: string;
@@ -26,11 +33,14 @@ export type MockApp = {
   near?: string; // house issue label when the replacement is a singular/plural of another string
   setSize: number;
   type: AppType;
+  registration: Registration;
   entity: {
     jurisdiction: string;
     website: string;
-    parent: string | null;
+    parent: string | null; // direct parent (AGB Q26), else ultimate (Q36)
+    ultimate?: string | null; // ultimate parent (AGB Q36)
     people: string;
+    roles?: Role[];
   };
   preReveal: { outlet: string; url: string; date: string } | null;
   fixture: boolean;
@@ -46,6 +56,7 @@ export type MockEntity = {
   name: string;
   jurisdiction: string;
   people: string;
+  roles?: Role[];
   fixture: boolean;
   apps: MockApp[];
 };
@@ -71,9 +82,22 @@ export type MockSet = {
   outlook: Outlook;
 };
 
+// A person the records name, with every entity that names them. Only the
+// person questions count (AGB 104 directors, 105 officers, 107 executives);
+// shareholders and controllers are often companies.
+export type MockPerson = {
+  slug: string;
+  name: string; // as first printed
+  roles: string[]; // every role they hold, across entities
+  entities: { slug: string; name: string; roles: string[]; group: string }[];
+  apps: MockApp[];
+  inSets: number;
+};
+
 export type MockData = {
   apps: MockApp[];
   sets: MockSet[];
+  people?: MockPerson[]; // most applications first
   groups: MockGroup[]; // most applications first
   stats: {
     groups: number;
@@ -85,6 +109,7 @@ export type MockData = {
     inContention: number;
     canSwitch: number;
     blocked: number;
+    people?: number;
   };
   disclosed: Record<string, number>; // primary strings disclosed before reveal, per applicant
 };
@@ -248,6 +273,7 @@ export function buildMock(): MockData {
       near,
       setSize: appliedBy.get(s.tld)!.length,
       type: TYPE[`${s.slug}|${s.tld}`] ?? "standard",
+      registration: TYPE[`${s.slug}|${s.tld}`] === "brand" ? "brand" : "open",
       entity: {
         jurisdiction: JURIS[s.slug.length % JURIS.length],
         website: src ? new URL(src.url).hostname : "example.com",

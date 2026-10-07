@@ -1,68 +1,99 @@
 "use client";
 
-// PROTOTYPE, throwaway. Three structurally different takes on the page that
-// starts from who applied, switched by ?variant= and the floating bar:
-// A Table (one row per group), B Dossiers (one block per group, every
-// application listed), C Rivals (which groups meet which, set by set).
+// PROTOTYPE, throwaway. The page that starts from who applied, as one table
+// with three levels of disclosure:
+//   group     one row each; the name opens its entities
+//   entity    one row each under its group; the name opens its people
+//   people    the names the record gives, by the AGB question that asked
 //
-// A group is entities tied together. Tied by the applicant's own statement
-// (declared parent or controller) the tag is soft; tied by something we
-// noticed (shared director, shared address) the tag is oxblood and the
-// evidence is printed.
+// A group is entities tied by the applicant's own statement: the same
+// declared parent (AGB Q26, Q36). Nothing is inferred.
 
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, useDeferredValue, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
-import PrototypeSwitcher from "@/components/PrototypeSwitcher";
-import {
-  LINK,
-  LINK_LABEL,
-  MockTag,
-  Replacement,
-  StringLink,
-  StringList,
-  TAG,
-  TH,
-  evidence,
-  inferred,
-} from "../bits";
-import type { MockData, MockGroup } from "../mock";
+import { LINK, PEOPLE, PERSON_ROLES, StringFold, StringLink, TAG, TH, ToStrings, slugify } from "../bits";
+import type { MockData, MockEntity, MockGroup, Role } from "../mock";
 
-const VARIANTS = [
-  { key: "A", name: "Table" },
-  { key: "B", name: "Dossiers" },
-  { key: "C", name: "Rivals" },
-];
+// A caret that turns when its row is open. The name is the label, not a link.
+// A caret that turns when its row is open. The name is the label, not a
+// link, and keeps to one line: cut with an ellipsis, whole on hover.
+function Toggle({ open, onClick, name, strong }: { open: boolean; onClick: () => void; name: string; strong?: boolean }) {
+  return (
+    <span className="group relative block max-w-full">
+      <Tip>{name}</Tip>
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-label={name}
+        onClick={onClick}
+        className={`cursor-pointer text-left flex items-baseline gap-2 max-w-full hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold focus:outline-none ${strong ? "font-medium" : ""}`}
+      >
+        <span aria-hidden className={`inline-block w-2 shrink-0 text-[10px] text-ink-soft transition-transform duration-200 ease-in-out ${open ? "rotate-90" : ""}`}>
+          ▶
+        </span>
+        <span className="truncate">{name}</span>
+      </button>
+    </span>
+  );
+}
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
+const CELL = "py-2 pr-4 text-right tabular-nums";
 
 // a group worth a row of its own: more than one application or entity
 const several = (g: MockGroup) => g.apps.length > 1 || g.entities.length > 1;
 
-const LinkTag = ({ g }: { g: MockGroup }) =>
-  g.link ? (
-    <span className={`${TAG} ml-2 whitespace-nowrap ${inferred(g.link) ? "text-oxblood" : "text-ink-soft"}`}>{LINK_LABEL[g.link]}</span>
-  ) : null;
+// the count, and under it, small and in oxblood, how many stand alone:
+// applications for a string nobody else applied for
+const Apps = ({ n, sets }: { n: number; sets: number }) => (
+  <span className="inline-flex flex-col items-end leading-tight">
+    <span>{n}</span>
+    {n - sets > 0 && <span className="text-[11px] text-oxblood">{n - sets}</span>}
+  </span>
+);
 
-// The groups it meets in a set, most sets first; hovering names the strings.
-function Meets({ g }: { g: MockGroup }) {
-  if (!g.rivals.length) return null;
+const inSets = (e: MockEntity) => e.apps.filter((a) => a.setSize > 1).length;
+
+// every entity in the group names the same people: print them once
+const sharedRoles = (g: MockGroup): Role[] | null => {
+  if (g.entities.length < 2) return null;
+  const key = (e: MockEntity) => JSON.stringify(e.roles ?? []);
+  const first = key(g.entities[0]);
+  if (!first || first === "[]") return null;
+  return g.entities.every((e) => key(e) === first) ? g.entities[0].roles! : null;
+};
+
+// The people a record names, one line per AGB question.
+function People({ roles, note }: { roles: Role[] | undefined; note?: string }) {
+  if (!roles?.length)
+    return <p className="serif italic text-ink-soft">No names in the published record.</p>;
   return (
-    <>
-      {g.rivals.map((r, i) => (
-        <span key={r.slug}>
-          {i > 0 && <span className="text-rule"> · </span>}
-          <span className="group relative whitespace-nowrap">
-            <Tip>{r.tlds.map((t) => `.${t}`).join(" · ")}</Tip>
-            <Link href={`#g-${r.slug}`} className={LINK}>
-              {r.name}
-            </Link>
-            <sup className="text-oxblood ml-0.5">{r.tlds.length}</sup>
+    <div className="grid sm:grid-cols-[minmax(0,10rem)_1fr] gap-x-4 gap-y-1">
+      {note && (
+        <p className={`${TAG} text-ink-soft col-span-2 mb-1`}>{note}</p>
+      )}
+      {roles.map((r) => (
+        <Fragment key={r.role}>
+          <span className={`${TAG} text-ink-soft pt-0.5`}>{r.role}</span>
+          <span className="mb-1 sm:mb-0">
+            {r.names.map((n, i) => (
+              <span key={n}>
+                {i > 0 && ", "}
+                {PERSON_ROLES.has(r.role) ? (
+                  <Link href={`${PEOPLE}#p-${slugify(n)}`} className={LINK}>
+                    {n}
+                  </Link>
+                ) : (
+                  n
+                )}
+              </span>
+            ))}
           </span>
-        </span>
+        </Fragment>
       ))}
-    </>
+    </div>
   );
 }
 
@@ -74,10 +105,14 @@ function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
       <SectionHead n={n} title="One application" count={single.length} className="mt-12" />
       <div className="grid sm:grid-cols-2 gap-x-12 text-sm">
         {single.map((g) => (
-          <div key={g.slug} id={`g-${g.slug}`} className="flex items-baseline justify-between gap-4 py-1.5 border-b border-rule-faint scroll-mt-4 target:bg-paper-deep">
-            <span>
-              {g.name}
-              <MockTag on={g.entities[0].fixture} />
+          <div
+            key={g.slug}
+            id={`g-${g.slug}`}
+            className="flex items-baseline justify-between gap-4 py-1.5 border-b border-rule-faint scroll-mt-4 target:bg-paper-deep"
+          >
+            <span className="min-w-0 flex items-baseline">
+              <span className="truncate">{g.name}</span>
+              <ToStrings by="applicant" name={g.entities[0].name} />
             </span>
             <StringLink a={g.apps[0]} />
           </div>
@@ -87,265 +122,162 @@ function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
   );
 }
 
-const Legend = () => (
-  <p className={`${TAG} text-ink-soft mb-4`}>
-    <sup className="text-oxblood">n</sup> applications for the string
-  </p>
-);
+const INPUT =
+  "border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out";
 
-// ---------- A: Table ----------
-// One row per group, counts first, strings last. The name opens its entities.
+// group name, each entity, everyone named under it, and its strings
+const matches = (g: MockGroup, q: string) => {
+  const t = q.trim().toLowerCase().replace(/^\./, "");
+  if (!t) return true;
+  if (g.name.toLowerCase().includes(t)) return true;
+  for (const e of g.entities) {
+    if (e.name.toLowerCase().includes(t) || e.people.toLowerCase().includes(t)) return true;
+    for (const r of e.roles ?? []) if (r.names.some((n) => n.toLowerCase().includes(t))) return true;
+  }
+  return g.apps.some((a) => a.tld.includes(t) || (a.replacement ?? "").includes(t));
+};
 
-function Table({ d }: { d: MockData }) {
-  const [open, setOpen] = useState<string | null>(null);
-  const rows = d.groups.filter(several);
+export default function Entities({ data: d }: { data: MockData }) {
+  const [open, setOpen] = useState<string | null>(null); // group slug
+  const [openEntity, setOpenEntity] = useState<string | null>(null); // entity slug
+  const [q, setQ] = useState("");
+  const dq = useDeferredValue(q); // the table follows the box when idle
+  const hit = d.groups.filter((g) => matches(g, dq));
+  const rows = hit.filter(several);
+  // a search for a person opens the groups it lands on, so the name is in view
+  const auto = dq.trim().length > 2 && rows.length <= 3;
+
+  const toggleGroup = (slug: string) => {
+    setOpen(open === slug ? null : slug);
+    setOpenEntity(null);
+  };
+
   return (
     <section className="mb-14">
       <SectionHead n="I" title="Groups" count={rows.length} />
-      <Legend />
-      <div className="overflow-x-auto sm:overflow-visible">
-        <table className="w-full text-sm border-collapse min-w-[620px]">
+      <div className="mb-5">
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search…"
+          aria-label="Search groups, entities, people and strings"
+          className={`${INPUT} sm:w-44`}
+        />
+      </div>
+      <p className={`${TAG} text-ink-soft mb-4`}>
+        <sup className="text-oxblood">n</sup> applications for the string
+        <span className="text-rule mx-2">·</span>
+        <span className="text-oxblood">n</span> under apps, uncontested
+      </p>
+      {/* no sideways scroll: below sm the entity count goes and the strings
+          wrap under the name instead of beside it */}
+      <div>
+        {/* fixed layout: the strings column takes what is left and wraps,
+            so an unfolded list never widens the table */}
+        <table className="w-full text-sm border-collapse table-fixed">
           <thead>
             <tr>
-              <th className={`${TH} w-80`}>Group</th>
-              <th className={`${NUM} w-16`}>Entities</th>
-              <th className={`${NUM} w-12`}>Apps</th>
-              <th className={`${NUM} w-16`}>In sets</th>
-              <th className={`${TH} pl-4 !pr-0`}>Strings</th>
+              <th className={`${TH} sm:w-72`}>Group</th>
+              <th className={`${NUM} w-16 hidden sm:table-cell`}>Entities</th>
+              <th className={`${NUM} w-16`}>Apps</th>
+              <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((g) => (
-              <Fragment key={g.slug}>
-                <tr id={`g-${g.slug}`} className="border-t border-rule-faint align-top scroll-mt-4 target:bg-paper-deep">
-                  <td className="py-2 pr-4">
-                    <button
-                      type="button"
-                      aria-expanded={open === g.slug}
-                      onClick={() => setOpen(open === g.slug ? null : g.slug)}
-                      className={`${LINK} text-left font-medium`}
-                    >
-                      {g.name}
-                    </button>
-                    <LinkTag g={g} />
-                  </td>
-                  <td className="py-2 pr-4 text-right tabular-nums">{g.entities.length}</td>
-                  <td className="py-2 pr-4 text-right tabular-nums">{g.apps.length}</td>
-                  <td className="py-2 pr-4 text-right tabular-nums text-oxblood">{g.inSets || ""}</td>
-                  <td className="py-2 pl-4 leading-6">
-                    <StringList apps={g.apps} />
-                  </td>
-                </tr>
-                {open === g.slug && (
-                  <tr className="bg-paper-deep">
-                    <td colSpan={5} className="px-3 py-3">
-                      {evidence(g) && <p className="serif italic text-ink-soft mb-2">{evidence(g)}</p>}
-                      {g.rivals.length > 0 && (
-                        <p className="mb-3">
-                          <span className="label !text-[10px] text-ink-soft mr-2">Meets</span>
-                          <Meets g={g} />
-                        </p>
-                      )}
-                      <div className="grid grid-cols-[minmax(0,14rem)_minmax(0,8rem)_minmax(0,1fr)] gap-x-4 gap-y-1.5">
-                        {g.entities.map((e) => (
-                          <Fragment key={e.slug}>
-                            <span>
-                              {e.name}
-                              <MockTag on={e.fixture} />
-                            </span>
-                            <span className="text-ink-soft">{e.jurisdiction}</span>
-                            <span>{e.people}</span>
-                          </Fragment>
-                        ))}
-                      </div>
+            {rows.map((g) => {
+              const isOpen = open === g.slug || auto;
+              const shared = isOpen ? sharedRoles(g) : null;
+              return (
+                <Fragment key={g.slug}>
+                  <tr
+                    id={`g-${g.slug}`}
+                    className={`border-t align-top scroll-mt-4 target:bg-paper-deep ${isOpen ? "border-ink" : "border-rule-faint"}`}
+                  >
+                    <td className="py-2 pr-4">
+                      <span className="flex items-baseline max-w-full">
+                        <Toggle open={isOpen} onClick={() => toggleGroup(g.slug)} name={g.name} strong />
+                        {/* a declared parent is searched as one; a group of one entity is that applicant */}
+                        <ToStrings by={g.link === "parent" ? "parent" : "applicant"} name={g.link === "parent" ? g.name : g.entities[0].name} />
+                      </span>
                     </td>
+                    <td className={`${CELL} hidden sm:table-cell`}>{g.entities.length}</td>
+                    <td className={CELL}>
+                      <Apps n={g.apps.length} sets={g.inSets} />
+                    </td>
+                    {/* open, the entity rows carry the strings instead */}
+                    <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <StringFold apps={g.apps} />}</td>
                   </tr>
-                )}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <Singles groups={d.groups} n="II" />
-    </section>
-  );
-}
-
-// ---------- B: Dossiers ----------
-// One block per group. Everything is on the page: what ties it, who it meets,
-// and each entity's applications with their replacements.
-
-function Dossiers({ d }: { d: MockData }) {
-  const rows = d.groups.filter(several);
-  return (
-    <section className="mb-14">
-      <SectionHead n="I" title="Groups" count={rows.length} />
-      <Legend />
-      {rows.map((g) => (
-        <article key={g.slug} id={`g-${g.slug}`} className="border-t border-ink pt-3 mb-10 scroll-mt-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-            <h3 className="text-2xl font-light">
-              {g.name}
-              <LinkTag g={g} />
-            </h3>
-            <span className="label text-ink-soft">
-              {g.entities.length} {g.entities.length === 1 ? "entity" : "entities"}
-              <span className="text-rule mx-2">·</span>
-              {g.apps.length} applications
-              {g.inSets > 0 && (
-                <>
-                  <span className="text-rule mx-2">·</span>
-                  <span className="text-oxblood">{g.inSets} in sets</span>
-                </>
-              )}
-            </span>
-          </div>
-          {evidence(g) && <p className="serif italic text-ink-soft text-sm mt-1">{evidence(g)}</p>}
-          {g.rivals.length > 0 && (
-            <p className="text-sm mt-2">
-              <span className="label !text-[10px] text-ink-soft mr-2">Meets</span>
-              <Meets g={g} />
-            </p>
-          )}
-          <div className="overflow-x-auto sm:overflow-visible mt-4">
-            <table className="w-full table-fixed text-sm border-collapse min-w-[620px]">
-              <colgroup>
-                <col className="w-[26%]" />
-                <col />
-                <col className="w-36" />
-                <col className="w-44" />
-              </colgroup>
-              <thead>
-                <tr>
-                  {["Entity", "People", "String", "Replacement"].map((h) => (
-                    <th key={h} className={TH}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {g.entities.map((e) =>
-                  e.apps.map((a, i) => (
-                    <tr key={a.id} className={`align-top ${i ? "" : "border-t border-rule-faint"}`}>
-                      <td className={`pr-4 ${i ? "pb-1.5" : "py-1.5"}`}>
-                        {i === 0 && (
-                          <>
-                            {e.name}
-                            <MockTag on={e.fixture} />
-                          </>
-                        )}
-                      </td>
-                      <td className={`pr-4 text-ink-soft ${i ? "pb-1.5" : "py-1.5"}`}>{i === 0 && e.people}</td>
-                      <td className={`pr-4 font-medium ${i ? "pb-1.5" : "py-1.5"}`}>
-                        <StringLink a={a} />
-                      </td>
-                      <td className={i ? "pb-1.5" : "py-1.5"}>
-                        <Replacement a={a} />
+                  {/* below sm the strings take a line of their own */}
+                  {!isOpen && (
+                    <tr className="sm:hidden">
+                      <td colSpan={2} className="pb-2 leading-6 text-xs">
+                        <StringFold apps={g.apps} />
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </article>
-      ))}
-      <Singles groups={d.groups} n="II" />
-    </section>
-  );
-}
+                  )}
 
-// ---------- C: Rivals ----------
-// Only the groups in a set, each against each: the number is the sets two
-// groups share, the strings are on hover. Read a row to see who a group faces.
-
-function Rivals({ d }: { d: MockData }) {
-  const total = (g: MockGroup) => g.rivals.reduce((n, r) => n + r.tlds.length, 0);
-  const rows = d.groups.filter((g) => g.rivals.length).sort((x, y) => total(y) - total(x) || x.name.localeCompare(y.name));
-  const rest = d.groups.filter((g) => !g.rivals.length);
-  return (
-    <section className="mb-14">
-      <SectionHead n="I" title="Groups in a set" count={rows.length} />
-      <p className={`${TAG} text-ink-soft mb-4`}>
-        <span className="text-oxblood">n</span> sets two groups share · the column number is the row number
-      </p>
-      <div className="overflow-x-auto sm:overflow-visible">
-        <table className="text-sm border-collapse">
-          <thead>
-            <tr>
-              <th className={`${TH} !pr-2 w-8`} />
-              <th className={`${TH} min-w-56`}>Group</th>
-              <th className={`${NUM} !pr-6`}>Apps</th>
-              {rows.map((_, j) => (
-                <th key={j} className="label text-ink-soft pb-2 font-medium w-9 text-center">
-                  {j + 1}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((g, i) => (
-              <tr key={g.slug} id={`g-${g.slug}`} className="border-t border-rule-faint scroll-mt-4">
-                <td className="py-2 pr-2 text-ink-soft tabular-nums">{i + 1}</td>
-                <td className="py-2 pr-4 whitespace-nowrap">
-                  <span className="font-medium">{g.name}</span>
-                  <LinkTag g={g} />
-                </td>
-                <td className="py-2 pr-6 text-right tabular-nums">{g.apps.length}</td>
-                {rows.map((o) => {
-                  const r = g.rivals.find((x) => x.slug === o.slug);
-                  return (
-                    <td
-                      key={o.slug}
-                      className={`w-9 h-9 text-center border border-rule-faint tabular-nums ${o.slug === g.slug ? "bg-paper-deep" : ""}`}
-                    >
-                      {r && (
-                        <span className="group relative block cursor-default text-oxblood">
-                          <Tip side="right">
-                            {g.name} and {o.name}: {r.tlds.map((t) => `.${t}`).join(" · ")}
-                          </Tip>
-                          {r.tlds.length}
-                        </span>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                  {/* level two: one row per entity, strings narrowed to its own */}
+                  {isOpen &&
+                    g.entities.map((e) => {
+                      const eOpen = openEntity === e.slug;
+                      const own = g.entities.length > 1;
+                      return (
+                        <Fragment key={e.slug}>
+                          <tr className="bg-paper-deep align-top">
+                            <td className="py-1.5 pr-4 pl-5">
+                              <span className="flex items-baseline max-w-full">
+                                {own ? (
+                                  <Toggle open={eOpen} onClick={() => setOpenEntity(eOpen ? null : e.slug)} name={e.name} />
+                                ) : (
+                                  <span className="pl-4 block truncate">{e.name}</span>
+                                )}
+                                <ToStrings by="applicant" name={e.name} />
+                              </span>
+                              {e.jurisdiction && <span className="block text-xs text-ink-soft mt-0.5 pl-4">{e.jurisdiction}</span>}
+                            </td>
+                            <td className={`${CELL} py-1.5 hidden sm:table-cell`} />
+                            <td className={`${CELL} py-1.5`}>
+                              <Apps n={e.apps.length} sets={inSets(e)} />
+                            </td>
+                            <td className="py-1.5 pl-4 leading-6 hidden sm:table-cell">
+                              <StringFold apps={e.apps} />
+                            </td>
+                          </tr>
+                          <tr className="sm:hidden bg-paper-deep">
+                            <td colSpan={2} className="pl-9 pb-2 leading-6 text-xs">
+                              <StringFold apps={e.apps} />
+                            </td>
+                          </tr>
+                          {/* level three: people, per entity when they differ */}
+                          {own && eOpen && !shared && (
+                            <tr className="bg-paper-deep">
+                              <td colSpan={4} className="pl-9 pr-4 pb-3 pt-1">
+                                <People roles={e.roles} />
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  {/* people once, when every entity names the same ones or there is one entity */}
+                  {isOpen && (shared || g.entities.length === 1) && (
+                    <tr className="bg-paper-deep">
+                      <td colSpan={4} className="pl-9 pr-4 pb-3 pt-2 border-t border-rule-faint">
+                        <People
+                          roles={shared ?? g.entities[0].roles}
+                          note={shared ? `Named by each of the ${g.entities.length} entities` : undefined}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>
-
-      <SectionHead n="II" title="Not in a set" count={rest.length} className="mt-12" />
-      <p className="text-sm leading-7">
-        {rest.map((g, i) => (
-          <span key={g.slug}>
-            {i > 0 && <span className="text-rule"> · </span>}
-            <span className="whitespace-nowrap">
-              {g.name}
-              <sup className="text-ink-soft ml-0.5">{g.apps.length}</sup>
-            </span>
-          </span>
-        ))}
-      </p>
-      <p className={`${TAG} text-ink-soft mt-3`}>
-        <sup>n</sup> applications
-      </p>
+      <Singles groups={hit} n="II" />
     </section>
-  );
-}
-
-// ---------- switch ----------
-
-export default function Entities({ data, initial }: { data: MockData; initial: string }) {
-  const [v, setV] = useState(VARIANTS.some((x) => x.key === initial) ? initial : "A");
-  return (
-    <>
-      {v === "A" && <Table d={data} />}
-      {v === "B" && <Dossiers d={data} />}
-      {v === "C" && <Rivals d={data} />}
-      <PrototypeSwitcher variants={VARIANTS} current={v} onChange={setV} />
-    </>
   );
 }
