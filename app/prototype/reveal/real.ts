@@ -213,6 +213,8 @@ export function buildReal(): MockData {
     return {
       id: r.applicationHumanReadableId,
       tld,
+      uLabel: r.primaryString.uLabel || undefined,
+      replacementU: rep?.primaryString.uLabel || undefined,
       applicant: r.organizationName,
       slug,
       replacement,

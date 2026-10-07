@@ -22,10 +22,12 @@ export type Role = { role: string; names: string[] };
 
 export type MockApp = {
   id: string;
-  tld: string;
+  tld: string; // the A-label, as the record keys it
+  uLabel?: string; // an IDN's U-label, what a reader sees
   applicant: string;
   slug: string;
-  replacement: string | null;
+  replacement: string | null; // A-label
+  replacementU?: string; // an IDN replacement's U-label
   status: Status;
   // every application that knocks the replacement out (AGB §5.1): one that
   // applied for the same string, or one that named it as its replacement too

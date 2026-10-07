@@ -94,7 +94,7 @@ export function Replacement({ a }: { a: MockApp }) {
         }
       >
         <span className={n ? "line-through decoration-oxblood text-ink-soft" : ""}>
-          <Tld>{a.replacement}</Tld>
+          <Shown a={{ tld: a.replacement, uLabel: a.replacementU }} />
         </span>
         {n > 0 && <sup className="text-oxblood ml-0.5">{n}</sup>}
       </Hover>
@@ -110,13 +110,24 @@ export const MockTag = ({ on }: { on: boolean }) =>
 // the number of applications for it, as the homepage index does.
 // A string in contention is set in oxblood with its count, as the issue
 // states are everywhere else; one alone stays in ink.
+// An IDN prints as its U-label; the A-label the record keys it by follows
+// small, so the punycode is still there to copy.
+export function Shown({ a }: { a: { tld: string; uLabel?: string } }) {
+  return (
+    <>
+      <Tld>{a.uLabel ?? a.tld}</Tld>
+      {a.uLabel && <span className={`${TAG} text-ink-soft ml-1.5 !normal-case !tracking-normal`}>{a.tld}</span>}
+    </>
+  );
+}
+
 export function StringLink({ a }: { a: MockApp }) {
   return (
     <Link
       href={`${STRINGS}#s-${a.tld}`}
       className={`whitespace-nowrap hover:text-gold transition-colors duration-200 ease-in-out ${a.setSize > 1 ? "text-oxblood font-medium" : ""}`}
     >
-      <Tld>{a.tld}</Tld>
+      <Shown a={a} />
       {a.setSize > 1 && <sup className="ml-0.5">{a.setSize}</sup>}
     </Link>
   );

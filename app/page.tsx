@@ -1,6 +1,5 @@
 // The post-reveal strings view on APS data. The pre-reveal page is at /archive.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { TopBar } from "@/components/PageHeader";
 import { buildReal } from "@/app/prototype/reveal/real";
 import Header from "@/app/prototype/reveal/Header";
@@ -16,9 +15,7 @@ export default function Page() {
     <>
       <TopBar current="/" />
       <Header stats={data.stats} current="strings" />
-      <Suspense>
-        <Reveal data={data} />
-      </Suspense>
+      <Reveal data={data} />
     </>
   );
 }

@@ -9,8 +9,7 @@
 //   a dash                     = none named, or no parent
 
 import Link from "next/link";
-import { Fragment, memo, useDeferredValue, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Fragment, memo, useDeferredValue, useEffect, useMemo, useState } from "react";
 import Tld from "@/components/Tld";
 import KindRule from "./KindRule";
 import Choice from "./Choice";
@@ -26,6 +25,7 @@ import {
   TAG,
   TH,
   inferred,
+  Shown,
 } from "./bits";
 import type { MockApp, MockData, MockGroup } from "./mock";
 
@@ -88,7 +88,7 @@ const matches = (
 ) => {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (!t) return true;
-  const string = a.tld.includes(t); // the primary; replacements are a filter, not a search
+  const string = a.tld.includes(t) || (a.uLabel ?? "").toLowerCase().includes(t); // the primary; replacements are a filter, not a search
   const applicant = a.applicant.toLowerCase().includes(t);
   const parent =
     (a.entity.parent ?? "").toLowerCase().includes(t) ||
@@ -400,7 +400,7 @@ const Row = memo(function Row({
       style={pressDelay(Math.min(vi * 22, 500))}
     >
       <td className="py-2 pr-4 font-medium">
-        <Tld>{r.tld}</Tld>
+        <Shown a={r.apps[0]} />
       </td>
       {/* one line per application: its replacement, who applied, who is behind them */}
       <td className="py-2">
@@ -457,16 +457,24 @@ const Row = memo(function Row({
 
 export default function Reveal({ data: d }: { data: MockData }) {
   const [scope, setScope] = useState<Scope>("all");
-  // arriving from another page with ?by=applicant&q=Name, the box is filled
-  // and the column set, so the link lands on the rows it means
-  const sp = useSearchParams();
-  const [q, setQ] = useState(sp.get("q") ?? "");
+  const [q, setQ] = useState("");
   const [applicant, setApplicant] = useState<string | null>(null);
   const [kind, setKind] = useState<Kind | "all">("all");
-  const [by, setBy] = useState<By>(() => {
-    const b = sp.get("by");
-    return b && BY.some((x) => x.value === b) ? (b as By) : "all";
-  });
+  const [by, setBy] = useState<By>("all");
+  // arriving from another page with ?by=applicant&q=Name, the box is filled
+  // and the column set once mounted, so the link lands on the rows it means.
+  // Read after mount, not with useSearchParams: that would turn the whole
+  // table into a client-only render and leave the prerendered page empty.
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const q0 = sp.get("q");
+    const by0 = sp.get("by");
+    if (!q0 && !by0) return;
+    queueMicrotask(() => {
+      if (q0) setQ(q0);
+      if (by0 && BY.some((b) => b.value === by0)) setBy(by0 as By);
+    });
+  }, []);
   const [rmark, setRmark] = useState<RMark | null>(null);
   const [cursor, setCursor] = useState(-1); // highlighted suggestion
   const [suggesting, setSuggesting] = useState(false);
@@ -480,7 +488,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
   const dq = useDeferredValue(q);
   const names = useMemo(
     () => ({
-      string: [...new Set(d.apps.map((a) => a.tld))].sort(),
+      string: [...new Set(d.apps.map((a) => a.uLabel ?? a.tld))].sort(),
       applicant: [...new Set(d.apps.map((a) => a.applicant))].sort(),
       parent: d.groups
         .filter((g) => g.link === "parent")
