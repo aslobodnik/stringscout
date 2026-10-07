@@ -1,9 +1,9 @@
 // Every TLD in the IANA root zone, A-labels, lowercased.
 // Source: https://data.iana.org/TLD/tlds-alpha-by-domain.txt
-// Version 2026100500, Last Updated Mon Oct  5 07:07:01 2026 UTC
+// Version 2026100700, Last Updated Wed Oct  7 07:07:01 2026 UTC
 // Refresh by re-fetching that file; lib/derive.ts flags any disclosed string
 // that is already delegated, or that is the singular/plural of one.
-export const rootZoneVersion = "2026100500";
+export const rootZoneVersion = "2026100700";
 
 export const rootZone: string[] = [
   "aaa", "aarp", "abb", "abbott", "abbvie", "abc", "able", "abogado",

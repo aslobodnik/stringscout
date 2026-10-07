@@ -87,6 +87,16 @@ export const claims: Claim[] = dedupe([
     "primary"
   ),
 
+  // Suffix Inc. — eleven more strings, per its own site's full list of 24.
+  ...expand(
+    [
+      "ask", "btw", "device", "dns", "follow", "indie",
+      "realm", "rep", "solo", "universe", "wizard",
+    ],
+    "suffix",
+    ["suffixsite"]
+  ),
+
   // Four applicants named exactly one string and referred to "the application"
   // in the singular. AGB Appendix 1 Question Set 5 designates the applied-for
   // string as TAMS.1, the primary, and §5.1 allows at most one replacement, so a

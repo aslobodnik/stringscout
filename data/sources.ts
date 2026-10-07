@@ -90,6 +90,14 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
+    id: "suffixsite",
+    outlet: "Suffix Domains",
+    title: "suffix.domains — full list grows to 24 strings",
+    url: "https://suffix.domains/",
+    date: "2026-10-07",
+    kind: "applicant",
+  },
+  {
     id: "xiyou",
     outlet: "Journey To The West Corporation",
     title: "xiyou.domains — 323 applied-for strings",
