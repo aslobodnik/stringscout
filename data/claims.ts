@@ -336,6 +336,72 @@ export const claims: Claim[] = dedupe([
     ["dnw-intercap"]
   ),
 
+  // DTTM TLD, LLC (Trump's IP holding company) — .trump, its only named
+  // string per Domain Name Wire, a dot-brand application; single-string
+  // applicant, so primary.
+  ...expand(["trump"], "trump", ["dnw-trump"], "primary"),
+
+  // GoDaddy Registry — Domain Name Wire's own list of GoDaddy's "primary
+  // string applications."
+  ...expand(
+    [
+      "ace", "act", "agentid", "agi", "aid", "air", "airo", "all", "ans",
+      "api", "ask", "bbq", "bit", "brand", "brew", "cart", "chain", "chef",
+      "class", "connect", "craft", "crm", "ddd", "decor", "demo", "dna",
+      "drone", "expo", "firm", "fix", "flow", "force", "form", "fresh",
+      "gear", "gig", "good", "grow", "gym", "hire", "hive", "hub", "key",
+      "labs", "line", "list", "maker", "mart", "max", "mind", "mix",
+      "model", "mvp", "omg", "ops", "park", "pod", "pop", "pot", "pov",
+      "power", "robot", "ship", "soul", "stack", "stay", "swap", "tap",
+      "tea", "therapy", "trip", "vibe", "wallet", "wealth", "wear", "wild",
+      "zen",
+    ],
+    "godaddy",
+    ["dnw-godaddy"],
+    "primary"
+  ),
+
+  // Meta — 18 strings named to Domain Name Wire as its full 2026-round
+  // application list; primary/backup split not stated.
+  ...expand(
+    [
+      "agent", "aiglasses", "facebook", "frommeta", "insta", "instagram",
+      "llama", "messenger", "meta", "metaai", "metaglasses", "metaverse",
+      "muse", "reels", "superintelligence", "threads", "wearables",
+      "whatsapp",
+    ],
+    "meta",
+    ["dnw-meta"]
+  ),
+
+  // XYZ.com LLC — 139 strings named to Domain Name Wire as its full
+  // 2026-round application list; primary/backup split not stated.
+  ...expand(
+    [
+      "ass", "automation", "bao", "bay", "body", "chi", "cmo", "cosmetics",
+      "defense", "electric", "ent", "gas", "hvac", "industrial", "interiors",
+      "jia", "kai", "lake", "learning", "mad", "mag", "nova", "nut", "ranch",
+      "scam", "sea", "stone", "street", "summit", "sus", "ten", "tex",
+      "unlimited", "van", "via", "war", "water", "west", "wood", "agent",
+      "labs", "bit", "api", "brand", "hub", "pop", "max", "official", "pod",
+      "zen", "connect", "firm", "key", "mind", "therapy", "gaming", "gen",
+      "mart", "omg", "portal", "wealth", "air", "crypto", "etc", "fab",
+      "list", "project", "robotics", "sys", "tap", "tea", "way", "ace",
+      "con", "dao", "factory", "flow", "gear", "invest", "ion", "node",
+      "pal", "park", "power", "research", "view", "well", "wellness",
+      "advisors", "base", "bro", "chef", "collective", "corporation",
+      "expo", "fest", "inn", "king", "kit", "machine", "mall", "moon",
+      "motors", "neo", "outlet", "path", "print", "products", "slot",
+      "time", "uni", "zzz", "apparel", "bakery", "beach", "bnb", "cap",
+      "central", "collection", "consultants", "creations", "creative",
+      "crm", "den", "jet", "journey", "logistics", "more", "oil", "plan",
+      "point", "resort", "road", "roofing", "society", "soft", "transport",
+      "universe", "virtual",
+    ],
+    "xyz",
+    ["dnw-xyz"]
+  ),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.

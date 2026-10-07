@@ -399,6 +399,38 @@ const handSources: Source[] = [
     date: "2026-10-07",
     kind: "trade",
   },
+  {
+    id: "dnw-trump",
+    outlet: "Domain Name Wire",
+    title: "Donald Trump applies for .trump top level domain name",
+    url: "https://domainnamewire.com/2026/10/07/donald-trump-applies-for-trump-top-level-domain-name/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-godaddy",
+    outlet: "Domain Name Wire",
+    title: "GoDaddy applies for 77 top level domains",
+    url: "https://domainnamewire.com/2026/10/07/godaddy-applies-for-77-top-level-domains/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-meta",
+    outlet: "Domain Name Wire",
+    title: "Meta applies for .superintelligence, 17 other top level domains",
+    url: "https://domainnamewire.com/2026/10/07/meta-applies-for-superintelligence-17-other-top-level-domains/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
+  {
+    id: "dnw-xyz",
+    outlet: "Domain Name Wire",
+    title: "XYZ revs up with 139 top level domain name applications",
+    url: "https://domainnamewire.com/2026/10/07/xyz-revs-up-with-139-top-level-domain-name-applications/",
+    date: "2026-10-07",
+    kind: "trade",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and
