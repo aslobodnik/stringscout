@@ -1,25 +1,33 @@
 "use client";
 
-// The page that starts from who is named. One row per person; the name opens
-// the entities that name them, each with the role the record gives. A copy of
-// the entities table, so the two read the same.
+// The page that starts from who is named. One row per person, most
+// applications first, a hundred a page; a name named by several entities
+// opens to them, each with the role the record gives. A copy of the entities
+// table, so the two read the same.
+//
+// Searching reads the name, the entities naming the person, their roles and
+// their strings. A row reached through an entity or a role says so under the
+// row; a matched string moves to the front of its list. While a query is in
+// the box the two sections become one list.
 import Link from "next/link";
-import { Fragment, useDeferredValue, useState } from "react";
+import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
-import { ENTITIES, LINK, StringFold, StringList, TAG, TH } from "../bits";
-import type { MockData, MockPerson } from "../mock";
+import { ENTITIES, LINK, StringFold, TAG, TH } from "../bits";
+import SearchBox from "../SearchBox";
+import Pager, { PAGE } from "../Pager";
+import { personHit, stringHit, stringNames, term, type PersonHit } from "../search";
+import type { MockData } from "../mock";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 const CELL = "py-2 pr-4 text-right tabular-nums";
-const INPUT =
-  "border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out";
 
 const ROLE_SHORT: Record<string, string> = {
   Directors: "director",
   "Officers & partners": "officer",
   "Executive responsibility": "executive",
 };
+const shortRoles = (roles: string[]) => roles.map((r) => ROLE_SHORT[r] ?? r).join(", ");
 
 function Toggle({ open, onClick, name, strong }: { open: boolean; onClick: () => void; name: string; strong?: boolean }) {
   return (
@@ -48,44 +56,79 @@ const Apps = ({ n, sets }: { n: number; sets: number }) => (
   </span>
 );
 
-const Strings = ({ p }: { p: MockPerson }) => <StringFold apps={p.apps} />;
-
-// name, any entity naming them, any string they stand behind
-const matches = (p: MockPerson, q: string) => {
-  const t = q.trim().toLowerCase().replace(/^\./, "");
+// Why the query reached this row when the name did not match: the entity
+// that names the person, or the role. Strings move to the front instead.
+function Why({ hit, colSpan }: { hit: PersonHit; colSpan: number }) {
+  if (hit.name || (!hit.entities.length && !hit.roles.length)) return null;
+  const line = (word: string, names: string[]) =>
+    names.length > 0 && (
+      <span className="mr-4">
+        <span className="serif italic text-ink-soft">{word}</span> {names.slice(0, 3).join(", ")}
+        {names.length > 3 && <span className="text-ink-soft"> and {names.length - 3} more</span>}
+      </span>
+    );
   return (
-    !t ||
-    p.name.toLowerCase().includes(t) ||
-    p.entities.some((e) => e.name.toLowerCase().includes(t)) ||
-    p.apps.some((a) => a.tld.includes(t))
+    <tr className="text-xs">
+      <td colSpan={colSpan} className="pb-2 pl-4 pt-0">
+        {line(hit.entities.length === 1 ? "named by" : "named by", hit.entities)}
+        {line("as", hit.roles.map((r) => ROLE_SHORT[r] ?? r))}
+      </td>
+    </tr>
   );
-};
+}
 
 export default function People({ data: d }: { data: MockData }) {
-  const [open, setOpen] = useState<string | null>(null);
+  // what the reader opened or closed by hand, and under which query
+  const [pick, setPick] = useState<{ for: string; slug?: string | null }>({ for: "" });
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q); // the table follows the box when idle
-  const all = d.people ?? [];
-  const rows = all.filter((p) => matches(p, dq));
-  const auto = dq.trim().length > 2 && rows.length <= 3;
-  // the long tail, named by one entity for one application, sits below
-  const several = (p: MockPerson) => p.apps.length > 1 || p.entities.length > 1;
-  const main = rows.filter(several);
-  const single = rows.filter((p) => !several(p));
+  const searching = term(dq).length > 0;
+  const all = useMemo(() => d.people ?? [], [d.people]);
+  const hits = useMemo(() => {
+    const m = new Map<string, PersonHit>();
+    for (const p of all) {
+      const hit = personHit(p, dq);
+      if (hit) m.set(p.slug, hit);
+    }
+    return m;
+  }, [all, dq]);
+  // one list, most applications first (the data's order), a hundred a page;
+  // the page belongs to the query it was turned under
+  const main = all.filter((p) => hits.has(p.slug));
+  const [pageFor, setPageFor] = useState<{ for: string; page: number }>({ for: "", page: 0 });
+  const page = pageFor.for === dq ? Math.min(pageFor.page, Math.max(0, Math.ceil(main.length / PAGE) - 1)) : 0;
+  const shown = main.slice(page * PAGE, (page + 1) * PAGE);
+  const turn = (next: number) => {
+    setPageFor({ for: dq, page: next });
+    document.getElementById("people")?.scrollIntoView({ block: "start" });
+  };
+  const names = useMemo(
+    () => [
+      { kind: "person", items: all.map((p) => p.name).sort() },
+      { kind: "entity", items: [...new Set(all.flatMap((p) => p.entities.map((e) => e.name)))].sort() },
+      { kind: "string", items: stringNames(d.apps) },
+    ],
+    [all, d.apps],
+  );
+  const pin = searching ? (a: Parameters<typeof stringHit>[0]) => stringHit(a, term(dq)) : undefined;
+  // A query that lands on one person opens them, so the entities naming them
+  // sit under the name. Derived, not set: the caret still closes it, and a
+  // pick made by hand belongs to the query it was made under.
+  const auto = searching && main.length === 1 && main[0].entities.length > 1 ? main[0].slug : null;
+  const openSlug = pick.for === dq && pick.slug !== undefined ? pick.slug : auto;
+  const toggle = (slug: string) => setPick({ for: dq, slug: openSlug === slug ? null : slug });
 
   return (
-    <section className="mb-14">
+    <section id="people" className="mb-14 scroll-mt-4">
       <SectionHead n="I" title="People" count={main.length} />
-      <div className="mb-5">
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search…"
-          aria-label="Search people, entities and strings"
-          className={`${INPUT} sm:w-44`}
-        />
-      </div>
+      <SearchBox
+        id="people-search"
+        value={q}
+        onChange={setQ}
+        names={names}
+        ariaLabel="Search people, entities, roles and strings"
+        count={`${main.length} ${main.length === 1 ? "person" : "people"}`}
+      />
       <p className={`${TAG} text-ink-soft mb-4`}>
         <sup className="text-oxblood">n</sup> applications for the string
         <span className="text-rule mx-2">·</span>
@@ -101,9 +144,15 @@ export default function People({ data: d }: { data: MockData }) {
             <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
           </tr>
         </thead>
-        <tbody>
-          {main.map((p) => {
-            const isOpen = open === p.slug || auto;
+        <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
+          {shown.map((p) => {
+            // one entity: nothing to open, its name sits under the person's
+            const one = p.entities.length === 1 ? p.entities[0] : null;
+            const isOpen = !one && openSlug === p.slug;
+            const why = hits.get(p.slug)!;
+            // the one entity is already under the name: no line for it, the
+            // link turns gold when it is what the query matched
+            const oneHot = !!one && why.entities.includes(one.name);
             return (
               <Fragment key={p.slug}>
                 <tr
@@ -111,22 +160,43 @@ export default function People({ data: d }: { data: MockData }) {
                   className={`border-t align-top scroll-mt-4 target:bg-paper-deep ${isOpen ? "border-ink" : "border-rule-faint"}`}
                 >
                   <td className="py-2 pr-4">
-                    <Toggle open={isOpen} onClick={() => setOpen(isOpen && !auto ? null : p.slug)} name={p.name} strong />
+                    {one ? (
+                      <>
+                        {/* cut names show whole on hover, the house Tip, as the carets do */}
+                        <span className="group relative block max-w-full">
+                          <Tip>{p.name}</Tip>
+                          <span className="block font-medium truncate">{p.name}</span>
+                        </span>
+                        <span className="group relative block w-max max-w-full">
+                          <Tip>{one.name}</Tip>
+                          <Link
+                            href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`}
+                            aria-current={oneHot || undefined}
+                            className={`${LINK} block max-w-full truncate text-xs mt-0.5 ${oneHot ? "text-gold decoration-gold" : "text-ink-soft"}`}
+                          >
+                            {one.name}
+                          </Link>
+                        </span>
+                      </>
+                    ) : (
+                      <Toggle open={isOpen} onClick={() => toggle(p.slug)} name={p.name} strong />
+                    )}
                   </td>
-                  <td className="py-2 pr-4 text-ink-soft hidden sm:table-cell">{p.roles.map((r) => ROLE_SHORT[r] ?? r).join(", ")}</td>
+                  <td className="py-2 pr-4 text-ink-soft hidden sm:table-cell">{shortRoles(p.roles)}</td>
                   <td className={CELL}>{p.entities.length}</td>
                   <td className={CELL}>
                     <Apps n={p.apps.length} sets={p.inSets} />
                   </td>
-                  <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <Strings p={p} />}</td>
+                  <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <StringFold apps={p.apps} pin={pin} />}</td>
                 </tr>
                 {!isOpen && (
                   <tr className="sm:hidden">
                     <td colSpan={3} className="pb-2 leading-6 text-xs">
-                      <Strings p={p} />
+                      <StringFold apps={p.apps} pin={pin} />
                     </td>
                   </tr>
                 )}
+                {!isOpen && <Why hit={one ? { ...why, entities: [] } : why} colSpan={5} />}
                 {isOpen &&
                   p.entities.map((e) => {
                     const own = p.apps.filter((a) => a.slug === e.slug);
@@ -134,23 +204,23 @@ export default function People({ data: d }: { data: MockData }) {
                       <Fragment key={e.slug}>
                         <tr className="bg-paper-deep align-top">
                           <td className="py-1.5 pr-4 pl-9">
-                            <Link href={`${ENTITIES}#g-${e.group}`} className={LINK}>
+                            <Link href={`${ENTITIES}?q=${encodeURIComponent(e.name)}`} className={LINK}>
                               {e.name}
                             </Link>
-                            <span className="block text-xs text-ink-soft mt-0.5 sm:hidden">{e.roles.map((r) => ROLE_SHORT[r] ?? r).join(", ")}</span>
+                            <span className="block text-xs text-ink-soft mt-0.5 sm:hidden">{shortRoles(e.roles)}</span>
                           </td>
-                          <td className="py-1.5 pr-4 text-ink-soft hidden sm:table-cell">{e.roles.map((r) => ROLE_SHORT[r] ?? r).join(", ")}</td>
+                          <td className="py-1.5 pr-4 text-ink-soft hidden sm:table-cell">{shortRoles(e.roles)}</td>
                           <td className={`${CELL} py-1.5`} />
                           <td className={`${CELL} py-1.5`}>
                             <Apps n={own.length} sets={own.filter((a) => a.setSize > 1).length} />
                           </td>
                           <td className="py-1.5 pl-4 leading-6 hidden sm:table-cell">
-                            <StringFold apps={own} />
+                            <StringFold apps={own} pin={pin} />
                           </td>
                         </tr>
                         <tr className="sm:hidden bg-paper-deep">
                           <td colSpan={3} className="pl-9 pb-2 leading-6 text-xs">
-                            <StringFold apps={own} />
+                            <StringFold apps={own} pin={pin} />
                           </td>
                         </tr>
                       </Fragment>
@@ -169,22 +239,7 @@ export default function People({ data: d }: { data: MockData }) {
         </tbody>
       </table>
 
-      <SectionHead n="II" title="One application" count={single.length} className="mt-12" />
-      <div className="grid sm:grid-cols-2 gap-x-12 text-sm">
-        {single.map((p) => (
-          <div
-            key={p.slug}
-            id={`p-${p.slug}`}
-            className="flex items-baseline justify-between gap-4 py-1.5 border-b border-rule-faint scroll-mt-4 target:bg-paper-deep"
-          >
-            <span>
-              {p.name}
-              <span className="text-xs text-ink-soft ml-2">{p.entities[0].name}</span>
-            </span>
-            <StringList apps={p.apps} />
-          </div>
-        ))}
-      </div>
+      <Pager total={main.length} page={page} onPage={turn} noun="people" />
     </section>
   );
 }

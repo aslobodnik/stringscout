@@ -1,7 +1,6 @@
 // PROTOTYPE, throwaway. The sentence both views open with; its two counts are
 // the way between them.
 import Link from "next/link";
-import NextDate from "./NextDate";
 import { ENTITIES, LINK, STRINGS } from "./bits";
 import type { MockData } from "./mock";
 
@@ -24,7 +23,6 @@ export default function Header({ stats, current }: { stats: MockData["stats"]; c
           </a>
         </sup>
       </h1>
-      <NextDate />
     </header>
   );
 }
