@@ -1,7 +1,7 @@
 "use client";
 
-// PROTOTYPE, throwaway. The page that starts from who applied, as one table
-// with three levels of disclosure:
+// PROTOTYPE, throwaway. The page that starts from who applied, as one table,
+// most applications first, a hundred a page, with three levels of disclosure:
 //   group     one row each; the name opens its entities
 //   entity    one row each under its group; the name opens its people
 //   people    the names the record gives, by the AGB question that asked
@@ -18,8 +18,9 @@ import Link from "next/link";
 import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
-import { LINK, PEOPLE, PERSON_ROLES, StringFold, StringLink, TAG, TH, ToStrings } from "../bits";
+import { LINK, PEOPLE, PERSON_ROLES, StringFold, TAG, TH, ToStrings } from "../bits";
 import SearchBox from "../SearchBox";
+import Pager, { PAGE } from "../Pager";
 import { groupHit, stringHit, stringNames, term, type GroupHit } from "../search";
 import type { MockData, MockEntity, MockGroup, Role } from "../mock";
 
@@ -47,9 +48,6 @@ function Toggle({ open, onClick, name, strong }: { open: boolean; onClick: () =>
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 const CELL = "py-2 pr-4 text-right tabular-nums";
-
-// a group worth a row of its own: more than one application or entity
-const several = (g: MockGroup) => g.apps.length > 1 || g.entities.length > 1;
 
 // the count, and under it, small and in oxblood, how many stand alone:
 // applications for a string nobody else applied for
@@ -132,31 +130,6 @@ function Why({ hit }: { hit: GroupHit }) {
   );
 }
 
-// The long tail: a group that is one entity with one application.
-function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
-  const single = groups.filter((g) => !several(g));
-  return (
-    <>
-      <SectionHead n={n} title="One application" count={single.length} className="mt-12" />
-      <div className="grid sm:grid-cols-2 gap-x-12 text-sm">
-        {single.map((g) => (
-          <div
-            key={g.slug}
-            id={`g-${g.slug}`}
-            className="flex items-baseline justify-between gap-4 py-1.5 border-b border-rule-faint scroll-mt-4 target:bg-paper-deep"
-          >
-            <span className="min-w-0 flex items-baseline">
-              <span className="truncate">{g.name}</span>
-              <ToStrings by="applicant" name={g.entities[0].name} />
-            </span>
-            <StringLink a={g.apps[0]} />
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
 export default function Entities({ data: d }: { data: MockData }) {
   // what the reader opened or closed by hand, and under which query
   const [pick, setPick] = useState<{ for: string; group?: string | null; entity?: string | null; closedAuto?: boolean }>({ for: "" });
@@ -171,13 +144,19 @@ export default function Entities({ data: d }: { data: MockData }) {
     }
     return m;
   }, [d.groups, dq]);
-  const hit = d.groups.filter((g) => hits.has(g.slug));
-  // idle: groups with more than one application above, the rest below;
-  // searching: everything the query reached, in one list
-  const rows = searching ? hit : hit.filter(several);
+  // one list, most applications first (the data's order), a hundred a page;
+  // the page belongs to the query it was turned under
+  const rows = d.groups.filter((g) => hits.has(g.slug));
+  const [pageFor, setPageFor] = useState<{ for: string; page: number }>({ for: "", page: 0 });
+  const page = pageFor.for === dq ? Math.min(pageFor.page, Math.max(0, Math.ceil(rows.length / PAGE) - 1)) : 0;
+  const shown = rows.slice(page * PAGE, (page + 1) * PAGE);
+  const turn = (next: number) => {
+    setPageFor({ for: dq, page: next });
+    document.getElementById("applicants")?.scrollIntoView({ block: "start" });
+  };
   const names = useMemo(
     () => [
-      { kind: "group", items: d.groups.filter(several).map((g) => g.name).sort() },
+      { kind: "group", items: d.groups.filter((g) => g.entities.length > 1).map((g) => g.name).sort() },
       { kind: "entity", items: [...new Set(d.groups.flatMap((g) => g.entities.map((e) => e.name)))].sort() },
       { kind: "person", items: (d.people ?? []).map((p) => p.name).sort() },
       { kind: "string", items: stringNames(d.apps) },
@@ -191,7 +170,7 @@ export default function Entities({ data: d }: { data: MockData }) {
   // still closes it (recorded against this query), and the next query that
   // lands on one group opens that one. A pick made by hand belongs to the
   // query it was made under, so a new query starts from the auto state.
-  const auto = useMemo(() => {
+  const auto = (() => {
     if (!searching || rows.length !== 1) return null;
     const g = rows[0];
     const why = hits.get(g.slug)!;
@@ -199,7 +178,7 @@ export default function Entities({ data: d }: { data: MockData }) {
       ? g.entities.find((e) => e.roles?.some((r) => r.names.some((n) => why.people.includes(n))))
       : undefined;
     return { group: g.slug, entity: g.entities.length > 1 ? named?.slug ?? null : null };
-  }, [searching, rows, hits]);
+  })();
   const autoOn = auto && pick.for === dq && pick.closedAuto ? null : auto;
   const openSlug = pick.for === dq && pick.group !== undefined ? pick.group : autoOn?.group ?? null;
   const openEntitySlug = pick.for === dq && pick.entity !== undefined ? pick.entity
@@ -213,8 +192,8 @@ export default function Entities({ data: d }: { data: MockData }) {
     setPick({ ...pick, for: dq, group: openSlug, entity: openEntitySlug === slug ? null : slug });
 
   return (
-    <section className="mb-14">
-      <SectionHead n="I" title={searching ? "Applicants" : "Groups"} count={rows.length} />
+    <section id="applicants" className="mb-14 scroll-mt-4">
+      <SectionHead n="I" title="Applicants" count={rows.length} />
       <SearchBox
         id="applicants-search"
         value={q}
@@ -236,14 +215,14 @@ export default function Entities({ data: d }: { data: MockData }) {
         <table className="w-full text-sm border-collapse table-fixed">
           <thead>
             <tr>
-              <th className={`${TH} sm:w-72`}>{searching ? "Applicant" : "Group"}</th>
+              <th className={`${TH} sm:w-72`}>Applicant</th>
               <th className={`${NUM} w-16 hidden sm:table-cell`}>Entities</th>
               <th className={`${NUM} w-16`}>Apps</th>
               <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
             </tr>
           </thead>
           <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
-            {rows.map((g) => {
+            {shown.map((g) => {
               const isOpen = openSlug === g.slug;
               const shared = isOpen ? sharedRoles(g) : null;
               const why = hits.get(g.slug)!;
@@ -344,7 +323,7 @@ export default function Entities({ data: d }: { data: MockData }) {
           </tbody>
         </table>
       </div>
-      {!searching && <Singles groups={hit} n="II" />}
+      <Pager total={rows.length} page={page} onPage={turn} noun="applicants" />
     </section>
   );
 }

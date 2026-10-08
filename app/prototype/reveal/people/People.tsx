@@ -1,8 +1,9 @@
 "use client";
 
-// The page that starts from who is named. One row per person; the name opens
-// the entities that name them, each with the role the record gives. A copy of
-// the entities table, so the two read the same.
+// The page that starts from who is named. One row per person, most
+// applications first, a hundred a page; a name named by several entities
+// opens to them, each with the role the record gives. A copy of the entities
+// table, so the two read the same.
 //
 // Searching reads the name, the entities naming the person, their roles and
 // their strings. A row reached through an entity or a role says so under the
@@ -12,10 +13,11 @@ import Link from "next/link";
 import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
-import { ENTITIES, LINK, StringFold, StringList, TAG, TH } from "../bits";
+import { ENTITIES, LINK, StringFold, TAG, TH } from "../bits";
 import SearchBox from "../SearchBox";
+import Pager, { PAGE } from "../Pager";
 import { personHit, stringHit, stringNames, term, type PersonHit } from "../search";
-import type { MockData, MockPerson } from "../mock";
+import type { MockData } from "../mock";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 const CELL = "py-2 pr-4 text-right tabular-nums";
@@ -90,13 +92,16 @@ export default function People({ data: d }: { data: MockData }) {
     }
     return m;
   }, [all, dq]);
-  const rows = all.filter((p) => hits.has(p.slug));
-  // the long tail, named by one entity for one application, sits below
-  const several = (p: MockPerson) => p.apps.length > 1 || p.entities.length > 1;
-  // idle: people with several applications above, the rest below;
-  // searching: everyone the query reached, in one list
-  const main = searching ? rows : rows.filter(several);
-  const single = rows.filter((p) => !several(p));
+  // one list, most applications first (the data's order), a hundred a page;
+  // the page belongs to the query it was turned under
+  const main = all.filter((p) => hits.has(p.slug));
+  const [pageFor, setPageFor] = useState<{ for: string; page: number }>({ for: "", page: 0 });
+  const page = pageFor.for === dq ? Math.min(pageFor.page, Math.max(0, Math.ceil(main.length / PAGE) - 1)) : 0;
+  const shown = main.slice(page * PAGE, (page + 1) * PAGE);
+  const turn = (next: number) => {
+    setPageFor({ for: dq, page: next });
+    document.getElementById("people")?.scrollIntoView({ block: "start" });
+  };
   const names = useMemo(
     () => [
       { kind: "person", items: all.map((p) => p.name).sort() },
@@ -114,7 +119,7 @@ export default function People({ data: d }: { data: MockData }) {
   const toggle = (slug: string) => setPick({ for: dq, slug: openSlug === slug ? null : slug });
 
   return (
-    <section className="mb-14">
+    <section id="people" className="mb-14 scroll-mt-4">
       <SectionHead n="I" title="People" count={main.length} />
       <SearchBox
         id="people-search"
@@ -140,7 +145,7 @@ export default function People({ data: d }: { data: MockData }) {
           </tr>
         </thead>
         <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
-          {main.map((p) => {
+          {shown.map((p) => {
             // one entity: nothing to open, its name sits under the person's
             const one = p.entities.length === 1 ? p.entities[0] : null;
             const isOpen = !one && openSlug === p.slug;
@@ -219,26 +224,7 @@ export default function People({ data: d }: { data: MockData }) {
         </tbody>
       </table>
 
-      {!searching && (
-        <>
-          <SectionHead n="II" title="One application" count={single.length} className="mt-12" />
-          <div className="grid sm:grid-cols-2 gap-x-12 text-sm">
-            {single.map((p) => (
-              <div
-                key={p.slug}
-                id={`p-${p.slug}`}
-                className="flex items-baseline justify-between gap-4 py-1.5 border-b border-rule-faint scroll-mt-4 target:bg-paper-deep"
-              >
-                <span>
-                  {p.name}
-                  <span className="text-xs text-ink-soft ml-2">{p.entities[0].name}</span>
-                </span>
-                <StringList apps={p.apps} />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+      <Pager total={main.length} page={page} onPage={turn} noun="people" />
     </section>
   );
 }

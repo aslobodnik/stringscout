@@ -10,9 +10,9 @@ test("applicants: a person's name that lands on one group opens it; closed, the 
   const box = page.getByRole("combobox", { name: /search groups/i });
   await expect(box).toBeVisible();
   await box.fill("paletta");
-  // one merged list, counted once, no "One application" section while searching
+  // one list, counted once, no paging for one hit
   await expect(page.getByText("1 applicant", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "One application" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: /applicants pages/ })).toHaveCount(0);
   // the single hit is open down to the entity that names the person, and the
   // name is marked as the match and links to the people page searched for it
   const caret = page.locator("tbody button[aria-expanded]").first();
@@ -31,10 +31,10 @@ test("applicants: a person's name that lands on one group opens it; closed, the 
   await box.fill("king");
   await expect(page.locator("tbody button[aria-expanded='true']")).toHaveCount(0);
   await box.fill("paletta");
-  // the chip clears the box and the sections come back
+  // the chip clears the box and the full paged list comes back
   await page.getByRole("button", { name: /clear the paletta filter/i }).click();
   await expect(box).toHaveValue("");
-  await expect(page.getByRole("heading", { name: "One application" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: /applicants pages/ })).toContainText("1 to 100 of 407");
 });
 
 test("applicants: a string query pins the string to the front and suggestions name their kind", async ({ page }) => {
@@ -62,7 +62,7 @@ test("people: an entity name reaches the people it names, with the reason under 
   const box = page.getByRole("combobox", { name: /search people/i });
   await box.fill("toddler logic");
   await expect(page.getByText(/^\d+ (person|people)$/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "One application" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: /people pages/ })).toHaveCount(0);
   await expect(page.locator("tr", { hasText: /^named by\s/ }).first()).toContainText("Toddler Logic");
   // a role is searchable too
   await box.fill("executive");
@@ -82,6 +82,26 @@ test("people: one hit opens to the entities naming them; the caret closes it; no
   await expect(page.locator("tr", { hasText: /^named by\s/ })).toHaveCount(0);
   await page.getByRole("combobox", { name: /search people/i }).fill("zzqqxx");
   await expect(page.getByText("No one matches.")).toBeVisible();
+});
+
+test("people: one list of everyone, a hundred a page, most applications first; a query resets the page", async ({ page }) => {
+  await page.goto("/people", { waitUntil: "networkidle" });
+  await expect(page.getByText("3307 people", { exact: true })).toBeVisible();
+  const pager = page.getByRole("navigation", { name: /people pages/ });
+  await expect(pager).toContainText("1 to 100 of 3,307");
+  await expect(pager.getByRole("button", { name: "Previous" })).toBeDisabled();
+  await expect(page.locator("tbody tr[id^='p-']")).toHaveCount(100);
+  const first = await page.locator("tbody tr[id^='p-']").first().locator("td").nth(3).innerText();
+  await pager.getByRole("button", { name: "Next" }).click();
+  await expect(pager).toContainText("101 to 200 of 3,307");
+  await expect(page.locator("tbody tr[id^='p-']")).toHaveCount(100);
+  const later = await page.locator("tbody tr[id^='p-']").first().locator("td").nth(3).innerText();
+  expect(parseInt(first)).toBeGreaterThanOrEqual(parseInt(later));
+  await page.getByRole("combobox", { name: /search people/i }).fill("paletta");
+  await expect(pager).toHaveCount(0);
+  // clearing the box returns to the page the reader was on
+  await page.getByRole("button", { name: /clear the paletta filter/i }).click();
+  await expect(pager).toContainText("101 to 200 of 3,307");
 });
 
 for (const path of ["/applicants?q=paletta", "/people?q=toddler"]) {

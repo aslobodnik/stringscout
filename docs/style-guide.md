@@ -132,8 +132,13 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
   line under it says why in `text-xs`, the reason word serif italic soft ink,
   the name in ink: "names Eric Trump", "named by Toddler Logic, LLC". A matched
   string moves to the front of its list (`StringFold pin`) rather than getting a
-  line. While a query is in the box, a page's sections become one list with one
-  count and one empty state. Never open rows for the reader.
+  line. A query that lands on one row opens it; the caret still closes it.
+- Long lists are one list, most applications first, a hundred a page:
+  `app/prototype/reveal/Pager.tsx` under the table, flush left. The range
+  ("1 to 100 of 3,307") in the count's label style in the search-box-width
+  slot, then `Previous`, `n / pages`, `Next` as `h-7` label buttons with the
+  toolbar-control border. Nothing when one page holds all. No "long tail"
+  section: a second heading hid most of the list.
 
 ## Motion
 
