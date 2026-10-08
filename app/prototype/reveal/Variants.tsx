@@ -522,6 +522,8 @@ export default function Reveal({ data: d }: { data: MockData }) {
       if (q0) setQ(q0);
       if (by0 && BY.some((b) => b.value === by0)) setBy(by0 as By);
     });
+    // the link lands on the box and its rows, not the page head
+    document.getElementById("strings-search")?.scrollIntoView({ block: "start" });
   }, []);
   const [rmark, setRmark] = useState<RMark | null>(null);
   const [cursor, setCursor] = useState(-1); // highlighted suggestion
@@ -629,7 +631,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
       />
 
       <div className="double-rule mb-5" />
-      <div className="mb-5">
+      <div id="strings-search" className="mb-5 scroll-mt-6">
         {/* the box and, beside it, which column it reads */}
         <div className="flex flex-wrap gap-3">
           <div className="relative w-full sm:w-80">

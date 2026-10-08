@@ -49,7 +49,10 @@ export default function SearchBox({
   const [suggesting, setSuggesting] = useState(false);
   useEffect(() => {
     const q0 = new URLSearchParams(window.location.search).get("q");
-    if (q0) queueMicrotask(() => onChange(q0));
+    if (!q0) return;
+    queueMicrotask(() => onChange(q0));
+    // a link into a search lands on the box and its rows, not the page head
+    document.getElementById(id)?.scrollIntoView({ block: "start" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const suggestions = suggesting ? suggest(value, names) : [];
@@ -59,7 +62,7 @@ export default function SearchBox({
     setCursor(-1);
   };
   return (
-    <div className="mb-5">
+    <div id={id} className="mb-5 scroll-mt-6">
       <div className="relative w-full sm:w-80">
         <input
           type="search"

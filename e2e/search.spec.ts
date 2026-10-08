@@ -108,6 +108,16 @@ test("people: one list of everyone, a hundred a page, most applications first; a
   await expect(pager).toContainText("101 to 200 of 3,307");
 });
 
+test("a link into a search lands on the box, not the page head", async ({ page }) => {
+  for (const [path, id] of [["/?by=applicant&q=XYZ.COM%20LLC", "strings-search"], ["/applicants?q=paletta", "applicants-search"], ["/people?q=paletta", "people-search"]]) {
+    await page.goto(path, { waitUntil: "networkidle" });
+    await page.waitForTimeout(300);
+    const top = await page.evaluate((id) => document.getElementById(id)!.getBoundingClientRect().top, id);
+    expect(top, path).toBeLessThan(60);
+    expect(await page.evaluate(() => window.scrollY), path).toBeGreaterThan(100);
+  }
+});
+
 for (const path of ["/applicants?q=paletta", "/people?q=toddler"]) {
   test(`${path} does not scroll sideways at 390px`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
