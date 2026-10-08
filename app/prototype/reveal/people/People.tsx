@@ -109,7 +109,7 @@ export default function People({ data: d }: { data: MockData }) {
   // A query that lands on one person opens them, so the entities naming them
   // sit under the name. Derived, not set: the caret still closes it, and a
   // pick made by hand belongs to the query it was made under.
-  const auto = searching && main.length === 1 ? main[0].slug : null;
+  const auto = searching && main.length === 1 && main[0].entities.length > 1 ? main[0].slug : null;
   const openSlug = pick.for === dq && pick.slug !== undefined ? pick.slug : auto;
   const toggle = (slug: string) => setPick({ for: dq, slug: openSlug === slug ? null : slug });
 
@@ -141,7 +141,9 @@ export default function People({ data: d }: { data: MockData }) {
         </thead>
         <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
           {main.map((p) => {
-            const isOpen = openSlug === p.slug;
+            // one entity: nothing to open, its name sits under the person's
+            const one = p.entities.length === 1 ? p.entities[0] : null;
+            const isOpen = !one && openSlug === p.slug;
             return (
               <Fragment key={p.slug}>
                 <tr
@@ -149,7 +151,16 @@ export default function People({ data: d }: { data: MockData }) {
                   className={`border-t align-top scroll-mt-4 target:bg-paper-deep ${isOpen ? "border-ink" : "border-rule-faint"}`}
                 >
                   <td className="py-2 pr-4">
-                    <Toggle open={isOpen} onClick={() => toggle(p.slug)} name={p.name} strong />
+                    {one ? (
+                      <>
+                        <span className="block font-medium truncate">{p.name}</span>
+                        <Link href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`} className={`${LINK} block w-max max-w-full truncate text-xs text-ink-soft mt-0.5`}>
+                          {one.name}
+                        </Link>
+                      </>
+                    ) : (
+                      <Toggle open={isOpen} onClick={() => toggle(p.slug)} name={p.name} strong />
+                    )}
                   </td>
                   <td className="py-2 pr-4 text-ink-soft hidden sm:table-cell">{shortRoles(p.roles)}</td>
                   <td className={CELL}>{p.entities.length}</td>
@@ -173,7 +184,7 @@ export default function People({ data: d }: { data: MockData }) {
                       <Fragment key={e.slug}>
                         <tr className="bg-paper-deep align-top">
                           <td className="py-1.5 pr-4 pl-9">
-                            <Link href={`${ENTITIES}#g-${e.group}`} className={LINK}>
+                            <Link href={`${ENTITIES}?q=${encodeURIComponent(e.name)}`} className={LINK}>
                               {e.name}
                             </Link>
                             <span className="block text-xs text-ink-soft mt-0.5 sm:hidden">{shortRoles(e.roles)}</span>

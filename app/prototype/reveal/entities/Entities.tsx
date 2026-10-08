@@ -18,7 +18,7 @@ import Link from "next/link";
 import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
-import { LINK, PEOPLE, PERSON_ROLES, StringFold, StringLink, TAG, TH, ToStrings, slugify } from "../bits";
+import { LINK, PEOPLE, PERSON_ROLES, StringFold, StringLink, TAG, TH, ToStrings } from "../bits";
 import SearchBox from "../SearchBox";
 import { groupHit, stringHit, stringNames, term, type GroupHit } from "../search";
 import type { MockData, MockEntity, MockGroup, Role } from "../mock";
@@ -71,10 +71,13 @@ const sharedRoles = (g: MockGroup): Role[] | null => {
   return g.entities.every((e) => key(e) === first) ? g.entities[0].roles! : null;
 };
 
-// The people a record names, one line per AGB question.
-function People({ roles, note }: { roles: Role[] | undefined; note?: string }) {
+// The people a record names, one line per AGB question. A name the query
+// matched is set in gold, the strings page's mark for the active pick. A name
+// links to the people page searched for it, which opens that person.
+function People({ roles, note, match }: { roles: Role[] | undefined; note?: string; match: string }) {
   if (!roles?.length)
     return <p className="serif italic text-ink-soft">No names in the published record.</p>;
+  const hot = (n: string) => match.length > 0 && n.toLowerCase().includes(match);
   return (
     <div className="grid sm:grid-cols-[minmax(0,10rem)_1fr] gap-x-4 gap-y-1">
       {note && (
@@ -88,11 +91,15 @@ function People({ roles, note }: { roles: Role[] | undefined; note?: string }) {
               <span key={n}>
                 {i > 0 && ", "}
                 {PERSON_ROLES.has(r.role) ? (
-                  <Link href={`${PEOPLE}#p-${slugify(n)}`} className={LINK}>
+                  <Link
+                    href={`${PEOPLE}?q=${encodeURIComponent(n)}`}
+                    aria-current={hot(n) || undefined}
+                    className={`${LINK} ${hot(n) ? "text-gold decoration-gold font-medium" : ""}`}
+                  >
                     {n}
                   </Link>
                 ) : (
-                  n
+                  <span className={hot(n) ? "text-gold font-medium" : ""}>{n}</span>
                 )}
               </span>
             ))}
@@ -240,6 +247,9 @@ export default function Entities({ data: d }: { data: MockData }) {
               const isOpen = openSlug === g.slug;
               const shared = isOpen ? sharedRoles(g) : null;
               const why = hits.get(g.slug)!;
+              // one entity: it is the group; no second row repeating it
+              const one = g.entities.length === 1 ? g.entities[0] : null;
+              const fold = !isOpen || one;
               return (
                 <Fragment key={g.slug}>
                   <tr
@@ -252,16 +262,17 @@ export default function Entities({ data: d }: { data: MockData }) {
                         {/* a declared parent is searched as one; a group of one entity is that applicant */}
                         <ToStrings by={g.link === "parent" ? "parent" : "applicant"} name={g.link === "parent" ? g.name : g.entities[0].name} />
                       </span>
+                      {one?.jurisdiction && <span className="block text-xs text-ink-soft mt-0.5 pl-4">{one.jurisdiction}</span>}
                     </td>
                     <td className={`${CELL} hidden sm:table-cell`}>{g.entities.length}</td>
                     <td className={CELL}>
                       <Apps n={g.apps.length} sets={g.inSets} />
                     </td>
                     {/* open, the entity rows carry the strings instead */}
-                    <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <StringFold apps={g.apps} pin={pin} />}</td>
+                    <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{fold && <StringFold apps={g.apps} pin={pin} />}</td>
                   </tr>
                   {/* below sm the strings take a line of their own */}
-                  {!isOpen && (
+                  {fold && (
                     <tr className="sm:hidden">
                       <td colSpan={2} className="pb-2 leading-6 text-xs">
                         <StringFold apps={g.apps} pin={pin} />
@@ -271,20 +282,15 @@ export default function Entities({ data: d }: { data: MockData }) {
                   {!isOpen && <Why hit={why} />}
 
                   {/* level two: one row per entity, strings narrowed to its own */}
-                  {isOpen &&
+                  {isOpen && !one &&
                     g.entities.map((e) => {
                       const eOpen = openEntitySlug === e.slug;
-                      const own = g.entities.length > 1;
                       return (
                         <Fragment key={e.slug}>
                           <tr className="bg-paper-deep align-top">
                             <td className="py-1.5 pr-4 pl-5">
                               <span className="flex items-baseline max-w-full">
-                                {own ? (
-                                  <Toggle open={eOpen} onClick={() => toggleEntity(e.slug)} name={e.name} />
-                                ) : (
-                                  <span className="pl-4 block truncate">{e.name}</span>
-                                )}
+                                <Toggle open={eOpen} onClick={() => toggleEntity(e.slug)} name={e.name} />
                                 <ToStrings by="applicant" name={e.name} />
                               </span>
                               {e.jurisdiction && <span className="block text-xs text-ink-soft mt-0.5 pl-4">{e.jurisdiction}</span>}
@@ -303,10 +309,10 @@ export default function Entities({ data: d }: { data: MockData }) {
                             </td>
                           </tr>
                           {/* level three: people, per entity when they differ */}
-                          {own && eOpen && !shared && (
+                          {eOpen && !shared && (
                             <tr className="bg-paper-deep">
                               <td colSpan={4} className="pl-9 pr-4 pb-3 pt-1">
-                                <People roles={e.roles} />
+                                <People roles={e.roles} match={term(dq)} />
                               </td>
                             </tr>
                           )}
@@ -314,12 +320,13 @@ export default function Entities({ data: d }: { data: MockData }) {
                       );
                     })}
                   {/* people once, when every entity names the same ones or there is one entity */}
-                  {isOpen && (shared || g.entities.length === 1) && (
+                  {isOpen && (shared || one) && (
                     <tr className="bg-paper-deep">
-                      <td colSpan={4} className="pl-9 pr-4 pb-3 pt-2 border-t border-rule-faint">
+                      <td colSpan={4} className={`pl-9 pr-4 pb-3 pt-2 ${one ? "" : "border-t border-rule-faint"}`}>
                         <People
                           roles={shared ?? g.entities[0].roles}
                           note={shared ? `Named by each of the ${g.entities.length} entities` : undefined}
+                          match={term(dq)}
                         />
                       </td>
                     </tr>

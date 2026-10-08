@@ -13,10 +13,16 @@ test("applicants: a person's name that lands on one group opens it; closed, the 
   // one merged list, counted once, no "One application" section while searching
   await expect(page.getByText("1 applicant", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "One application" })).toHaveCount(0);
-  // the single hit is open down to the entity that names the person
+  // the single hit is open down to the entity that names the person, and the
+  // name is marked as the match and links to the people page searched for it
   const caret = page.locator("tbody button[aria-expanded]").first();
   await expect(caret).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("link", { name: "Catherine Paletta" }).first()).toBeVisible();
+  const name = page.getByRole("link", { name: "Catherine Paletta" }).first();
+  await expect(name).toBeVisible();
+  await expect(name).toHaveAttribute("aria-current", "true");
+  await expect(name).toHaveAttribute("href", "/people?q=Catherine%20Paletta");
+  // only the matched name is marked
+  await expect(page.locator("tbody a[aria-current='true']")).toHaveCount(1);
   // the caret closes it, and the reason line takes over
   await caret.click();
   await expect(caret).toHaveAttribute("aria-expanded", "false");
@@ -68,7 +74,9 @@ test("people: one hit opens to the entities naming them; the caret closes it; no
   await expect(page.locator("tbody tr").first()).toContainText("Catherine Paletta");
   const caret = page.locator("tbody button[aria-expanded]").first();
   await expect(caret).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("link", { name: "Toddler Logic, LLC" })).toBeVisible();
+  const entity = page.getByRole("link", { name: "Toddler Logic, LLC" });
+  await expect(entity).toBeVisible();
+  await expect(entity).toHaveAttribute("href", "/applicants?q=Toddler%20Logic%2C%20LLC");
   await caret.click();
   await expect(caret).toHaveAttribute("aria-expanded", "false");
   await expect(page.locator("tr", { hasText: /^named by\s/ })).toHaveCount(0);
