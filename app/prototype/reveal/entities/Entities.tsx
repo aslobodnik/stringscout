@@ -151,8 +151,8 @@ function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
 }
 
 export default function Entities({ data: d }: { data: MockData }) {
-  const [open, setOpen] = useState<string | null>(null); // group slug
-  const [openEntity, setOpenEntity] = useState<string | null>(null); // entity slug
+  // what the reader opened or closed by hand, and under which query
+  const [pick, setPick] = useState<{ for: string; group?: string | null; entity?: string | null; closedAuto?: boolean }>({ for: "" });
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q); // the table follows the box when idle
   const searching = term(dq).length > 0;
@@ -179,10 +179,31 @@ export default function Entities({ data: d }: { data: MockData }) {
   );
   const pin = searching ? (a: Parameters<typeof stringHit>[0]) => stringHit(a, term(dq)) : undefined;
 
+  // A query that lands on one group opens it, and when a person matched, the
+  // entity naming them, so the name is in view. Derived, not set: the caret
+  // still closes it (recorded against this query), and the next query that
+  // lands on one group opens that one. A pick made by hand belongs to the
+  // query it was made under, so a new query starts from the auto state.
+  const auto = useMemo(() => {
+    if (!searching || rows.length !== 1) return null;
+    const g = rows[0];
+    const why = hits.get(g.slug)!;
+    const named = why.people.length
+      ? g.entities.find((e) => e.roles?.some((r) => r.names.some((n) => why.people.includes(n))))
+      : undefined;
+    return { group: g.slug, entity: g.entities.length > 1 ? named?.slug ?? null : null };
+  }, [searching, rows, hits]);
+  const autoOn = auto && pick.for === dq && pick.closedAuto ? null : auto;
+  const openSlug = pick.for === dq && pick.group !== undefined ? pick.group : autoOn?.group ?? null;
+  const openEntitySlug = pick.for === dq && pick.entity !== undefined ? pick.entity
+    : openSlug === autoOn?.group ? autoOn?.entity ?? null : null;
+
   const toggleGroup = (slug: string) => {
-    setOpen(open === slug ? null : slug);
-    setOpenEntity(null);
+    const closing = openSlug === slug;
+    setPick({ for: dq, group: closing ? null : slug, entity: null, closedAuto: closing && autoOn?.group === slug });
   };
+  const toggleEntity = (slug: string) =>
+    setPick({ ...pick, for: dq, group: openSlug, entity: openEntitySlug === slug ? null : slug });
 
   return (
     <section className="mb-14">
@@ -216,7 +237,7 @@ export default function Entities({ data: d }: { data: MockData }) {
           </thead>
           <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
             {rows.map((g) => {
-              const isOpen = open === g.slug;
+              const isOpen = openSlug === g.slug;
               const shared = isOpen ? sharedRoles(g) : null;
               const why = hits.get(g.slug)!;
               return (
@@ -252,7 +273,7 @@ export default function Entities({ data: d }: { data: MockData }) {
                   {/* level two: one row per entity, strings narrowed to its own */}
                   {isOpen &&
                     g.entities.map((e) => {
-                      const eOpen = openEntity === e.slug;
+                      const eOpen = openEntitySlug === e.slug;
                       const own = g.entities.length > 1;
                       return (
                         <Fragment key={e.slug}>
@@ -260,7 +281,7 @@ export default function Entities({ data: d }: { data: MockData }) {
                             <td className="py-1.5 pr-4 pl-5">
                               <span className="flex items-baseline max-w-full">
                                 {own ? (
-                                  <Toggle open={eOpen} onClick={() => setOpenEntity(eOpen ? null : e.slug)} name={e.name} />
+                                  <Toggle open={eOpen} onClick={() => toggleEntity(e.slug)} name={e.name} />
                                 ) : (
                                   <span className="pl-4 block truncate">{e.name}</span>
                                 )}

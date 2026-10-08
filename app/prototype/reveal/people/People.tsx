@@ -76,7 +76,8 @@ function Why({ hit, colSpan }: { hit: PersonHit; colSpan: number }) {
 }
 
 export default function People({ data: d }: { data: MockData }) {
-  const [open, setOpen] = useState<string | null>(null);
+  // what the reader opened or closed by hand, and under which query
+  const [pick, setPick] = useState<{ for: string; slug?: string | null }>({ for: "" });
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q); // the table follows the box when idle
   const searching = term(dq).length > 0;
@@ -105,6 +106,12 @@ export default function People({ data: d }: { data: MockData }) {
     [all, d.apps],
   );
   const pin = searching ? (a: Parameters<typeof stringHit>[0]) => stringHit(a, term(dq)) : undefined;
+  // A query that lands on one person opens them, so the entities naming them
+  // sit under the name. Derived, not set: the caret still closes it, and a
+  // pick made by hand belongs to the query it was made under.
+  const auto = searching && main.length === 1 ? main[0].slug : null;
+  const openSlug = pick.for === dq && pick.slug !== undefined ? pick.slug : auto;
+  const toggle = (slug: string) => setPick({ for: dq, slug: openSlug === slug ? null : slug });
 
   return (
     <section className="mb-14">
@@ -134,7 +141,7 @@ export default function People({ data: d }: { data: MockData }) {
         </thead>
         <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
           {main.map((p) => {
-            const isOpen = open === p.slug;
+            const isOpen = openSlug === p.slug;
             return (
               <Fragment key={p.slug}>
                 <tr
@@ -142,7 +149,7 @@ export default function People({ data: d }: { data: MockData }) {
                   className={`border-t align-top scroll-mt-4 target:bg-paper-deep ${isOpen ? "border-ink" : "border-rule-faint"}`}
                 >
                   <td className="py-2 pr-4">
-                    <Toggle open={isOpen} onClick={() => setOpen(isOpen ? null : p.slug)} name={p.name} strong />
+                    <Toggle open={isOpen} onClick={() => toggle(p.slug)} name={p.name} strong />
                   </td>
                   <td className="py-2 pr-4 text-ink-soft hidden sm:table-cell">{shortRoles(p.roles)}</td>
                   <td className={CELL}>{p.entities.length}</td>

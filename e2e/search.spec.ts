@@ -5,16 +5,26 @@ import { test, expect } from "@playwright/test";
 // matched string first in its list, suggestions that name their kind, a
 // clear chip, and ?q= landing on the rows it means.
 
-test("applicants: a person's name reaches their group and the row says so", async ({ page }) => {
+test("applicants: a person's name that lands on one group opens it; closed, the row says why", async ({ page }) => {
   await page.goto("/applicants", { waitUntil: "networkidle" });
   const box = page.getByRole("combobox", { name: /search groups/i });
   await expect(box).toBeVisible();
   await box.fill("paletta");
   // one merged list, counted once, no "One application" section while searching
-  await expect(page.getByText(/^\d+ applicants?$/)).toBeVisible();
+  await expect(page.getByText("1 applicant", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "One application" })).toHaveCount(0);
-  const why = page.locator("tr", { hasText: /^names\s/ }).first();
-  await expect(why).toContainText("Catherine Paletta");
+  // the single hit is open down to the entity that names the person
+  const caret = page.locator("tbody button[aria-expanded]").first();
+  await expect(caret).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("link", { name: "Catherine Paletta" }).first()).toBeVisible();
+  // the caret closes it, and the reason line takes over
+  await caret.click();
+  await expect(caret).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("tr", { hasText: /^names\s/ }).first()).toContainText("Catherine Paletta");
+  // several hits open nothing
+  await box.fill("king");
+  await expect(page.locator("tbody button[aria-expanded='true']")).toHaveCount(0);
+  await box.fill("paletta");
   // the chip clears the box and the sections come back
   await page.getByRole("button", { name: /clear the paletta filter/i }).click();
   await expect(box).toHaveValue("");
@@ -53,9 +63,14 @@ test("people: an entity name reaches the people it names, with the reason under 
   await expect(page.locator("tr", { hasText: /^as\s/ }).first()).toContainText("executive");
 });
 
-test("people: the person's own name needs no reason line and nothing matching says so", async ({ page }) => {
+test("people: one hit opens to the entities naming them; the caret closes it; nothing matching says so", async ({ page }) => {
   await page.goto("/people?q=paletta", { waitUntil: "networkidle" });
   await expect(page.locator("tbody tr").first()).toContainText("Catherine Paletta");
+  const caret = page.locator("tbody button[aria-expanded]").first();
+  await expect(caret).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("link", { name: "Toddler Logic, LLC" })).toBeVisible();
+  await caret.click();
+  await expect(caret).toHaveAttribute("aria-expanded", "false");
   await expect(page.locator("tr", { hasText: /^named by\s/ })).toHaveCount(0);
   await page.getByRole("combobox", { name: /search people/i }).fill("zzqqxx");
   await expect(page.getByText("No one matches.")).toBeVisible();
