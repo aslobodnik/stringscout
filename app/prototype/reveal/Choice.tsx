@@ -29,7 +29,7 @@ export default function Choice({ label, value, options, onChange, alignRight = f
         trigger.current?.focus();
       }
     }}>
-      <summary ref={trigger} aria-label={`${label}: ${value === "all" ? "All" : selected.label}`} className="list-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-3 h-10 border border-ink px-3 text-sm cursor-pointer hover:bg-paper-deep focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200">
+      <summary ref={trigger} aria-label={`${label}: ${value === "all" ? "All" : selected.label}`} className="list-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-3 h-10 border border-ink px-3 text-sm cursor-pointer hover:bg-paper-deep focus-visible:outline-2 focus-visible:outline-gold transition-colors duration-200 ease-in-out">
         <span className="truncate">{selected.label}</span><span aria-hidden className="text-[9px]">▾</span>
       </summary>
       <div role="group" aria-label={label} className={`absolute ${alignRight ? "right-0" : "left-0"} top-full mt-1 z-30 border border-ink bg-paper w-max min-w-full max-w-[calc(100vw-3rem)]`}>
@@ -41,7 +41,7 @@ export default function Choice({ label, value, options, onChange, alignRight = f
               if (root.current) root.current.open = false;
               trigger.current?.focus();
             }}
-            className={`block text-left w-full px-3 py-2.5 border-t border-rule-faint text-sm cursor-pointer focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-[-2px] transition-colors duration-200 ${value === option.value ? "bg-ink text-paper" : "hover:bg-paper-deep"}`}>
+            className={`block text-left w-full px-3 py-2.5 border-t border-rule-faint text-sm cursor-pointer focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-[-2px] transition-colors duration-200 ease-in-out ${value === option.value ? "bg-ink text-paper" : "hover:bg-paper-deep"}`}>
             {option.label}<span aria-hidden className="float-right ml-6">{value === option.value ? "✓" : ""}</span>
           </button>
         ))}

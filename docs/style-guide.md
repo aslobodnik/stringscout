@@ -119,9 +119,15 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
 - Toolbar order: search, selects, view toggles, CSV. Under it, flush left: the
   count (`label text-ink-soft`, in a slot the width of the search box), then
   the chips for whatever is filtering.
-- Every interactive element: `cursor-pointer`, `transition-colors duration-200
-  ease-in-out` (300 for the leader and tips), `focus-visible:outline-2
+- Every interactive element: `cursor-pointer` and `focus-visible:outline-2
   focus-visible:outline-gold`.
+- Hover, the standard: nothing changes on hover without a transition, and the
+  transition is `duration-200 ease-in-out`, which runs both ways, in and out.
+  `transition-colors` for colour, underline and border changes;
+  `transition-opacity` or `transition-transform` when that is what moves.
+  300 ms for the tip (`Tip.tsx`), the dot leader, the tally strokes and a
+  results crossfade. Never the Tailwind default (150 ms, no curve) and never
+  `transition` with no duration. Off under `prefers-reduced-motion`.
 - Links in text: `underline decoration-rule underline-offset-2
   hover:decoration-gold`.
 - Search with suggestions: `app/prototype/reveal/SearchBox.tsx` (the strings

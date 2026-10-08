@@ -237,7 +237,7 @@ export default function ExploreSearch({ registrations }: { registrations: typeof
                   ))}
                 </ul>
               )}
-              <ul id="explore-results" ref={resultsList} aria-label="Related strings" className={`relative col-start-1 row-start-1 flex flex-wrap gap-3 transition-opacity duration-200 motion-reduce:transition-none ${pendingQuery ? "opacity-50" : "opacity-100"}`}>
+              <ul id="explore-results" ref={resultsList} aria-label="Related strings" className={`relative col-start-1 row-start-1 flex flex-wrap gap-3 transition-opacity duration-200 ease-in-out motion-reduce:transition-none ${pendingQuery ? "opacity-50" : "opacity-100"}`}>
                 {selected.slice(0, count).map((result) => (
                   <li key={result.tld} className="max-w-full">
                     <button

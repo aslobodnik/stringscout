@@ -53,9 +53,9 @@ export default function Footer() {
       <p>
         <ExploreFooterNote fallback="Not affiliated with ICANN.">
           Registration counts provided by {" "}
-          <a href={exploreRegistrations.source} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold">{exploreRegistrations.sourceLabel}</a>
+          <a href={exploreRegistrations.source} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out">{exploreRegistrations.sourceLabel}</a>
           {" as of "}{formatDate(exploreRegistrations.month)}
-          {" · "}<a href={exploreRegistrations.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold">{exploreRegistrations.license}</a>
+          {" · "}<a href={exploreRegistrations.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out">{exploreRegistrations.license}</a>
         </ExploreFooterNote>
       </p>
       <div className="flex items-center gap-3 ml-auto">
