@@ -10,9 +10,8 @@ test("applicants: a person's name that lands on one group opens it; closed, the 
   const box = page.getByRole("combobox", { name: /search groups/i });
   await expect(box).toBeVisible();
   await box.fill("paletta");
-  // one list, counted once, no paging for one hit
+  // one list, counted once
   await expect(page.getByText("1 applicant", { exact: true })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: /applicants pages/ })).toHaveCount(0);
   // the single hit is open down to the entity that names the person, and the
   // name is marked as the match and links to the people page searched for it
   const caret = page.locator("tbody button[aria-expanded]").first();
@@ -31,10 +30,11 @@ test("applicants: a person's name that lands on one group opens it; closed, the 
   await box.fill("king");
   await expect(page.locator("tbody button[aria-expanded='true']")).toHaveCount(0);
   await box.fill("paletta");
-  // the chip clears the box and the full paged list comes back
+  // the chip clears the box and the whole list comes back, unpaged
   await page.getByRole("button", { name: /clear the paletta filter/i }).click();
   await expect(box).toHaveValue("");
-  await expect(page.getByRole("navigation", { name: /applicants pages/ })).toContainText("1 to 100 of 407");
+  await expect(page.getByText("407 applicants", { exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: /pages/ })).toHaveCount(0);
 });
 
 test("applicants: a string query pins the string to the front and suggestions name their kind", async ({ page }) => {
@@ -97,6 +97,14 @@ test("people: one list of everyone, a hundred a page, most applications first; a
   await expect(page.locator("tbody tr[id^='p-']")).toHaveCount(100);
   const later = await page.locator("tbody tr[id^='p-']").first().locator("td").nth(3).innerText();
   expect(parseInt(first)).toBeGreaterThanOrEqual(parseInt(later));
+  // arrow keys turn pages, but not while typing in the box
+  await page.keyboard.press("ArrowRight");
+  await expect(pager).toContainText("201 to 300 of 3,307");
+  await page.keyboard.press("ArrowLeft");
+  await expect(pager).toContainText("101 to 200 of 3,307");
+  await page.getByRole("combobox", { name: /search people/i }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(pager).toContainText("101 to 200 of 3,307");
   await page.getByRole("combobox", { name: /search people/i }).fill("paletta");
   await expect(pager).toHaveCount(0);
   // clearing the box returns to the page the reader was on

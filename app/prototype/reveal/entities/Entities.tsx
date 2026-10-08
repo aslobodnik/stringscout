@@ -1,7 +1,7 @@
 "use client";
 
 // PROTOTYPE, throwaway. The page that starts from who applied, as one table,
-// most applications first, a hundred a page, with three levels of disclosure:
+// most applications first, with three levels of disclosure:
 //   group     one row each; the name opens its entities
 //   entity    one row each under its group; the name opens its people
 //   people    the names the record gives, by the AGB question that asked
@@ -20,7 +20,6 @@ import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
 import { LINK, PEOPLE, PERSON_ROLES, StringFold, TAG, TH, ToStrings } from "../bits";
 import SearchBox from "../SearchBox";
-import Pager, { PAGE } from "../Pager";
 import { groupHit, stringHit, stringNames, term, type GroupHit } from "../search";
 import type { MockData, MockEntity, MockGroup, Role } from "../mock";
 
@@ -144,16 +143,9 @@ export default function Entities({ data: d }: { data: MockData }) {
     }
     return m;
   }, [d.groups, dq]);
-  // one list, most applications first (the data's order), a hundred a page;
-  // the page belongs to the query it was turned under
+  // one list, most applications first (the data's order); 407 groups render
+  // lighter than the strings page, so no paging here
   const rows = d.groups.filter((g) => hits.has(g.slug));
-  const [pageFor, setPageFor] = useState<{ for: string; page: number }>({ for: "", page: 0 });
-  const page = pageFor.for === dq ? Math.min(pageFor.page, Math.max(0, Math.ceil(rows.length / PAGE) - 1)) : 0;
-  const shown = rows.slice(page * PAGE, (page + 1) * PAGE);
-  const turn = (next: number) => {
-    setPageFor({ for: dq, page: next });
-    document.getElementById("applicants")?.scrollIntoView({ block: "start" });
-  };
   const names = useMemo(
     () => [
       { kind: "group", items: d.groups.filter((g) => g.entities.length > 1).map((g) => g.name).sort() },
@@ -192,7 +184,7 @@ export default function Entities({ data: d }: { data: MockData }) {
     setPick({ ...pick, for: dq, group: openSlug, entity: openEntitySlug === slug ? null : slug });
 
   return (
-    <section id="applicants" className="mb-14 scroll-mt-4">
+    <section className="mb-14">
       <SectionHead n="I" title="Applicants" count={rows.length} />
       <SearchBox
         id="applicants-search"
@@ -222,7 +214,7 @@ export default function Entities({ data: d }: { data: MockData }) {
             </tr>
           </thead>
           <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
-            {shown.map((g) => {
+            {rows.map((g) => {
               const isOpen = openSlug === g.slug;
               const shared = isOpen ? sharedRoles(g) : null;
               const why = hits.get(g.slug)!;
@@ -323,7 +315,6 @@ export default function Entities({ data: d }: { data: MockData }) {
           </tbody>
         </table>
       </div>
-      <Pager total={rows.length} page={page} onPage={turn} noun="applicants" />
     </section>
   );
 }
