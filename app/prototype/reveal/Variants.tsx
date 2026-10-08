@@ -686,10 +686,11 @@ export default function Reveal({ data: d }: { data: MockData }) {
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => pick(sg)}
                       onMouseEnter={() => setCursor(i)}
-                      className={`flex items-baseline justify-between gap-4 w-full text-left px-3 py-2 cursor-pointer border-t border-rule-faint first:border-t-0 transition-colors duration-200 ease-in-out ${
+                      className={`group relative flex items-baseline justify-between gap-4 w-full text-left px-3 py-2 cursor-pointer border-t border-rule-faint first:border-t-0 transition-colors duration-200 ease-in-out ${
                         i === cursor ? "bg-paper-deep" : ""
                       }`}
                     >
+                      {sg.text.length > 36 && <Tip>{sg.kind === "string" ? `.${sg.text}` : sg.text}</Tip>}
                       <span className="truncate">
                         {sg.kind === "string" ? `.${sg.text}` : sg.text}
                       </span>

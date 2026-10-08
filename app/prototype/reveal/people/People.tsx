@@ -162,14 +162,21 @@ export default function People({ data: d }: { data: MockData }) {
                   <td className="py-2 pr-4">
                     {one ? (
                       <>
-                        <span className="block font-medium truncate">{p.name}</span>
-                        <Link
-                          href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`}
-                          aria-current={oneHot || undefined}
-                          className={`${LINK} block w-max max-w-full truncate text-xs mt-0.5 ${oneHot ? "text-gold decoration-gold" : "text-ink-soft"}`}
-                        >
-                          {one.name}
-                        </Link>
+                        {/* cut names show whole on hover, the house Tip, as the carets do */}
+                        <span className="group relative block max-w-full">
+                          <Tip>{p.name}</Tip>
+                          <span className="block font-medium truncate">{p.name}</span>
+                        </span>
+                        <span className="group relative block w-max max-w-full">
+                          <Tip>{one.name}</Tip>
+                          <Link
+                            href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`}
+                            aria-current={oneHot || undefined}
+                            className={`${LINK} block max-w-full truncate text-xs mt-0.5 ${oneHot ? "text-gold decoration-gold" : "text-ink-soft"}`}
+                          >
+                            {one.name}
+                          </Link>
+                        </span>
                       </>
                     ) : (
                       <Toggle open={isOpen} onClick={() => toggle(p.slug)} name={p.name} strong />
