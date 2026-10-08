@@ -8,15 +8,21 @@
 //
 // A group is entities tied by the applicant's own statement: the same
 // declared parent (AGB Q26, Q36). Nothing is inferred.
+//
+// Searching reads every level. A row the query reached through something the
+// row does not show (an entity name, a person, a string behind the fold) says
+// so on a line under the row, and a matched string moves to the front of its
+// list. While a query is in the box the two sections become one list.
 
 import Link from "next/link";
-import { Fragment, useDeferredValue, useState } from "react";
+import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
 import SectionHead from "@/components/SectionHead";
 import { LINK, PEOPLE, PERSON_ROLES, StringFold, StringLink, TAG, TH, ToStrings, slugify } from "../bits";
+import SearchBox from "../SearchBox";
+import { groupHit, stringHit, stringNames, term, type GroupHit } from "../search";
 import type { MockData, MockEntity, MockGroup, Role } from "../mock";
 
-// A caret that turns when its row is open. The name is the label, not a link.
 // A caret that turns when its row is open. The name is the label, not a
 // link, and keeps to one line: cut with an ellipsis, whole on hover.
 function Toggle({ open, onClick, name, strong }: { open: boolean; onClick: () => void; name: string; strong?: boolean }) {
@@ -97,6 +103,28 @@ function People({ roles, note }: { roles: Role[] | undefined; note?: string }) {
   );
 }
 
+// Why the query reached this row, when the row itself does not show it:
+// the entity or the person it matched. A matched string needs no line; it
+// moves to the front of the row's list instead.
+function Why({ hit }: { hit: GroupHit }) {
+  if (hit.name || (!hit.entities.length && !hit.people.length)) return null;
+  const line = (word: string, names: string[]) =>
+    names.length > 0 && (
+      <span className="mr-4">
+        <span className="serif italic text-ink-soft">{word}</span> {names.slice(0, 3).join(", ")}
+        {names.length > 3 && <span className="text-ink-soft"> and {names.length - 3} more</span>}
+      </span>
+    );
+  return (
+    <tr className="text-xs">
+      <td colSpan={4} className="pb-2 pl-4 pt-0">
+        {line(hit.entities.length === 1 ? "entity" : "entities", hit.entities)}
+        {line("names", hit.people)}
+      </td>
+    </tr>
+  );
+}
+
 // The long tail: a group that is one entity with one application.
 function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
   const single = groups.filter((g) => !several(g));
@@ -122,30 +150,34 @@ function Singles({ groups, n }: { groups: MockGroup[]; n: string }) {
   );
 }
 
-const INPUT =
-  "border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out";
-
-// group name, each entity, everyone named under it, and its strings
-const matches = (g: MockGroup, q: string) => {
-  const t = q.trim().toLowerCase().replace(/^\./, "");
-  if (!t) return true;
-  if (g.name.toLowerCase().includes(t)) return true;
-  for (const e of g.entities) {
-    if (e.name.toLowerCase().includes(t) || e.people.toLowerCase().includes(t)) return true;
-    for (const r of e.roles ?? []) if (r.names.some((n) => n.toLowerCase().includes(t))) return true;
-  }
-  return g.apps.some((a) => a.tld.includes(t) || (a.replacement ?? "").includes(t));
-};
-
 export default function Entities({ data: d }: { data: MockData }) {
   const [open, setOpen] = useState<string | null>(null); // group slug
   const [openEntity, setOpenEntity] = useState<string | null>(null); // entity slug
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q); // the table follows the box when idle
-  const hit = d.groups.filter((g) => matches(g, dq));
-  const rows = hit.filter(several);
-  // a search for a person opens the groups it lands on, so the name is in view
-  const auto = dq.trim().length > 2 && rows.length <= 3;
+  const searching = term(dq).length > 0;
+  const hits = useMemo(() => {
+    const m = new Map<string, GroupHit>();
+    for (const g of d.groups) {
+      const hit = groupHit(g, dq);
+      if (hit) m.set(g.slug, hit);
+    }
+    return m;
+  }, [d.groups, dq]);
+  const hit = d.groups.filter((g) => hits.has(g.slug));
+  // idle: groups with more than one application above, the rest below;
+  // searching: everything the query reached, in one list
+  const rows = searching ? hit : hit.filter(several);
+  const names = useMemo(
+    () => [
+      { kind: "group", items: d.groups.filter(several).map((g) => g.name).sort() },
+      { kind: "entity", items: [...new Set(d.groups.flatMap((g) => g.entities.map((e) => e.name)))].sort() },
+      { kind: "person", items: (d.people ?? []).map((p) => p.name).sort() },
+      { kind: "string", items: stringNames(d.apps) },
+    ],
+    [d.groups, d.people, d.apps],
+  );
+  const pin = searching ? (a: Parameters<typeof stringHit>[0]) => stringHit(a, term(dq)) : undefined;
 
   const toggleGroup = (slug: string) => {
     setOpen(open === slug ? null : slug);
@@ -154,17 +186,15 @@ export default function Entities({ data: d }: { data: MockData }) {
 
   return (
     <section className="mb-14">
-      <SectionHead n="I" title="Groups" count={rows.length} />
-      <div className="mb-5">
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search…"
-          aria-label="Search groups, entities, people and strings"
-          className={`${INPUT} sm:w-44`}
-        />
-      </div>
+      <SectionHead n="I" title={searching ? "Applicants" : "Groups"} count={rows.length} />
+      <SearchBox
+        id="applicants-search"
+        value={q}
+        onChange={setQ}
+        names={names}
+        ariaLabel="Search groups, entities, people and strings"
+        count={`${rows.length} ${rows.length === 1 ? "applicant" : "applicants"}`}
+      />
       <p className={`${TAG} text-ink-soft mb-4`}>
         <sup className="text-oxblood">n</sup> applications for the string
         <span className="text-rule mx-2">·</span>
@@ -178,16 +208,17 @@ export default function Entities({ data: d }: { data: MockData }) {
         <table className="w-full text-sm border-collapse table-fixed">
           <thead>
             <tr>
-              <th className={`${TH} sm:w-72`}>Group</th>
+              <th className={`${TH} sm:w-72`}>{searching ? "Applicant" : "Group"}</th>
               <th className={`${NUM} w-16 hidden sm:table-cell`}>Entities</th>
               <th className={`${NUM} w-16`}>Apps</th>
               <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className={`transition-opacity duration-200 ease-in-out ${dq !== q ? "opacity-60" : ""}`}>
             {rows.map((g) => {
-              const isOpen = open === g.slug || auto;
+              const isOpen = open === g.slug;
               const shared = isOpen ? sharedRoles(g) : null;
+              const why = hits.get(g.slug)!;
               return (
                 <Fragment key={g.slug}>
                   <tr
@@ -206,16 +237,17 @@ export default function Entities({ data: d }: { data: MockData }) {
                       <Apps n={g.apps.length} sets={g.inSets} />
                     </td>
                     {/* open, the entity rows carry the strings instead */}
-                    <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <StringFold apps={g.apps} />}</td>
+                    <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{!isOpen && <StringFold apps={g.apps} pin={pin} />}</td>
                   </tr>
                   {/* below sm the strings take a line of their own */}
                   {!isOpen && (
                     <tr className="sm:hidden">
                       <td colSpan={2} className="pb-2 leading-6 text-xs">
-                        <StringFold apps={g.apps} />
+                        <StringFold apps={g.apps} pin={pin} />
                       </td>
                     </tr>
                   )}
+                  {!isOpen && <Why hit={why} />}
 
                   {/* level two: one row per entity, strings narrowed to its own */}
                   {isOpen &&
@@ -241,12 +273,12 @@ export default function Entities({ data: d }: { data: MockData }) {
                               <Apps n={e.apps.length} sets={inSets(e)} />
                             </td>
                             <td className="py-1.5 pl-4 leading-6 hidden sm:table-cell">
-                              <StringFold apps={e.apps} />
+                              <StringFold apps={e.apps} pin={pin} />
                             </td>
                           </tr>
                           <tr className="sm:hidden bg-paper-deep">
                             <td colSpan={2} className="pl-9 pb-2 leading-6 text-xs">
-                              <StringFold apps={e.apps} />
+                              <StringFold apps={e.apps} pin={pin} />
                             </td>
                           </tr>
                           {/* level three: people, per entity when they differ */}
@@ -274,10 +306,17 @@ export default function Entities({ data: d }: { data: MockData }) {
                 </Fragment>
               );
             })}
+            {rows.length === 0 && (
+              <tr className="border-t border-rule-faint">
+                <td colSpan={4} className="py-6 text-ink-soft serif italic">
+                  No applicants match.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-      <Singles groups={hit} n="II" />
+      {!searching && <Singles groups={hit} n="II" />}
     </section>
   );
 }

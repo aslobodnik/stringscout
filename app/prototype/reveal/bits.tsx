@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Tld from "@/components/Tld";
 import Tip from "@/components/Tip";
 import type { Link as GroupLink, MockApp, MockGroup } from "./mock";
@@ -135,8 +135,10 @@ export function StringLink({ a }: { a: MockApp }) {
 
 // The strings three lines deep, then "all n" which opens the rest in place
 // as columns; "fewer" folds them back. The fold only offers itself when the
-// three lines are not enough, which is measured, not guessed.
-export function StringFold({ apps }: { apps: MockApp[] }) {
+// three lines are not enough, which is measured, not guessed. `pin` brings
+// the strings a search matched to the front, so a hit is never behind the fold.
+export function StringFold({ apps: given, pin }: { apps: MockApp[]; pin?: (a: MockApp) => boolean }) {
+  const apps = useMemo(() => (pin ? [...given.filter(pin), ...given.filter((a) => !pin(a))] : given), [given, pin]);
   const [open, setOpen] = useState(false);
   const [clipped, setClipped] = useState(false);
   const box = useRef<HTMLSpanElement>(null);

@@ -124,6 +124,16 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
   focus-visible:outline-gold`.
 - Links in text: `underline decoration-rule underline-offset-2
   hover:decoration-gold`.
+- Search with suggestions: `app/prototype/reveal/SearchBox.tsx` (the strings
+  page's box without its column choice). Box `sm:w-80`; suggestions name their
+  kind at the right in a 9px label; count and clear chip under it. It reads
+  `?q=` after mount. Matching lives in `app/prototype/reveal/search.ts`.
+- Searching a list that reads more than the row shows: the row stays, and a
+  line under it says why in `text-xs`, the reason word serif italic soft ink,
+  the name in ink: "names Eric Trump", "named by Toddler Logic, LLC". A matched
+  string moves to the front of its list (`StringFold pin`) rather than getting a
+  line. While a query is in the box, a page's sections become one list with one
+  count and one empty state. Never open rows for the reader.
 
 ## Motion
 
