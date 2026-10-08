@@ -10,7 +10,6 @@
 
 import Link from "next/link";
 import { Fragment, memo, useDeferredValue, useEffect, useMemo, useState } from "react";
-import Tld from "@/components/Tld";
 import KindRule from "./KindRule";
 import Choice from "./Choice";
 import Tip from "@/components/Tip";
@@ -455,6 +454,55 @@ const Row = memo(function Row({
   );
 });
 
+// A count tile that is also the filter it counts. Declared at module level on
+// purpose: declared inside Reveal it was a new component type on every render,
+// so React remounted the tiles and their settle animation replayed on every
+// keystroke and click.
+const tileClass = (on: boolean, rules: string) =>
+  `p-3 sm:p-4 text-left w-full cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${rules} ${
+    on ? "bg-paper-deep" : "hover:bg-paper-deep"
+  }`;
+function Tile({
+  v,
+  label,
+  on,
+  accent,
+  i,
+  rules = "",
+  onClick,
+}: {
+  v: number;
+  label: string;
+  on: boolean;
+  accent: boolean;
+  i: number;
+  rules?: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={tileClass(on, rules)}
+    >
+      <div
+        className={`text-2xl sm:text-3xl font-light press-word ${accent ? "text-oxblood" : ""}`}
+        style={pressDelay(150 + i * 120)}
+      >
+        {v}
+      </div>
+      <div
+        className={`label mt-2 !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block ${
+          accent ? "!text-oxblood" : "text-ink-soft"
+        }`}
+      >
+        {label}
+      </div>
+    </button>
+  );
+}
+
 export default function Reveal({ data: d }: { data: MockData }) {
   const [scope, setScope] = useState<Scope>("all");
   const [q, setQ] = useState("");
@@ -554,48 +602,6 @@ export default function Reveal({ data: d }: { data: MockData }) {
     label: k.label,
     v: strings.filter((r) => kindOfRow(r.apps) === k.value).length,
   }));
-  const tileClass = (on: boolean, rules: string) =>
-    `p-3 sm:p-4 text-left w-full cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${rules} ${
-      on ? "bg-paper-deep" : "hover:bg-paper-deep"
-    }`;
-  const Tile = ({
-    v,
-    label,
-    on,
-    accent,
-    i,
-    rules = "",
-    onClick,
-  }: {
-    v: number;
-    label: string;
-    on: boolean;
-    accent: boolean;
-    i: number;
-    rules?: string;
-    onClick: () => void;
-  }) => (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={tileClass(on, rules)}
-    >
-      <div
-        className={`text-2xl sm:text-3xl font-light press-word ${accent ? "text-oxblood" : ""}`}
-        style={pressDelay(150 + i * 120)}
-      >
-        {v}
-      </div>
-      <div
-        className={`label mt-2 !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block ${
-          accent ? "!text-oxblood" : "text-ink-soft"
-        }`}
-      >
-        {label}
-      </div>
-    </button>
-  );
   return (
     <section className="mb-14">
       <div className="border border-ink mb-6">
