@@ -171,6 +171,7 @@ export default function People({ data: d }: { data: MockData }) {
                           <Tip>{one.name}</Tip>
                           <Link
                             href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`}
+                            scroll={false}
                             aria-current={oneHot || undefined}
                             className={`${LINK} block max-w-full truncate text-xs mt-0.5 ${oneHot ? "text-gold decoration-gold" : "text-ink-soft"}`}
                           >
@@ -204,7 +205,7 @@ export default function People({ data: d }: { data: MockData }) {
                       <Fragment key={e.slug}>
                         <tr className="bg-paper-deep align-top">
                           <td className="py-1.5 pr-4 pl-9">
-                            <Link href={`${ENTITIES}?q=${encodeURIComponent(e.name)}`} className={LINK}>
+                            <Link href={`${ENTITIES}?q=${encodeURIComponent(e.name)}`} scroll={false} className={LINK}>
                               {e.name}
                             </Link>
                             <span className="block text-xs text-ink-soft mt-0.5 sm:hidden">{shortRoles(e.roles)}</span>

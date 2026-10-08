@@ -29,6 +29,7 @@ export function ToStrings({ by, name }: { by: "applicant" | "parent"; name: stri
       <Tip>Strings {by === "parent" ? "under" : "by"} {name}</Tip>
       <Link
         href={stringsFor(by, name)}
+        scroll={false}
         aria-label={`Strings ${by === "parent" ? "under" : "by"} ${name}`}
         className="inline-block px-0.5 text-[11px] text-ink-soft hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold"
       >
@@ -121,10 +122,13 @@ export function Shown({ a }: { a: { tld: string; uLabel?: string } }) {
   );
 }
 
+// A string anywhere links to the strings page searched for it, as the
+// applicant and parent links do, rather than to a row anchor.
 export function StringLink({ a }: { a: MockApp }) {
   return (
     <Link
-      href={`${STRINGS}#s-${a.tld}`}
+      href={`${STRINGS}?by=string&q=${encodeURIComponent(`.${a.uLabel ?? a.tld}`)}`}
+      scroll={false}
       className={`whitespace-nowrap hover:text-gold transition-colors duration-200 ease-in-out ${a.setSize > 1 ? "text-oxblood font-medium" : ""}`}
     >
       <Shown a={a} />

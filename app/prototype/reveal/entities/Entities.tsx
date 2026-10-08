@@ -90,6 +90,7 @@ function People({ roles, note, match }: { roles: Role[] | undefined; note?: stri
                 {PERSON_ROLES.has(r.role) ? (
                   <Link
                     href={`${PEOPLE}?q=${encodeURIComponent(n)}`}
+                    scroll={false}
                     aria-current={hot(n) || undefined}
                     className={`${LINK} ${hot(n) ? "text-gold decoration-gold font-medium" : ""}`}
                   >

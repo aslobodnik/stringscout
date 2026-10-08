@@ -51,8 +51,9 @@ export default function SearchBox({
     const q0 = new URLSearchParams(window.location.search).get("q");
     if (!q0) return;
     queueMicrotask(() => onChange(q0));
-    // a link into a search lands on the box and its rows, not the page head
-    document.getElementById(id)?.scrollIntoView({ block: "start" });
+    // a link into a search lands on the box and its rows, not the page head;
+    // a frame later, after the router's own scroll to the top of the new page
+    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: "start" }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const suggestions = suggesting ? suggest(value, names) : [];

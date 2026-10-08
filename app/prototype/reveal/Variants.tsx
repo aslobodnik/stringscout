@@ -259,18 +259,18 @@ function Chip({
 // as ownership that the applicant did not state.
 function Parent({ a, g }: { a: MockApp; g: MockGroup }) {
   if (!g.link) return DASH;
-  const href = `${ENTITIES}#g-${g.slug}`;
+  const href = `${ENTITIES}?q=${encodeURIComponent(g.name)}`;
   if (!inferred(g.link))
     return (
       <Hover tip={() => <Above a={a} g={g} />}>
-        <Link href={href} className={LINK}>
+        <Link href={href} scroll={false} className={LINK}>
           {g.name}
         </Link>
       </Hover>
     );
   const others = g.entities.filter((e) => e.slug !== a.slug);
   return (
-    <Link href={href} className={`${LINK} serif italic text-ink-soft`}>
+    <Link href={href} scroll={false} className={`${LINK} serif italic text-ink-soft`}>
       {g.link === "person"
         ? "shares a director with"
         : "shares an address with"}{" "}
@@ -522,8 +522,9 @@ export default function Reveal({ data: d }: { data: MockData }) {
       if (q0) setQ(q0);
       if (by0 && BY.some((b) => b.value === by0)) setBy(by0 as By);
     });
-    // the link lands on the box and its rows, not the page head
-    document.getElementById("strings-search")?.scrollIntoView({ block: "start" });
+    // the link lands on the box and its rows, not the page head; a frame
+    // later, after the router's own scroll to the top of the new page
+    requestAnimationFrame(() => document.getElementById("strings-search")?.scrollIntoView({ block: "start" }));
   }, []);
   const [rmark, setRmark] = useState<RMark | null>(null);
   const [cursor, setCursor] = useState(-1); // highlighted suggestion
