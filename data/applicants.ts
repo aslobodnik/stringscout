@@ -408,6 +408,36 @@ export const handApplicants: Applicant[] = [
     note: null,
     sourceIds: ["identitydigital"],
   },
+  {
+    slug: "taylorswift",
+    status: "disclosed",
+    name: "TAS Rights Management, LLC",
+    backers: "Taylor Swift",
+    feesPaid: null,
+    revealedOn: "2026-10-08",
+    note: null,
+    sourceIds: ["dnw-taylorswift"],
+  },
+  {
+    slug: "usc",
+    status: "disclosed",
+    name: "University of South Carolina",
+    backers: "People undisclosed",
+    feesPaid: null,
+    revealedOn: "2026-10-08",
+    note: null,
+    sourceIds: ["dnw-usc"],
+  },
+  {
+    slug: "booking",
+    status: "disclosed",
+    name: "Booking.com B.V.",
+    backers: "People undisclosed",
+    feesPaid: null,
+    revealedOn: "2026-10-08",
+    note: null,
+    sourceIds: ["dnw-booking"],
+  },
 ];
 
 export const applicants: Applicant[] = [

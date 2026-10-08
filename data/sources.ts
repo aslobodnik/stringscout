@@ -375,6 +375,30 @@ const handSources: Source[] = [
     date: "2026-10-07",
     kind: "applicant",
   },
+  {
+    id: "dnw-taylorswift",
+    outlet: "Domain Name Wire",
+    title: "Taylor Swift applies for her own top level domain",
+    url: "https://domainnamewire.com/2026/10/08/taylor-swift-applies-for-her-own-top-level-domain/",
+    date: "2026-10-08",
+    kind: "trade",
+  },
+  {
+    id: "dnw-usc",
+    outlet: "Domain Name Wire",
+    title: "University of South Carolina beats the other USC to .usc",
+    url: "https://domainnamewire.com/2026/10/08/university-of-south-carolina-beats-the-other-usc-to-usc/",
+    date: "2026-10-08",
+    kind: "trade",
+  },
+  {
+    id: "dnw-booking",
+    outlet: "Domain Name Wire",
+    title: "Booking.yeah could become an actual domain name",
+    url: "https://domainnamewire.com/2026/10/08/booking-yeah-could-become-an-actual-domain-name/",
+    date: "2026-10-08",
+    kind: "trade",
+  },
 ];
 
 // Numbered in bucket order so a superscript resolves to exactly one entry and

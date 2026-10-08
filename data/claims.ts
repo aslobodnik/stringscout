@@ -297,6 +297,22 @@ export const claims: Claim[] = dedupe([
   // published on its own site. Primary/replacement split not stated.
   ...expand(identityDigitalStrings, "identitydigital", ["identitydigital"]),
 
+  // TAS Rights Management, LLC (Taylor Swift) — .taylorswift, per Domain
+  // Name Wire, the only record of the reveal. Single-string applicant
+  // naming its application, so primary.
+  ...expand(["taylorswift"], "taylorswift", ["dnw-taylorswift"], "primary"),
+
+  // University of South Carolina — .usc, its applied-for primary string,
+  // and .gamecocks, the replacement string named alongside it, per Domain
+  // Name Wire, the only record of the reveal.
+  ...expand(["usc"], "usc", ["dnw-usc"], "primary"),
+  ...expand(["gamecocks"], "usc", ["dnw-usc"], "backup"),
+
+  // Booking.com B.V. — .yeah, its 2026-round application per Domain Name
+  // Wire, the only record of the reveal. Single-string applicant naming its
+  // application, so primary.
+  ...expand(["yeah"], "booking", ["dnw-booking"], "primary"),
+
   // Pre-window intent announcements, per Domain Incite. Not applications: the
   // "intent" kind keeps them visible in the table without counting them as
   // disclosed strings.
