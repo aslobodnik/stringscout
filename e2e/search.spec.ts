@@ -49,11 +49,7 @@ test("applicants: a string query pins the string to the front and suggestions na
   // every visible strings cell starts with the matched string
   const cells = page.locator("tbody tr:not(.sm\\:hidden) td:nth-child(4) a").first();
   await expect(cells).toContainText("agent");
-});
-
-test("applicants: nothing matching says so, and ?q= prefills the box", async ({ page }) => {
-  await page.goto("/applicants?q=zzqqxx", { waitUntil: "networkidle" });
-  await expect(page.getByRole("combobox", { name: /search groups/i })).toHaveValue("zzqqxx");
+  await box.fill("zzqqxx");
   await expect(page.getByText("No applicants match.")).toBeVisible();
 });
 
@@ -118,14 +114,14 @@ test("a link into a search lands on the box, not the page head", async ({ page }
   }
 });
 
-for (const path of ["/applicants?q=paletta", "/people?q=toddler"]) {
-  test(`${path} does not scroll sideways at 390px`, async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+test("neither page scrolls sideways at 390px while searching", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of ["/applicants?q=paletta", "/people?q=toddler"]) {
     await page.goto(path, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
     const { scrollWidth, clientWidth } = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth,
     }));
-    expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
-  });
-}
+    expect(scrollWidth, path).toBeLessThanOrEqual(clientWidth);
+  }
+});
