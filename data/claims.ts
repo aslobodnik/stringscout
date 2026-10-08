@@ -57,16 +57,12 @@ export const claims: Claim[] = dedupe([
   // TLD1 LLC — four applied-for strings per its site.
   ...expand(["bewell", "etc", "joinus", "whatsnew"], "tld1", ["tld1"]),
 
-  // internet.Best — ten applied-for strings, per its own site and its CEO's
-  // LinkedIn post.
-  ...expand(
-    [
-      "prompt", "chatbot", "answer", "ask", "skills",
-      "creator", "socialmedia", "influencer", "content", "streamer",
-    ],
-    "ibest",
-    ["ibest", "internetbest"]
-  ),
+  // internet.Best — proposed ten strings pre-window (its own site and its
+  // CEO's LinkedIn post, both July 2026); its own Reveal Day pages now name
+  // only one application, .socialmedia, with .aiagent as its AGB §5.1
+  // replacement string. The other nine proposed strings were never filed.
+  ...expand(["socialmedia"], "ibest", ["ibest-socialmedia"], "primary"),
+  ...expand(["aiagent"], "ibest", ["ibest-press"], "backup"),
 
   // Endpoint Domains — eight strings, stated as primary applications on its site.
   ...expand(

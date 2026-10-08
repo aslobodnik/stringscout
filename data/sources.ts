@@ -57,11 +57,20 @@ const handSources: Source[] = [
     kind: "applicant",
   },
   {
-    id: "ibest",
+    id: "ibest-socialmedia",
     outlet: "internet.Best",
-    title: "internet.best/icann2026 — ten applied-for strings",
-    url: "https://internet.best/icann2026",
-    date: "2026-08-15",
+    title: "internet.best/socialmedia — sole applicant for .socialmedia, applied 12 Aug 2026",
+    url: "https://internet.best/socialmedia",
+    date: "2026-08-14",
+    kind: "applicant",
+  },
+  {
+    id: "ibest-press",
+    outlet: "internet.Best",
+    title:
+      "internet.best/press — applied for .socialmedia, with .aiagent as its replacement string",
+    url: "https://internet.best/press",
+    date: "2026-10-07",
     kind: "applicant",
   },
   {

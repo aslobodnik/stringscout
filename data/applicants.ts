@@ -44,7 +44,7 @@ export const handApplicants: Applicant[] = [
     feesPaid: null,
     revealedOn: "2026-07-05",
     note: null,
-    sourceIds: ["ibest", "internetbest"],
+    sourceIds: ["internetbest", "ibest-socialmedia", "ibest-press"],
   },
   {
     slug: "endpoint",
