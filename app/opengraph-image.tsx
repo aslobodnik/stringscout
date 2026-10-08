@@ -1,13 +1,11 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { stats } from "@/lib/derive";
-import { lastUpdated } from "@/data/meta";
-import { formatDate } from "@/lib/format";
+import { buildReal } from "@/app/prototype/reveal/real";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Stringscout — self-revealed strings in the 2026 gTLD round";
+export const alt = "Stringscout: every string applied for in ICANN's 2026 gTLD round";
 
 // The two Jost cuts the card sets, vendored so the build never reaches
 // Google Fonts and a missing file fails the build instead of the card
@@ -21,20 +19,20 @@ const INK_SOFT = "#6b6353";
 const GOLD = "#8a5f1a";
 const RULE = "rgba(33, 29, 21, 0.25)";
 
-// The card is the page's own header and count tiles, rendered at build from
-// the same data, so a shared link carries the numbers as of that deploy.
+// The card is the page's own header counts, rendered at build from ICANN's
+// APS record, so a shared link carries the numbers as of that deploy.
 export default async function OgImage() {
-  const s = stats();
+  const s = buildReal().stats;
   const [light, medium] = await Promise.all([jost(300), jost(500)]);
   const fonts = [
     { name: "Jost", data: light, style: "normal" as const, weight: 300 as const },
     { name: "Jost", data: medium, style: "normal" as const, weight: 500 as const },
   ];
   const tiles = [
-    [s.applicants, "Applicants"],
-    [s.strings, "Strings disclosed"],
-    [s.overlap, "Overlapping strings"],
-    [s.issues, "Potential issues"],
+    [s.strings, "Strings"],
+    [s.applications, "Applications"],
+    [s.groups, "Parent companies"],
+    [s.sets, "Contention sets"],
   ] as const;
 
   return new ImageResponse(
@@ -142,7 +140,7 @@ export default async function OgImage() {
             marginTop: 24,
           }}
         >
-          {`Updated ${formatDate(lastUpdated)}`}
+          Revealed by ICANN 7 October 2026
         </div>
       </div>
     ),

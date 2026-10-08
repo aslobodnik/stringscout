@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   title: { default: "Stringscout", template: "%s — Stringscout" },
   alternates: { canonical: "/" },
   description:
-    "Self-revealed applicants in ICANN's 2026 gTLD round: tracked strings, overlapping strings, key dates. Cited.",
+    "Every string applied for in ICANN's 2026 gTLD round, who applied, and who stands behind them.",
   openGraph: {
     title: "Stringscout",
     description:
-      "Self-revealed applicants and applied strings in ICANN's 2026 gTLD round.",
+      "Every string applied for in ICANN's 2026 gTLD round, who applied, and who stands behind them.",
     url: SITE,
     siteName: "Stringscout",
     type: "website",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Stringscout",
-    description: "Self-revealed strings in the 2026 gTLD round.",
+    description: "Every string applied for in ICANN's 2026 gTLD round.",
   },
 };
 
