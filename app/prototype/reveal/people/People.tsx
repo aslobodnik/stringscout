@@ -149,6 +149,10 @@ export default function People({ data: d }: { data: MockData }) {
             // one entity: nothing to open, its name sits under the person's
             const one = p.entities.length === 1 ? p.entities[0] : null;
             const isOpen = !one && openSlug === p.slug;
+            const why = hits.get(p.slug)!;
+            // the one entity is already under the name: no line for it, the
+            // link turns gold when it is what the query matched
+            const oneHot = !!one && why.entities.includes(one.name);
             return (
               <Fragment key={p.slug}>
                 <tr
@@ -159,7 +163,11 @@ export default function People({ data: d }: { data: MockData }) {
                     {one ? (
                       <>
                         <span className="block font-medium truncate">{p.name}</span>
-                        <Link href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`} className={`${LINK} block w-max max-w-full truncate text-xs text-ink-soft mt-0.5`}>
+                        <Link
+                          href={`${ENTITIES}?q=${encodeURIComponent(one.name)}`}
+                          aria-current={oneHot || undefined}
+                          className={`${LINK} block w-max max-w-full truncate text-xs mt-0.5 ${oneHot ? "text-gold decoration-gold" : "text-ink-soft"}`}
+                        >
                           {one.name}
                         </Link>
                       </>
@@ -181,7 +189,7 @@ export default function People({ data: d }: { data: MockData }) {
                     </td>
                   </tr>
                 )}
-                {!isOpen && <Why hit={hits.get(p.slug)!} colSpan={5} />}
+                {!isOpen && <Why hit={one ? { ...why, entities: [] } : why} colSpan={5} />}
                 {isOpen &&
                   p.entities.map((e) => {
                     const own = p.apps.filter((a) => a.slug === e.slug);

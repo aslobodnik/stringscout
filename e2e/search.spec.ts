@@ -64,6 +64,10 @@ test("people: an entity name reaches the people it names, with the reason under 
   await expect(page.getByText(/^\d+ (person|people)$/)).toBeVisible();
   await expect(page.getByRole("navigation", { name: /people pages/ })).toHaveCount(0);
   await expect(page.locator("tr", { hasText: /^named by\s/ }).first()).toContainText("Toddler Logic");
+  // one entity sits under the name already: no line, the link is the mark
+  await box.fill("namehash");
+  await expect(page.locator("tr", { hasText: /^named by\s/ })).toHaveCount(0);
+  await expect(page.locator("tbody a[aria-current='true']").first()).toContainText("Namehash");
   // a role is searchable too
   await box.fill("executive");
   await expect(page.locator("tr", { hasText: /^as\s/ }).first()).toContainText("executive");
