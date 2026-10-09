@@ -12,7 +12,8 @@ import type { MockApp, MockData, MockPerson } from "@/app/prototype/reveal/mock"
 
 export type OverlapRow = {
   person: MockPerson;
-  apps: MockApp[]; // the person's own applications on the shared strings, by string
+  apps: MockApp[]; // the viewer's own applications on the shared strings, by string
+  theirs: MockApp[]; // the other person's applications on those strings, by string
 };
 
 // everyone the records name on an application, by application id
@@ -28,6 +29,7 @@ export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
   for (const a of d.apps) if (a.setSize > 1) inSet.set(a.tld, [...(inSet.get(a.tld) ?? []), a]);
   const mine = new Set(me.apps.map((a) => a.id));
   const shared = new Map<string, Map<string, MockApp>>(); // person slug -> tld -> my app
+  const theirs = new Map<string, Map<string, MockApp>>(); // person slug -> app id -> their app
   const who = new Map<string, MockPerson>();
   for (const a of me.apps) {
     if (a.setSize <= 1) continue;
@@ -39,6 +41,7 @@ export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
         const byTld = shared.get(p.slug) ?? new Map<string, MockApp>();
         if (!byTld.has(a.tld)) byTld.set(a.tld, a);
         shared.set(p.slug, byTld);
+        theirs.set(p.slug, (theirs.get(p.slug) ?? new Map<string, MockApp>()).set(other.id, other));
       }
     }
   }
@@ -46,6 +49,7 @@ export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
     .map(([slug, byTld]) => ({
       person: who.get(slug)!,
       apps: [...byTld.values()].sort((x, y) => x.tld.localeCompare(y.tld)),
+      theirs: [...theirs.get(slug)!.values()].sort((x, y) => x.tld.localeCompare(y.tld)),
     }))
     .sort((x, y) => y.apps.length - x.apps.length || x.person.name.localeCompare(y.person.name));
 }

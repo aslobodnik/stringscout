@@ -38,6 +38,10 @@ describe("overlapsFor", () => {
   it("a sibling entity filing separately is an overlap", () => {
     expect(rows[1].apps.map((a) => a.tld)).toEqual(["hub"]);
   });
+  it("carries the other side's applications, so a row names only the entities on the shared strings", () => {
+    expect(rows[0].theirs.map((a) => a.id)).toEqual(["B1", "B2"]);
+    expect(rows[1].theirs.map((a) => a.id)).toEqual(["A4"]);
+  });
   it("a string with no other applicant is not shared", () => {
     expect(rows.flatMap((r) => r.apps).some((a) => a.tld === "bit")).toBe(false);
   });

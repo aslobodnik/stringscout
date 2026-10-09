@@ -102,8 +102,9 @@ export default function Overlap({ data: d }: { data: MockData }) {
                 </tr>
               </thead>
               <tbody>
-                {slice.map(({ person: p, apps }) => {
-                  const names = [...new Set(p.entities.map((e) => e.name))];
+                {slice.map(({ person: p, apps, theirs }) => {
+                  // the entities on the shared strings, not everything the person sits on
+                  const names = [...new Set(theirs.map((a) => a.applicant))];
                   const strings = one ? <StringList apps={apps} /> : <StringFold apps={apps} />;
                   return (
                     <Fragment key={p.slug}>
