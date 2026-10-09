@@ -11,38 +11,72 @@
 import Link from "next/link";
 import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
-import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TAG, TH } from "@/app/prototype/reveal/bits";
+import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
 import { overlapsFor } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
-import type { MockData, MockPerson } from "@/app/prototype/reveal/mock";
+import type { MockApp, MockData, MockGroup, MockPerson } from "@/app/prototype/reveal/mock";
 import PersonBox from "./PersonBox";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 
-// Three names, then "and n more", which opens the rest in place; "fewer"
-// folds them back, as the string fold does.
-function Few({ names, to }: { names: string[]; to: (n: string) => string }) {
+// Who is behind a set of applications: a declared parent prints once as its
+// name, its entities behind "n entities", which opens them in place; an
+// entity with no parent prints as itself. Three names, then "and n more".
+type Behind = { name: string; href: string; under: string[] };
+function behind(apps: MockApp[], groups: MockGroup[]): Behind[] {
+  const byGroup = Map.groupBy(apps, (a) => a.group);
+  return [...byGroup.entries()].map(([slug, as]) => {
+    const g = groups.find((x) => x.slug === slug);
+    const entities = [...new Set(as.map((a) => a.applicant))];
+    if (g?.link === "parent") return { name: g.name, href: stringsFor("parent", g.name), under: entities };
+    return { name: entities[0], href: `${ENTITIES}?q=${encodeURIComponent(entities[0])}`, under: [] };
+  });
+}
+
+const FOLD = "cursor-pointer text-ink-soft hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold";
+
+function Under({ names }: { names: string[] }) {
   const [open, setOpen] = useState(false);
-  const shown = open ? names : names.slice(0, 3);
-  const more = names.length - 3;
   return (
     <>
-      {shown.map((n, i) => (
-        <span key={n}>
+      {" "}
+      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={FOLD}>
+        {open ? "fewer" : `${names.length} entities`}
+      </button>
+      {open && (
+        <span className="block pl-3">
+          {names.map((n, i) => (
+            <span key={n}>
+              {i > 0 && ", "}
+              <Link href={`${ENTITIES}?q=${encodeURIComponent(n)}`} scroll={false} className={LINK}>
+                {n}
+              </Link>
+            </span>
+          ))}
+        </span>
+      )}
+    </>
+  );
+}
+
+function Few({ items }: { items: Behind[] }) {
+  const [open, setOpen] = useState(false);
+  const shown = open ? items : items.slice(0, 3);
+  const more = items.length - 3;
+  return (
+    <>
+      {shown.map((b, i) => (
+        <span key={b.name}>
           {i > 0 && ", "}
-          <Link href={to(n)} scroll={false} className={LINK}>
-            {n}
+          <Link href={b.href} scroll={false} className={LINK}>
+            {b.name}
           </Link>
+          {b.under.length > 1 && <Under names={b.under} />}
         </span>
       ))}
       {more > 0 && (
-        <button
-          type="button"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-          className="cursor-pointer text-ink-soft hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold"
-        >
+        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={FOLD}>
           {open ? ", fewer" : ` and ${more} more`}
         </button>
       )}
@@ -79,7 +113,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
     document.getElementById("overlap")?.scrollIntoView({ block: "start" });
   };
   const inSets = me ? me.apps.filter((a) => a.setSize > 1).length : 0;
-  const entityNames = me ? [...new Set(me.entities.map((e) => e.name))] : [];
+  const mine = me ? behind(me.apps, d.groups) : [];
 
   return (
     <section id="overlap" className="mb-14 scroll-mt-4">
@@ -91,7 +125,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
           <p className="mb-5 leading-6">
             <span className="font-medium">{me.name}</span>
             <span className="text-ink-soft">, </span>
-            <Few names={entityNames} to={(n) => `${ENTITIES}?q=${encodeURIComponent(n)}`} />
+            <Few items={mine} />
             <span className="text-ink-soft">. </span>
             <Link href={`${PEOPLE}?q=${encodeURIComponent(me.name)}`} scroll={false} className={LINK}>
               {me.apps.length} {me.apps.length === 1 ? "application" : "applications"}
@@ -116,8 +150,8 @@ export default function Overlap({ data: d }: { data: MockData }) {
               </thead>
               <tbody>
                 {slice.map(({ person: p, apps, theirs }) => {
-                  // the entities on the shared strings, not everything the person sits on
-                  const names = [...new Set(theirs.map((a) => a.applicant))];
+                  // who is on the shared strings, not everything the person sits on
+                  const who = behind(theirs, d.groups);
                   const strings = one ? <StringList apps={apps} /> : <StringFold apps={apps} />;
                   return (
                     <Fragment key={p.slug}>
@@ -127,7 +161,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
                             {p.name}
                           </Link>
                           <span className="block text-xs text-ink-soft mt-0.5">
-                            <Few names={names} to={(n) => `${ENTITIES}?q=${encodeURIComponent(n)}`} />
+                            <Few items={who} />
                           </span>
                         </td>
                         <td className="py-2 pr-4 text-right tabular-nums">{apps.length}</td>
