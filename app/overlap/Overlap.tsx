@@ -133,6 +133,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
         </a>
         .
       </p>
+      <p className="label !text-sm mb-3">Find who you overlap with</p>
       <PersonBox id="me" people={people} picked={me} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
       {meSlug && !me && <p className="serif italic text-ink-soft mb-6">No one named that in the records.</p>}
       {me && (

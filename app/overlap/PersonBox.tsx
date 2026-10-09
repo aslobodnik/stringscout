@@ -69,7 +69,7 @@ export default function PersonBox({
                   setSuggesting(false);
                 }
               }}
-              placeholder="Name or company…"
+              placeholder={label ? "Name or company…" : "Your name…"}
               aria-label={`${label ?? "You"}: search people by name or company`}
               role="combobox"
               aria-autocomplete="list"
