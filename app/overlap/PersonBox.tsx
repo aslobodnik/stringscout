@@ -4,10 +4,11 @@
 // shared SearchBox copied, suggestions naming the person's first entity on
 // the right so two people at different companies tell apart. Picking one
 // hands back the person; clearing hands back null. The box never leaves:
-// a picked name sits in it, and typing over it starts a new search, so
-// nothing on the page moves when a pick is made or cleared.
+// a picked name sits in it with the border gold, the house mark for the
+// active pick, and an × at its end clears it. Typing over the name starts
+// a new search, so nothing on the page moves when a pick is made or cleared.
 import { useState } from "react";
-import { INPUT, Chip } from "@/app/prototype/reveal/SearchBox";
+import { INPUT } from "@/app/prototype/reveal/SearchBox";
 import { suggestPeople } from "@/lib/overlap";
 import type { MockPerson } from "@/app/prototype/reveal/mock";
 
@@ -78,8 +79,18 @@ export default function PersonBox({
             aria-autocomplete="list"
             aria-expanded={suggestions.length > 0}
             aria-controls={`${id}-suggestions`}
-            className={INPUT}
+            className={`${INPUT} pr-9 [&::-webkit-search-cancel-button]:hidden ${picked ? "border-gold font-medium" : ""}`}
           />
+          {picked && (
+            <button
+              type="button"
+              onClick={() => onPick(null)}
+              aria-label={`Clear ${picked.name}`}
+              className="absolute right-0 top-0 h-10 w-9 cursor-pointer text-ink-soft hover:text-oxblood transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold"
+            >
+              ×
+            </button>
+          )}
           {suggestions.length > 0 && (
             <ul id={`${id}-suggestions`} role="listbox" className="absolute left-0 right-0 top-full mt-1 z-30 border border-ink bg-paper text-sm">
               {suggestions.map((p, i) => (
@@ -105,9 +116,6 @@ export default function PersonBox({
             </ul>
           )}
         </div>
-      </div>
-      <div className={`flex items-center gap-3 mt-3 min-h-7 ${label ? "sm:pl-[6.75rem]" : ""}`}>
-        {picked && <Chip label={picked.name} onClear={() => onPick(null)} />}
       </div>
     </div>
   );
