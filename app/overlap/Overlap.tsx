@@ -20,11 +20,15 @@ import PersonBox from "./PersonBox";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 
-// first three names, then how many more
+// Three names, then "and n more", which opens the rest in place; "fewer"
+// folds them back, as the string fold does.
 function Few({ names, to }: { names: string[]; to: (n: string) => string }) {
+  const [open, setOpen] = useState(false);
+  const shown = open ? names : names.slice(0, 3);
+  const more = names.length - 3;
   return (
     <>
-      {names.slice(0, 3).map((n, i) => (
+      {shown.map((n, i) => (
         <span key={n}>
           {i > 0 && ", "}
           <Link href={to(n)} scroll={false} className={LINK}>
@@ -32,7 +36,16 @@ function Few({ names, to }: { names: string[]; to: (n: string) => string }) {
           </Link>
         </span>
       ))}
-      {names.length > 3 && <span className="text-ink-soft"> and {names.length - 3} more</span>}
+      {more > 0 && (
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+          className="cursor-pointer text-ink-soft hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold"
+        >
+          {open ? ", fewer" : ` and ${more} more`}
+        </button>
+      )}
     </>
   );
 }
