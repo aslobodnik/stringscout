@@ -21,7 +21,7 @@ export default function PickBox({
   autoFocus,
 }: {
   id: string;
-  label?: string; // "Talking to"; none for the first box
+  label?: string; // "Talking to"; none for the first box. Read out, not printed: the page labels the box.
   picks: Pick[];
   picked: Pick | null;
   onPick: (p: Pick | null) => void;
@@ -43,8 +43,7 @@ export default function PickBox({
   return (
     <div id={id} className="mb-5 scroll-mt-6">
       <div className="flex items-baseline gap-3">
-        {label && <span className="label text-ink-soft shrink-0 w-24 whitespace-nowrap">{label}</span>}
-        <div className="relative w-full sm:w-[30rem]">
+        <div className="relative w-full">
           <input
             type="search"
             value={picked ? picked.name : q}

@@ -85,6 +85,39 @@ function Few({ items }: { items: Behind[] }) {
   );
 }
 
+// The counts, in the house tile row: a copy of the strings page's StatTiles
+// with three tiles. Two leave for the people page; the third is the list
+// below, and clears a "talking to" pick.
+type Tile = { v: number; l: string; href?: string; act?: () => void; on?: boolean };
+function Tiles({ tiles }: { tiles: Tile[] }) {
+  const cell = "p-3 sm:p-4 text-left w-full block";
+  const num = "text-2xl sm:text-3xl font-light tabular-nums";
+  const cap = "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
+  return (
+    <section className="grid grid-cols-3 border border-ink mb-8">
+      {tiles.map(({ v, l, href, act, on }, i) => {
+        const divider = i > 0 ? "border-l border-rule" : "";
+        const inner = (
+          <>
+            <span className={`block ${num}`}>{v}</span>
+            <span className={cap}>{l}</span>
+          </>
+        );
+        const cls = `${cell} ${divider} transition-colors duration-200 ease-in-out hover:bg-paper-deep cursor-pointer ${on ? "bg-paper-deep" : ""}`;
+        return href ? (
+          <Link key={l} href={href} scroll={false} className={cls}>
+            {inner}
+          </Link>
+        ) : (
+          <button key={l} type="button" onClick={act} aria-pressed={on} className={cls}>
+            {inner}
+          </button>
+        );
+      })}
+    </section>
+  );
+}
+
 export default function Overlap({ data: d }: { data: MockData }) {
   const people = useMemo(() => d.people ?? [], [d.people]);
   const bySlug = useMemo(() => new Map(people.map((p) => [p.slug, p])), [people]);
@@ -162,29 +195,37 @@ export default function Overlap({ data: d }: { data: MockData }) {
         </a>
         .
       </p>
-      <p className="label !text-sm mb-3">Find who you overlap with</p>
-      <PickBox id="me" picks={mePicks} picked={me ? personPick(me) : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
-      {meSlug && !me && <p className="serif italic text-ink-soft mb-6">No one named that in the records.</p>}
+      {/* the two boxes side by side above sm, each under its label, same
+          width, so a pick in one moves nothing in the other */}
+      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 mb-5">
+        <div>
+          <p className="label !text-sm mb-3">Find who you overlap with</p>
+          <PickBox id="me" picks={mePicks} picked={me ? personPick(me) : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
+          <p className="text-xs text-ink-soft mt-2 min-h-4 leading-4">
+            {me && <Few items={mine} />}
+            {meSlug && !me && <span className="serif italic">No one named that in the records.</span>}
+          </p>
+        </div>
+        {me && (
+          <div>
+            <p className="label !text-sm mb-3">Talking to</p>
+            <PickBox id="with" label="Talking to" picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
+            <p className="text-xs text-ink-soft mt-2 min-h-4 leading-4 serif italic">
+              {withSlug && !them && "No one by that name in the records."}
+              {them && shown.length === 0 && `No shared string.${aside ? ` ${aside}` : ""}`}
+            </p>
+          </div>
+        )}
+      </div>
       {me && (
         <>
-          <p className="mb-5 leading-6">
-            <span className="font-medium">{me.name}</span>
-            <span className="text-ink-soft">, </span>
-            <Few items={mine} />
-            <span className="text-ink-soft">. </span>
-            <Link href={`${PEOPLE}?q=${encodeURIComponent(me.name)}`} scroll={false} className={LINK}>
-              {me.apps.length} {me.apps.length === 1 ? "application" : "applications"}
-            </Link>
-            <span className="text-ink-soft">, {inSets} in overlap. </span>
-            {rows.length} {rows.length === 1 ? "person shares" : "people share"} a string.
-          </p>
-          <PickBox id="with" label="Talking to" picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
-          {withSlug && !them && <p className="serif italic text-ink-soft mb-6">No one by that name in the records.</p>}
-          {them && shown.length === 0 && (
-            <p className="serif italic text-ink-soft mb-6">
-              No shared string.{aside && ` ${aside}`}
-            </p>
-          )}
+          <Tiles
+            tiles={[
+              { v: me.apps.length, l: me.apps.length === 1 ? "application" : "applications", href: `${PEOPLE}?q=${encodeURIComponent(me.name)}` },
+              { v: inSets, l: "in overlap", href: `${PEOPLE}?q=${encodeURIComponent(me.name)}` },
+              { v: rows.length, l: rows.length === 1 ? "person shares a string" : "people share a string", on: !them, act: () => set("with", null) },
+            ]}
+          />
           {!them && rows.length === 0 && (
             <p className="serif italic text-ink-soft mb-6">No overlap recorded: none of their strings sits in a set with another applicant&apos;s.</p>
           )}
