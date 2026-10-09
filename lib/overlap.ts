@@ -70,21 +70,26 @@ export function suggestPeople(q: string, people: MockPerson[], max = 8): MockPer
   return [...starts, ...within].slice(0, max);
 }
 
-// People at one parent who share exactly the same strings read as one row
-// with every name on it, so three directors of one company are not three
-// copies of one line. Keyed on the strings and the groups behind them;
-// order is kept, so the merged list is still most shared first.
-export type OverlapGroup = { people: MockPerson[]; apps: MockApp[]; theirs: MockApp[] };
-export function mergeAlike(rows: OverlapRow[]): OverlapGroup[] {
+// People behind the same parents read as one row, every name on it, with
+// the union of their strings: three directors of one company are not three
+// copies of one line. A name on fewer strings than the row keeps its own
+// list, so the row can say "6 of 7". Order is kept by the first person in,
+// then by the union, so the merged list is still most shared first.
+export type OverlapGroup = { people: OverlapRow[]; apps: MockApp[]; theirs: MockApp[] };
+export function mergeByParent(rows: OverlapRow[]): OverlapGroup[] {
   const out = new Map<string, OverlapGroup>();
   for (const r of rows) {
-    const key = `${r.apps.map((a) => a.tld).join(" ")}|${[...new Set(r.theirs.map((a) => a.group))].sort().join(" ")}`;
+    const key = [...new Set(r.theirs.map((a) => a.group))].sort().join(" ");
     const g = out.get(key);
     if (g) {
-      g.people.push(r.person);
-      const seen = new Set(g.theirs.map((a) => a.id));
-      for (const a of r.theirs) if (!seen.has(a.id)) g.theirs.push(a);
-    } else out.set(key, { people: [r.person], apps: r.apps, theirs: [...r.theirs] });
+      g.people.push(r);
+      const seen = new Set(g.apps.map((a) => a.tld));
+      for (const a of r.apps) if (!seen.has(a.tld)) g.apps.push(a);
+      const ids = new Set(g.theirs.map((a) => a.id));
+      for (const a of r.theirs) if (!ids.has(a.id)) g.theirs.push(a);
+    } else out.set(key, { people: [r], apps: [...r.apps], theirs: [...r.theirs] });
   }
-  return [...out.values()];
+  return [...out.values()]
+    .map((g) => ({ ...g, apps: g.apps.sort((x, y) => x.tld.localeCompare(y.tld)) }))
+    .sort((x, y) => y.apps.length - x.apps.length);
 }

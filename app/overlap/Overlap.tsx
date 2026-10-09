@@ -13,7 +13,7 @@ import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
 import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
-import { mergeAlike, overlapsFor } from "@/lib/overlap";
+import { mergeByParent, overlapsFor } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
 import type { MockApp, MockData, MockGroup, MockPerson } from "@/app/prototype/reveal/mock";
 import PersonBox from "./PersonBox";
@@ -104,9 +104,10 @@ export default function Overlap({ data: d }: { data: MockData }) {
   const them = withSlug ? (bySlug.get(withSlug) ?? null) : null;
   const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
   const rivals = useMemo(() => rows.map((r) => r.person), [rows]);
-  const merged = useMemo(() => mergeAlike(rows), [rows]);
-  const one = them ? (merged.find((g) => g.people.some((p) => p.slug === them.slug)) ?? null) : null;
-  const shown = them ? (one ? [one] : []) : merged;
+  const merged = useMemo(() => mergeByParent(rows), [rows]);
+  // talking to one person: their row, holding only their own strings
+  const one = them ? (rows.find((r) => r.person.slug === them.slug) ?? null) : null;
+  const shown = them ? (one ? [{ people: [one], apps: one.apps, theirs: one.theirs }] : []) : merged;
   const [page, setPage] = useState(0);
   const slice = shown.slice(page * PAGE, (page + 1) * PAGE);
   const turn = (n: number) => {
@@ -155,18 +156,24 @@ export default function Overlap({ data: d }: { data: MockData }) {
                   const who = behind(theirs, d.groups);
                   const strings = one ? <StringList apps={apps} /> : <StringFold apps={apps} />;
                   return (
-                    <Fragment key={ps[0].slug}>
+                    <Fragment key={ps[0].person.slug}>
                       <tr className="border-t border-rule-faint align-top">
                         <td className="py-2 pr-4">
-                          {ps.map((p) => (
-                            <Link
-                              key={p.slug}
-                              href={`${PEOPLE}?q=${encodeURIComponent(p.name)}`}
-                              scroll={false}
-                              className={`${LINK} block w-max max-w-full font-medium ${them?.slug === p.slug ? "text-gold decoration-gold" : ""}`}
-                            >
-                              {p.name}
-                            </Link>
+                          {ps.map(({ person: p, apps: own }) => (
+                            <span key={p.slug} className="block">
+                              <Link
+                                href={`${PEOPLE}?q=${encodeURIComponent(p.name)}`}
+                                scroll={false}
+                                className={`${LINK} font-medium ${them?.slug === p.slug ? "text-gold decoration-gold" : ""}`}
+                              >
+                                {p.name}
+                              </Link>
+                              {own.length < apps.length && (
+                                <span className="text-xs text-ink-soft ml-2 tabular-nums">
+                                  {own.length} of {apps.length}
+                                </span>
+                              )}
+                            </span>
                           ))}
                           <span className="block text-xs text-ink-soft mt-0.5">
                             <Few items={who} />
