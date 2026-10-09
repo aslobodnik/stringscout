@@ -2,7 +2,8 @@
 
 // Who shares a string with you. Pick yourself, read the people most shared
 // first; pick the person you are talking to and only your shared strings
-// stay. Both picks live in the URL (?me=&with=) so a link restores them, and
+// stay, or pick the company and every name behind it stays. Both picks live
+// in the URL (?me=&with=) so a link restores them, and
 // nothing after load needs the network.
 //
 // The list is one list, a hundred a page, as the people page: no fold for
@@ -13,24 +14,24 @@ import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
 import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
-import { mergeByParent, overlapsFor } from "@/lib/overlap";
+import { mergeByParent, overlapsFor, personPick, type Pick } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
-import type { MockApp, MockData, MockGroup, MockPerson } from "@/app/prototype/reveal/mock";
-import PersonBox from "./PersonBox";
+import type { MockApp, MockData, MockGroup } from "@/app/prototype/reveal/mock";
+import PickBox from "./PickBox";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
 
 // Who is behind a set of applications: a declared parent prints once as its
 // name, its entities behind "n entities", which opens them in place; an
 // entity with no parent prints as itself. Three names, then "and n more".
-type Behind = { name: string; href: string; under: string[] };
+type Behind = { slug: string; name: string; href: string; under: string[] }; // slug: the group
 function behind(apps: MockApp[], groups: MockGroup[]): Behind[] {
   const byGroup = Map.groupBy(apps, (a) => a.group);
   return [...byGroup.entries()].map(([slug, as]) => {
     const g = groups.find((x) => x.slug === slug);
     const entities = [...new Set(as.map((a) => a.applicant))];
-    if (g?.link === "parent") return { name: g.name, href: stringsFor("parent", g.name), under: entities };
-    return { name: entities[0], href: `${ENTITIES}?q=${encodeURIComponent(entities[0])}`, under: [] };
+    if (g?.link === "parent") return { slug, name: g.name, href: stringsFor("parent", g.name), under: entities };
+    return { slug, name: entities[0], href: `${ENTITIES}?q=${encodeURIComponent(entities[0])}`, under: [] };
   });
 }
 
@@ -87,13 +88,14 @@ function Few({ items }: { items: Behind[] }) {
 export default function Overlap({ data: d }: { data: MockData }) {
   const people = useMemo(() => d.people ?? [], [d.people]);
   const bySlug = useMemo(() => new Map(people.map((p) => [p.slug, p])), [people]);
+  const mePicks = useMemo(() => people.map(personPick), [people]);
   // the URL is the state: both picks read from it, so a link restores them
   const search = useSyncExternalStore(subscribeToUrl, () => window.location.search, () => "");
   const [meSlug, withSlug] = useMemo(() => {
     const u = new URLSearchParams(search);
     return [u.get("me"), u.get("with")];
   }, [search]);
-  const set = (key: "me" | "with", p: MockPerson | null) => {
+  const set = (key: "me" | "with", p: Pick | null) => {
     const u = new URLSearchParams(window.location.search);
     if (p) u.set(key, p.slug);
     else u.delete(key);
@@ -101,13 +103,29 @@ export default function Overlap({ data: d }: { data: MockData }) {
     history.replaceState(null, "", `${window.location.pathname}${u.size ? `?${u}` : ""}`);
   };
   const me = meSlug ? (bySlug.get(meSlug) ?? null) : null;
-  const them = withSlug ? (bySlug.get(withSlug) ?? null) : null;
   const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
-  const rivals = useMemo(() => rows.map((r) => r.person), [rows]);
   const merged = useMemo(() => mergeByParent(rows), [rows]);
-  // talking to one person: their row, holding only their own strings
-  const one = them ? (rows.find((r) => r.person.slug === them.slug) ?? null) : null;
-  const shown = them ? (one ? [{ people: [one], apps: one.apps, theirs: one.theirs }] : []) : merged;
+  // what the second box offers: every person on the list, and every company
+  // behind a row, by its group slug
+  const withPicks = useMemo<Pick[]>(() => {
+    const companies = new Map<string, Pick>();
+    for (const g of merged)
+      for (const b of behind(g.theirs, d.groups))
+        if (!companies.has(b.slug))
+          companies.set(b.slug, { kind: "company", slug: b.slug, name: b.name, sub: `${g.people.length} ${g.people.length === 1 ? "person" : "people"}` });
+    return [...rows.map((r) => personPick(r.person)), ...companies.values()];
+  }, [rows, merged, d.groups]);
+  const them = withSlug ? (withPicks.find((k) => k.slug === withSlug) ?? null) : null;
+  // talking to one person: their row, holding only their own strings; to a
+  // company: every row it is behind, every name on it
+  const shown = useMemo(() => {
+    if (!them) return merged;
+    if (them.kind === "person") {
+      const r = rows.find((x) => x.person.slug === them.slug);
+      return r ? [{ people: [r], apps: r.apps, theirs: r.theirs }] : [];
+    }
+    return merged.filter((g) => g.theirs.some((a) => a.group === them.slug));
+  }, [them, rows, merged]);
   const [page, setPage] = useState(0);
   const slice = shown.slice(page * PAGE, (page + 1) * PAGE);
   const turn = (n: number) => {
@@ -134,7 +152,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
         .
       </p>
       <p className="label !text-sm mb-3">Find who you overlap with</p>
-      <PersonBox id="me" people={people} picked={me} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
+      <PickBox id="me" picks={mePicks} picked={me ? personPick(me) : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
       {meSlug && !me && <p className="serif italic text-ink-soft mb-6">No one named that in the records.</p>}
       {me && (
         <>
@@ -149,9 +167,8 @@ export default function Overlap({ data: d }: { data: MockData }) {
             <span className="text-ink-soft">, {inSets} in overlap. </span>
             {rows.length} {rows.length === 1 ? "person shares" : "people share"} a string.
           </p>
-          <PersonBox id="with" label="Talking to" people={rivals} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
-          {withSlug && !them && <p className="serif italic text-ink-soft mb-6">No one named that shares a string with {me.name}.</p>}
-          {them && !one && <p className="serif italic text-ink-soft mb-6">No shared string.</p>}
+          <PickBox id="with" label="Talking to" picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
+          {withSlug && !them && <p className="serif italic text-ink-soft mb-6">No one by that name shares a string with {me.name}.</p>}
           {!them && rows.length === 0 && (
             <p className="serif italic text-ink-soft mb-6">No overlap recorded: none of their strings sits in a set with another applicant&apos;s.</p>
           )}
@@ -168,7 +185,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
                 {slice.map(({ people: ps, apps, theirs }) => {
                   // who is on the shared strings, not everything the people sit on
                   const who = behind(theirs, d.groups);
-                  const strings = one ? <StringList apps={apps} /> : <StringFold apps={apps} />;
+                  const strings = them ? <StringList apps={apps} /> : <StringFold apps={apps} />;
                   return (
                     <Fragment key={ps[0].person.slug}>
                       <tr className="border-t border-rule-faint align-top">

@@ -54,21 +54,36 @@ export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
     .sort((x, y) => y.apps.length - x.apps.length || x.person.name.localeCompare(y.person.name));
 }
 
-// Names a typed fragment starts, then names it sits in; an entity name
-// reaches its people. At most `max`, each person once.
-export function suggestPeople(q: string, people: MockPerson[], max = 8): MockPerson[] {
+// What a box can pick: a person, or a company (a parent or a lone entity).
+// `sub` is the line under the name in a suggestion and what a company search
+// reaches for a person, so "GoDaddy" finds its officers.
+export type Pick = { kind: "person" | "company"; slug: string; name: string; sub: string };
+
+export const personPick = (p: MockPerson): Pick => ({
+  kind: "person",
+  slug: p.slug,
+  name: p.name,
+  sub: p.entities.map((e) => e.name).join(", "),
+});
+
+// Names a typed fragment starts, then names it sits in, then names whose
+// line under reaches it. At most `max`, each once.
+export function suggestPicks(q: string, picks: Pick[], max = 8): Pick[] {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (t.length < 2) return [];
-  const starts: MockPerson[] = [];
-  const within: MockPerson[] = [];
-  for (const p of people) {
+  const starts: Pick[] = [];
+  const within: Pick[] = [];
+  for (const p of picks) {
     const n = p.name.toLowerCase();
     if (n.startsWith(t)) starts.push(p);
-    else if (n.includes(t) || p.entities.some((e) => e.name.toLowerCase().includes(t))) within.push(p);
+    else if (n.includes(t) || p.sub.toLowerCase().includes(t)) within.push(p);
     if (starts.length >= max) return starts.slice(0, max);
   }
   return [...starts, ...within].slice(0, max);
 }
+
+export const suggestPeople = (q: string, people: MockPerson[], max = 8) =>
+  suggestPicks(q, people.map(personPick), max).map((k) => people.find((p) => p.slug === k.slug)!);
 
 // People behind the same parents read as one row, every name on it, with
 // the union of their strings: three directors of one company are not three

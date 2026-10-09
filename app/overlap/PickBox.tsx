@@ -1,37 +1,38 @@
 "use client";
 
-// The people search box, picking a person rather than filling text: the
-// shared SearchBox copied, suggestions naming the person's first entity on
-// the right so two people at different companies tell apart. Picking one
-// hands back the person; clearing hands back null. The box never leaves:
+// A box that picks one thing rather than filling text: the shared SearchBox
+// copied. A suggestion carries a line under the name (a person's entities,
+// a company's people count) so two people at different companies tell
+// apart, and names its kind on the right when the list mixes kinds. Picking
+// one hands back the pick; clearing hands back null. The box never leaves:
 // a picked name sits in it with the border gold, the house mark for the
 // active pick, and an × at its end clears it. Typing over the name starts
 // a new search, so nothing on the page moves when a pick is made or cleared.
 import { useState } from "react";
 import { INPUT } from "@/app/prototype/reveal/SearchBox";
-import { suggestPeople } from "@/lib/overlap";
-import type { MockPerson } from "@/app/prototype/reveal/mock";
+import { suggestPicks, type Pick } from "@/lib/overlap";
 
-export default function PersonBox({
+export default function PickBox({
   id,
   label,
-  people,
+  picks,
   picked,
   onPick,
   autoFocus,
 }: {
   id: string;
   label?: string; // "Talking to"; none for the first box
-  people: MockPerson[];
-  picked: MockPerson | null;
-  onPick: (p: MockPerson | null) => void;
+  picks: Pick[];
+  picked: Pick | null;
+  onPick: (p: Pick | null) => void;
   autoFocus?: boolean;
 }) {
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(-1);
   const [suggesting, setSuggesting] = useState(false);
-  const suggestions = suggesting && !picked ? suggestPeople(q, people) : [];
-  const pick = (p: MockPerson) => {
+  const suggestions = suggesting && !picked ? suggestPicks(q, picks) : [];
+  const mixed = picks.some((p) => p.kind === "company");
+  const pick = (p: Pick) => {
     onPick(p);
     setQ("");
     setSuggesting(false);
@@ -73,7 +74,7 @@ export default function PersonBox({
                 setSuggesting(false);
               }
             }}
-            placeholder={label ? "Name or company…" : "Your name…"}
+            placeholder={label ? "Person or company…" : "Your name…"}
             aria-label={`${label ?? "You"}: search people by name or company`}
             role="combobox"
             aria-autocomplete="list"
@@ -101,15 +102,15 @@ export default function PersonBox({
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => pick(p)}
                     onMouseEnter={() => setCursor(i)}
-                    className={`flex flex-col w-full text-left px-3 py-2 cursor-pointer border-t border-rule-faint first:border-t-0 transition-colors duration-200 ease-in-out ${
+                    className={`flex items-baseline justify-between gap-4 w-full text-left px-3 py-2 cursor-pointer border-t border-rule-faint first:border-t-0 transition-colors duration-200 ease-in-out ${
                       i === cursor ? "bg-paper-deep" : ""
                     }`}
                   >
-                    <span>{p.name}</span>
-                    <span className="text-xs text-ink-soft">
-                      {p.entities[0].name}
-                      {p.entities.length > 1 && ` and ${p.entities.length - 1} more`}
+                    <span className="min-w-0">
+                      <span className="block truncate">{p.name}</span>
+                      <span className="block text-xs text-ink-soft truncate">{p.sub}</span>
                     </span>
+                    {mixed && <span className="label !text-[9px] text-ink-soft shrink-0">{p.kind}</span>}
                   </button>
                 </li>
               ))}
