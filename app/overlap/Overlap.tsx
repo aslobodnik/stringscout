@@ -121,10 +121,17 @@ export default function Overlap({ data: d }: { data: MockData }) {
     <section id="overlap" className="mb-14 scroll-mt-4">
       <SectionHead n="I" title="Overlap" count={me ? rows.length : undefined} />
       <p className="mb-5 leading-6 max-w-prose">
-        From Reveal Day until a registry agreement is signed or the application is withdrawn, applicants for strings in the same
-        contention set may not communicate, directly or indirectly, about those applications or any strategy for the strings (AGB
-        §5.2.3.1). Agents and affiliates are included. Routine business communication is permitted if it conveys nothing about an
-        application. Your name shows whose applications share a string with yours, most shared first.
+        Applicants for strings in the same contention set may not communicate, directly or indirectly, about those applications or
+        any strategy for the string{" "}
+        <a
+          href="https://newgtldprogram-2026-agb.icann.org/en/9-module-5-contention-set-resolution.html"
+          target="_blank"
+          rel="noopener"
+          className={`${LINK} label !text-[10px] text-ink-soft whitespace-nowrap`}
+        >
+          AGB §5.2.3.1
+        </a>
+        .
       </p>
       <PersonBox id="me" people={people} picked={me} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
       {meSlug && !me && <p className="serif italic text-ink-soft mb-6">No one named that in the records.</p>}
