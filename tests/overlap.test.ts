@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { overlapsFor, suggestPeople } from "@/lib/overlap";
+import { mergeAlike, overlapsFor, suggestPeople } from "@/lib/overlap";
 import type { MockApp, MockData, MockPerson } from "@/app/prototype/reveal/mock";
 
 const app = (id: string, tld: string, slug: string, setSize: number): MockApp =>
@@ -48,6 +48,20 @@ describe("overlapsFor", () => {
   it("most shared first, then name", () => {
     const back = overlapsFor(bob, data);
     expect(back.map((r) => [r.person.name, r.apps.length])).toEqual([["Al Ng", 2], ["Ann Lee", 2], ["Sal Fox", 1]]);
+  });
+});
+
+describe("mergeAlike", () => {
+  it("people at one group with the same strings become one row, order kept", () => {
+    const g = mergeAlike(overlapsFor(bob, data));
+    expect(g.map((r) => [r.people.map((p) => p.name), r.apps.map((a) => a.tld)])).toEqual([
+      [["Al Ng", "Ann Lee"], ["agent", "hub"]],
+      [["Sal Fox"], ["hub"]],
+    ]);
+  });
+  it("same strings at different groups stay apart", () => {
+    const g = mergeAlike(overlapsFor(ann, data));
+    expect(g.map((r) => r.people.map((p) => p.name))).toEqual([["Bob Ray"], ["Sal Fox"]]);
   });
 });
 

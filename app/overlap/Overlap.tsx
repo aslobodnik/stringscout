@@ -13,7 +13,7 @@ import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
 import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
-import { overlapsFor } from "@/lib/overlap";
+import { mergeAlike, overlapsFor } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
 import type { MockApp, MockData, MockGroup, MockPerson } from "@/app/prototype/reveal/mock";
 import PersonBox from "./PersonBox";
@@ -104,8 +104,9 @@ export default function Overlap({ data: d }: { data: MockData }) {
   const them = withSlug ? (bySlug.get(withSlug) ?? null) : null;
   const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
   const rivals = useMemo(() => rows.map((r) => r.person), [rows]);
-  const one = them ? (rows.find((r) => r.person.slug === them.slug) ?? null) : null;
-  const shown = them ? (one ? [one] : []) : rows;
+  const merged = useMemo(() => mergeAlike(rows), [rows]);
+  const one = them ? (merged.find((g) => g.people.some((p) => p.slug === them.slug)) ?? null) : null;
+  const shown = them ? (one ? [one] : []) : merged;
   const [page, setPage] = useState(0);
   const slice = shown.slice(page * PAGE, (page + 1) * PAGE);
   const turn = (n: number) => {
@@ -149,17 +150,24 @@ export default function Overlap({ data: d }: { data: MockData }) {
                 </tr>
               </thead>
               <tbody>
-                {slice.map(({ person: p, apps, theirs }) => {
-                  // who is on the shared strings, not everything the person sits on
+                {slice.map(({ people: ps, apps, theirs }) => {
+                  // who is on the shared strings, not everything the people sit on
                   const who = behind(theirs, d.groups);
                   const strings = one ? <StringList apps={apps} /> : <StringFold apps={apps} />;
                   return (
-                    <Fragment key={p.slug}>
+                    <Fragment key={ps[0].slug}>
                       <tr className="border-t border-rule-faint align-top">
                         <td className="py-2 pr-4">
-                          <Link href={`${PEOPLE}?q=${encodeURIComponent(p.name)}`} scroll={false} className={`${LINK} font-medium`}>
-                            {p.name}
-                          </Link>
+                          {ps.map((p) => (
+                            <Link
+                              key={p.slug}
+                              href={`${PEOPLE}?q=${encodeURIComponent(p.name)}`}
+                              scroll={false}
+                              className={`${LINK} block w-max max-w-full font-medium ${them?.slug === p.slug ? "text-gold decoration-gold" : ""}`}
+                            >
+                              {p.name}
+                            </Link>
+                          ))}
                           <span className="block text-xs text-ink-soft mt-0.5">
                             <Few items={who} />
                           </span>
@@ -176,7 +184,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
               </tbody>
             </table>
           )}
-          {!them && <Pager total={rows.length} page={page} onPage={turn} noun="people" />}
+          {!them && <Pager total={merged.length} page={page} onPage={turn} noun="rows" />}
         </>
       )}
       <p className={`${TAG} text-ink-soft mt-6 leading-5`}>

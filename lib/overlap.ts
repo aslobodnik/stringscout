@@ -69,3 +69,22 @@ export function suggestPeople(q: string, people: MockPerson[], max = 8): MockPer
   }
   return [...starts, ...within].slice(0, max);
 }
+
+// People at one parent who share exactly the same strings read as one row
+// with every name on it, so three directors of one company are not three
+// copies of one line. Keyed on the strings and the groups behind them;
+// order is kept, so the merged list is still most shared first.
+export type OverlapGroup = { people: MockPerson[]; apps: MockApp[]; theirs: MockApp[] };
+export function mergeAlike(rows: OverlapRow[]): OverlapGroup[] {
+  const out = new Map<string, OverlapGroup>();
+  for (const r of rows) {
+    const key = `${r.apps.map((a) => a.tld).join(" ")}|${[...new Set(r.theirs.map((a) => a.group))].sort().join(" ")}`;
+    const g = out.get(key);
+    if (g) {
+      g.people.push(r.person);
+      const seen = new Set(g.theirs.map((a) => a.id));
+      for (const a of r.theirs) if (!seen.has(a.id)) g.theirs.push(a);
+    } else out.set(key, { people: [r.person], apps: r.apps, theirs: [...r.theirs] });
+  }
+  return [...out.values()];
+}
