@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { TopBar } from "@/components/PageHeader";
 import { buildReal } from "@/app/prototype/reveal/real";
-import Header from "@/app/prototype/reveal/Header";
 import Entities from "@/app/prototype/reveal/entities/Entities";
 
 export const metadata: Metadata = {
@@ -14,7 +13,6 @@ export default function Page() {
   return (
     <>
       <TopBar current="/applicants" />
-      <Header stats={data.stats} current="groups" />
       <Entities data={data} />
     </>
   );
