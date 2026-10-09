@@ -11,7 +11,7 @@
 import Link from "next/link";
 import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
-import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
+import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
 import { mergeByParent, overlapsFor } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
@@ -120,7 +120,10 @@ export default function Overlap({ data: d }: { data: MockData }) {
   return (
     <section id="overlap" className="mb-14 scroll-mt-4">
       <SectionHead n="I" title="Overlap" count={me ? rows.length : undefined} />
-      <PersonBox id="me" label="I am" people={people} picked={me} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
+      <p className="mb-5 leading-6 max-w-prose">
+        Who applied for a string you applied for, most shared first, from ICANN&apos;s reveal of 7 Oct 2026. Start with your name.
+      </p>
+      <PersonBox id="me" people={people} picked={me} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
       {meSlug && !me && <p className="serif italic text-ink-soft mb-6">No one named that in the records.</p>}
       {me && (
         <>
@@ -194,9 +197,6 @@ export default function Overlap({ data: d }: { data: MockData }) {
           {!them && <Pager total={merged.length} page={page} onPage={turn} noun="rows" />}
         </>
       )}
-      <p className={`${TAG} text-ink-soft mt-6 leading-5`}>
-        Identical strings only, from ICANN&apos;s reveal-day contention sets, 7 Oct 2026. People are those an application names as a director, officer or executive.
-      </p>
     </section>
   );
 }

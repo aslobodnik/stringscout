@@ -18,7 +18,7 @@ export default function PersonBox({
   autoFocus,
 }: {
   id: string;
-  label: string; // "I am", "Talking to"
+  label?: string; // "Talking to"; none for the first box
   people: MockPerson[];
   picked: MockPerson | null;
   onPick: (p: MockPerson | null) => void;
@@ -38,11 +38,11 @@ export default function PersonBox({
   return (
     <div id={id} className="mb-5 scroll-mt-6">
       <div className="flex items-baseline gap-3">
-        <span className="label text-ink-soft shrink-0 w-24 whitespace-nowrap">{label}</span>
+        {label && <span className="label text-ink-soft shrink-0 w-24 whitespace-nowrap">{label}</span>}
         {picked ? (
           <Chip label={picked.name} onClear={() => onPick(null)} />
         ) : (
-          <div className="relative w-full sm:w-80">
+          <div className="relative w-full sm:w-[30rem]">
             <input
               type="search"
               value={q}
@@ -70,7 +70,7 @@ export default function PersonBox({
                 }
               }}
               placeholder="Name or company…"
-              aria-label={`${label}: search people by name or company`}
+              aria-label={`${label ?? "You"}: search people by name or company`}
               role="combobox"
               aria-autocomplete="list"
               aria-expanded={suggestions.length > 0}
