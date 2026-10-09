@@ -105,16 +105,17 @@ export default function Overlap({ data: d }: { data: MockData }) {
   const me = meSlug ? (bySlug.get(meSlug) ?? null) : null;
   const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
   const merged = useMemo(() => mergeByParent(rows), [rows]);
-  // what the second box offers: every person on the list, and every company
-  // behind a row, by its group slug
+  // what the second box offers: everyone and every company, not only the
+  // list, so a name off the list gets an answer rather than silence
   const withPicks = useMemo<Pick[]>(() => {
-    const companies = new Map<string, Pick>();
-    for (const g of merged)
-      for (const b of behind(g.theirs, d.groups))
-        if (!companies.has(b.slug))
-          companies.set(b.slug, { kind: "company", slug: b.slug, name: b.name, sub: `${g.people.length} ${g.people.length === 1 ? "person" : "people"}` });
-    return [...rows.map((r) => personPick(r.person)), ...companies.values()];
-  }, [rows, merged, d.groups]);
+    const companies = d.groups.map<Pick>((g) => ({
+      kind: "company",
+      slug: g.slug,
+      name: g.name,
+      sub: g.entities.length > 1 ? `${g.entities.length} entities` : `${g.apps.length} ${g.apps.length === 1 ? "application" : "applications"}`,
+    }));
+    return [...mePicks, ...companies];
+  }, [mePicks, d.groups]);
   const them = withSlug ? (withPicks.find((k) => k.slug === withSlug) ?? null) : null;
   // talking to one person: their row, holding only their own strings; to a
   // company: every row it is behind, every name on it
@@ -126,6 +127,16 @@ export default function Overlap({ data: d }: { data: MockData }) {
     }
     return merged.filter((g) => g.theirs.some((a) => a.group === them.slug));
   }, [them, rows, merged]);
+  // a pick that shares nothing: the entity both are named by, or your own company
+  const aside = useMemo(() => {
+    if (!me || !them || shown.length) return null;
+    if (them.kind === "person") {
+      const theirs = new Set(bySlug.get(them.slug)?.entities.map((e) => e.name));
+      const both = me.entities.filter((e) => theirs.has(e.name)).map((e) => e.name);
+      return both.length ? `Both named by ${both.join(", ")}.` : null;
+    }
+    return me.apps.some((a) => a.group === them.slug) ? "Your own company." : null;
+  }, [me, them, shown, bySlug]);
   const [page, setPage] = useState(0);
   const slice = shown.slice(page * PAGE, (page + 1) * PAGE);
   const turn = (n: number) => {
@@ -168,7 +179,12 @@ export default function Overlap({ data: d }: { data: MockData }) {
             {rows.length} {rows.length === 1 ? "person shares" : "people share"} a string.
           </p>
           <PickBox id="with" label="Talking to" picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
-          {withSlug && !them && <p className="serif italic text-ink-soft mb-6">No one by that name shares a string with {me.name}.</p>}
+          {withSlug && !them && <p className="serif italic text-ink-soft mb-6">No one by that name in the records.</p>}
+          {them && shown.length === 0 && (
+            <p className="serif italic text-ink-soft mb-6">
+              No shared string.{aside && ` ${aside}`}
+            </p>
+          )}
           {!them && rows.length === 0 && (
             <p className="serif italic text-ink-soft mb-6">No overlap recorded: none of their strings sits in a set with another applicant&apos;s.</p>
           )}

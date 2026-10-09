@@ -31,6 +31,7 @@ export default function PickBox({
   const [cursor, setCursor] = useState(-1);
   const [suggesting, setSuggesting] = useState(false);
   const suggestions = suggesting && !picked ? suggestPicks(q, picks) : [];
+  const nothing = suggesting && !picked && q.trim().length >= 2 && suggestions.length === 0;
   const mixed = picks.some((p) => p.kind === "company");
   const pick = (p: Pick) => {
     onPick(p);
@@ -91,6 +92,11 @@ export default function PickBox({
             >
               ×
             </button>
+          )}
+          {nothing && (
+            <p className="absolute left-0 right-0 top-full mt-1 z-30 border border-ink bg-paper text-sm px-3 py-2 serif italic text-ink-soft">
+              No one by that name.
+            </p>
           )}
           {suggestions.length > 0 && (
             <ul id={`${id}-suggestions`} role="listbox" className="absolute left-0 right-0 top-full mt-1 z-30 border border-ink bg-paper text-sm">
