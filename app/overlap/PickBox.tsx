@@ -92,8 +92,8 @@ export default function PickBox({
             pick(suggestions[Math.max(0, cursor)]);
           }
         }}
-        placeholder={label ? "Person or company…" : "Your name…"}
-        aria-label={`${label ?? "You"}: search people by name or company`}
+        placeholder={label ? "Person or company…" : "Applicant or person…"}
+        aria-label={label ? `${label}: search people by name or company` : "Search applicants and people"}
         role="combobox"
         aria-autocomplete="list"
         aria-expanded={suggestions.length > 0}

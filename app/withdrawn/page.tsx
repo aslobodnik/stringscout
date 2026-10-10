@@ -28,7 +28,7 @@ export default function WithdrawnPage() {
     <>
       <PageHeader title="Withdrawn" current="/withdrawn" />
 
-      <p className="text-sm text-ink-soft mb-8 max-w-2xl">
+      <p className="text-sm text-ink-soft mb-8">
         Announced for the 2026 round, then pulled before the application reached
         ICANN.
       </p>

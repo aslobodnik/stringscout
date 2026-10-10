@@ -17,7 +17,6 @@
 import Link from "next/link";
 import { Fragment, useDeferredValue, useMemo, useState } from "react";
 import Tip from "@/components/Tip";
-import SectionHead from "@/components/SectionHead";
 import { LINK, PEOPLE, PERSON_ROLES, StringFold, TAG, TH, ToStrings } from "../bits";
 import SearchBox from "../SearchBox";
 import { groupHit, stringHit, stringNames, term, type GroupHit } from "../search";
@@ -186,20 +185,14 @@ export default function Entities({ data: d }: { data: MockData }) {
 
   return (
     <section className="mb-14">
-      <SectionHead n="I" title="Applicants" count={rows.length} />
+      <div className="double-rule mb-5" />
       <SearchBox
         id="applicants-search"
         value={q}
         onChange={setQ}
         names={names}
         ariaLabel="Search groups, entities, people and strings"
-        count={`${rows.length} ${rows.length === 1 ? "applicant" : "applicants"}`}
       />
-      <p className={`${TAG} text-ink-soft mb-4`}>
-        <sup className="text-oxblood">n</sup> applications for the string
-        <span className="text-rule mx-2">·</span>
-        <span className="text-oxblood">n</span> under apps, uncontested
-      </p>
       {/* no sideways scroll: below sm the entity count goes and the strings
           wrap under the name instead of beside it */}
       <div>
@@ -208,7 +201,7 @@ export default function Entities({ data: d }: { data: MockData }) {
         <table className="w-full text-sm border-collapse table-fixed">
           <thead>
             <tr>
-              <th className={`${TH} sm:w-72`}>Applicant</th>
+              <th className={`${TH} sm:w-72`}>Parent Applicant ({rows.length})</th>
               <th className={`${NUM} w-16 hidden sm:table-cell`}>Entities</th>
               <th className={`${NUM} w-16`}>Apps</th>
               <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>

@@ -23,7 +23,8 @@ const peopleOn = (people: MockPerson[]) => {
   return m;
 };
 
-export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
+// `me` is a person or an applicant: only its slug and its applications count.
+export function overlapsFor(me: { slug: string; apps: MockApp[] }, d: MockData): OverlapRow[] {
   const onApp = peopleOn(d.people ?? []);
   const inSet = new Map<string, MockApp[]>();
   for (const a of d.apps) if (a.setSize > 1) inSet.set(a.tld, [...(inSet.get(a.tld) ?? []), a]);
