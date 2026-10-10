@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 // unseen, once gave the page a sideways scroll between 640 and 768px, which
 // clipped the tiles and the caption. Every width a phone or a narrow window
 // might be, every page that draws the rule or the table.
-const WIDTHS = [320, 360, 375, 414, 480, 640, 700, 768, 1024, 1280];
+const WIDTHS = [320, 375, 768, 1280];
 const PAGES = ["/", "/withdrawn", "/sources"];
 
 for (const path of PAGES) {

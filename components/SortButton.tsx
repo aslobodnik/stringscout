@@ -41,6 +41,8 @@ export default function SortButton<K extends string>({
   return (
     <button
       type="button"
+      // a short head ("#", "×") still reads as its name
+      aria-label={col.short ? col.label : undefined}
       onClick={() =>
         onSort(
           active

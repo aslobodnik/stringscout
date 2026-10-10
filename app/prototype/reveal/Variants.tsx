@@ -36,13 +36,13 @@ const INPUT =
 // replacement, applicant, parent: the head and every line share it
 // minmax(0,1fr): a long applicant name truncates instead of widening the column
 const LINE =
-  "grid grid-cols-[4.5rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[8rem_minmax(0,1fr)_12rem] gap-x-4";
+  "grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-2 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-x-4 lg:grid-cols-[8rem_minmax(0,1fr)_12rem]";
 
 // the heads that sort: the string A to Z, or its applications, most first
 type SortKey = "string" | "apps";
 const SORT_COLS: SortCol<SortKey>[] = [
   { key: "string", label: "String" },
-  { key: "apps", label: "Apps", dir: -1 },
+  { key: "apps", label: "Apps", short: "#", dir: -1 },
 ];
 const SORT_TH = "label !tracking-[0.06em] sm:!tracking-[0.18em]";
 
@@ -116,7 +116,9 @@ const matches = (
 ) => {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (!t) return true;
-  const string = a.tld.includes(t) || (a.uLabel ?? "").toLowerCase().includes(t); // the primary; replacements are a filter, not a search
+  // the string or the replacement the application names: a string named only
+  // as a replacement is found by its name too
+  const string = [a.tld, a.uLabel, a.replacement, a.replacementU].some((x) => x?.toLowerCase().includes(t));
   const applicant = a.applicant.toLowerCase().includes(t);
   const parent =
     (a.entity.parent ?? "").toLowerCase().includes(t) ||
@@ -231,7 +233,7 @@ function Parent({ a, g }: { a: MockApp; g: MockGroup }) {
     return (
       // from lg the column cuts a long name short; the tip then leads with it
       <Hover tip={(cut) => <Above g={g} cut={cut} />} className={FIT}>
-        <Link href={href} scroll={false} className={`${LINK} ${FIT} lg:truncate`}>
+        <Link href={href} scroll={false} className={`${LINK} ${FIT} truncate`}>
           {g.name}
         </Link>
       </Hover>
@@ -366,10 +368,10 @@ const Row = memo(function Row({
       className="border-t border-rule-faint align-top row-press scroll-mt-4 target:bg-paper-deep [content-visibility:auto] [contain-intrinsic-size:auto_2.5rem]"
       style={pressDelay(Math.min(vi * 22, 500))}
     >
-      <td className="py-2 pr-4 font-medium">
+      <td className="py-2 pr-2 sm:pr-4 font-medium whitespace-nowrap">
         <Shown a={r.apps[0]} cell />
       </td>
-      <td className="py-2 pr-4 tabular-nums">{r.apps.length}</td>
+      <td className="py-2 pr-2 sm:pr-4 tabular-nums">{r.apps.length}</td>
       {/* one line per application: its replacement, who applied, who is behind them */}
       <td className="py-2">
         {r.apps.map((a, li) => {
@@ -380,7 +382,7 @@ const Row = memo(function Row({
               key={a.id}
               className={`${LINE} ${li ? "mt-1.5" : ""} ${dim ? "opacity-40" : ""} transition-opacity duration-200 ease-in-out`}
             >
-              <span>
+              <span className="[overflow-wrap:anywhere]">
                 <Replacement a={a} />
               </span>
               <span>
@@ -390,7 +392,7 @@ const Row = memo(function Row({
                     aria-current={applicant === a.applicant || undefined}
                     aria-label={a.applicant}
                     onClick={() => onPick(a.applicant)}
-                    className={`text-left ${FIT} sm:truncate ${LINK} ${applicant === a.applicant ? "text-gold decoration-gold" : ""}`}
+                    className={`text-left ${FIT} truncate ${LINK} ${applicant === a.applicant ? "text-gold decoration-gold" : ""}`}
                   >
                     {a.applicant}
                   </button>
@@ -404,7 +406,7 @@ const Row = memo(function Row({
                 <MockTag on={a.fixture} />
                 {/* below lg the parent has no column: it sits under the name */}
                 {g.link && (
-                  <span className="block text-xs mt-0.5 lg:hidden">
+                  <span className="block text-[11px] sm:text-xs mt-0.5 lg:hidden">
                     <Parent a={a} g={g} />
                   </span>
                 )}
@@ -507,7 +509,11 @@ export default function Reveal({ data: d }: { data: MockData }) {
   const dby = useDeferredValue(by); // a keystroke resets it; the table follows when idle
   const names = useMemo(
     () => ({
-      string: [...new Set(d.apps.map((a) => a.uLabel ?? a.tld))].sort(),
+      string: [
+        ...new Set(
+          d.apps.flatMap((a) => [a.uLabel ?? a.tld, a.replacementU ?? a.replacement ?? ""]).filter(Boolean),
+        ),
+      ].sort(),
       applicant: [...new Set(d.apps.map((a) => a.applicant))].sort(),
       parent: d.groups
         .filter((g) => g.link === "parent")
@@ -781,20 +787,24 @@ export default function Reveal({ data: d }: { data: MockData }) {
         </div>
       </div>
 
-      <table className="w-full table-fixed text-sm border-collapse">
+      <table className="w-full table-fixed text-xs sm:text-sm border-collapse">
         <colgroup>
-          <col className="w-24 sm:w-32" />
-          <col className="w-14 sm:w-[4.25rem]" />
+          {/* wide enough for .superintelligence, the longest string, on one line */}
+          <col className="w-[6.5rem] sm:w-32" />
+          <col className="w-8 sm:w-[4.25rem]" />
           <col />
         </colgroup>
         <thead>
           <tr>
             {SORT_COLS.map((col) => (
-              <SortHead key={col.key} col={col} sort={sort} onSort={setSort} thClassName={`${TH} align-bottom`} className={SORT_TH} />
+              <SortHead key={col.key} col={col} sort={sort} onSort={setSort} thClassName={`${TH} align-bottom max-sm:!pr-2`} className={SORT_TH} />
             ))}
             <th className="pb-2 font-medium align-bottom">
               <span className={LINE}>
-                <span className={`${TH} !pb-0 !pr-0`}>Replacement</span>
+                <span className={`${TH} !pb-0 !pr-0`}>
+                  <span className="sm:hidden">Repl.</span>
+                  <span className="hidden sm:inline">Replacement</span>
+                </span>
                 <span className={`${TH} !pb-0 !pr-0`}>Applicant</span>
                 <span className={`${TH} !pb-0 !pr-0 hidden lg:block`}>
                   Parent

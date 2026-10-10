@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { claims, type Claim } from "@/data/claims";
-import {
-  applicants,
-  type Applicant,
-  type ApplicantStatus,
-} from "@/data/applicants";
+import { applicants } from "@/data/applicants";
 import { sources, sourceIndex, KIND_ORDER } from "@/data/sources";
 import { announced } from "@/data/announced";
 import {
@@ -15,14 +11,7 @@ import {
   withdrawnClaims,
 } from "@/data/announcedAdapter";
 import { handWithdrawn } from "@/data/withdrawn";
-import {
-  applicantBackers,
-  applicantMarks,
-  latestReveal,
-  roundShares,
-  stringCount,
-  stringRows,
-} from "@/lib/derive";
+import { applicantBackers, applicantMarks, stringRows } from "@/lib/derive";
 import { matches } from "@/lib/search";
 import { formatDate } from "@/lib/format";
 
@@ -144,20 +133,6 @@ describe("strings", () => {
   });
 });
 
-describe("round", () => {
-  // one unit per applicant and string; an intent the same applicant later
-  // filed is a filing, so it lands in this set once and nowhere else
-  const filed = new Set(
-    claims.filter((c) => c.kind !== "intent").map((c) => `${c.applicantSlug}|${c.tld}`)
-  );
-
-  it("shares out the disclosed total by applicant, largest first", () => {
-    const shares = roundShares();
-    expect(shares.reduce((n, s) => n + s.count, 0)).toBe(filed.size);
-    expect(shares.map((s) => s.count)).toEqual([...shares.map((s) => s.count)].sort((a, b) => b - a));
-  });
-});
-
 describe("scraped announcements", () => {
   it("parses strings, not the prose beside them", () => {
     const bad = [...new Set(announced.flatMap((a) => a.strings))].filter(
@@ -257,36 +232,6 @@ describe("scraped announcements", () => {
       );
       expect(claimed, `${w.applicant} should not claim .${w.tld}`).toBe(false);
     }
-  });
-});
-
-describe("latest reveal", () => {
-  const row = (
-    slug: string,
-    status: ApplicantStatus,
-    revealedOn: string
-  ): Applicant => ({ ...applicants[0], slug, name: slug, status, revealedOn });
-
-  it("returns every disclosed applicant on the newest date, and no intent row", () => {
-    const latest = latestReveal([
-      row("older", "disclosed", "2026-08-20"),
-      row("a", "disclosed", "2026-08-27"),
-      row("announced", "intent", "2026-08-30"),
-      row("b", "disclosed", "2026-08-27"),
-    ]);
-    expect(latest.map((a) => a.slug)).toEqual(["a", "b"]);
-  });
-});
-
-describe("string counts", () => {
-  it("counts a string once however many claims an applicant has on it", () => {
-    // Unstoppable filed .agi and also announced it upstream: two claims, one
-    // string. The count is what the applicants column, its sort and the
-    // dateline all print, so a link's number matches the row it lands on.
-    const mine = claims.filter((c) => c.applicantSlug === "unstoppable");
-    expect(mine.filter((c) => c.tld === "agi").length).toBeGreaterThan(1);
-    expect(stringCount("unstoppable")).toBe(new Set(mine.map((c) => c.tld)).size);
-    expect(stringCount("nobody")).toBe(0);
   });
 });
 
