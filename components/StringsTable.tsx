@@ -25,6 +25,7 @@ import { ShortcutSheet } from "./strings-table/ShortcutSheet";
 import { useTableKeys } from "./strings-table/useTableKeys";
 import { StatTiles } from "./strings-table/StatTiles";
 import { Tally } from "./strings-table/Tally";
+import { SortHead, type Sort, type SortCol } from "./SortButton";
 import { downloadCsv } from "./strings-table/csv";
 import type { Citations, UiStats, UiStringRow } from "./strings-table/types";
 
@@ -69,14 +70,8 @@ function FilterChip({
 
 type SortKey = "tld" | "applicants" | "overlap";
 
-// dir: default sort direction (overlaps = most applicants first); short: sub-sm header label
-const SORT_COLS: {
-  key: SortKey;
-  label: string;
-  short?: string;
-  right?: boolean;
-  dir?: -1;
-}[] = [
+// overlaps run most applicants first
+const SORT_COLS: (SortCol<SortKey> & { right?: boolean })[] = [
   { key: "tld", label: "String" },
   { key: "applicants", label: "Applicants" },
   { key: "overlap", label: "Overlaps", short: "×", right: true, dir: -1 },
@@ -86,52 +81,6 @@ const collator = new Intl.Collator();
 
 const applicantParam = () =>
   new URLSearchParams(window.location.search).get("applicant");
-
-type Sort = { key: SortKey; dir: 1 | -1 };
-
-function SortButton({
-  col,
-  sort,
-  onSort,
-}: {
-  col: (typeof SORT_COLS)[number];
-  sort: Sort;
-  onSort: (s: Sort) => void;
-}) {
-  const active = sort.key === col.key;
-  return (
-    <button
-      type="button"
-      onClick={() =>
-        onSort(
-          active
-            ? { key: col.key, dir: sort.dir === 1 ? -1 : 1 }
-            : { key: col.key, dir: col.dir ?? 1 }
-        )
-      }
-      className={`label cursor-pointer transition-colors duration-200 ease-in-out ${
-        active ? "text-ink" : "text-ink-soft hover:text-ink"
-      }`}
-    >
-      {col.short ? (
-        <>
-          <span className="hidden sm:inline">{col.label}</span>
-          <span className="sm:hidden">{col.short}</span>
-        </>
-      ) : (
-        col.label
-      )}
-      <span
-        aria-hidden
-        className={`text-[8px] ml-1.5 transition-colors duration-200 ease-in-out ${
-          active ? "text-gold" : "text-rule"
-        }`}
-      >
-        {active && sort.dir === -1 ? "▼" : "▲"}
-      </span>
-    </button>
-  );
-}
 
 // A reader meets the 29 pages at the foot of page one, so the way out of them
 // belongs there as well as in the toolbar. Both carry the count: "show all" on
@@ -270,7 +219,7 @@ export default function StringsTable({
   // the string an index entry sent the reader to, held so it stands out among
   // the strings its dotted search also matches (.con reaches .concert too)
   const [focused, setFocused] = useState<string | null>(null);
-  const [sort, setSort] = useState<Sort>({ key: "tld", dir: 1 });
+  const [sort, setSort] = useState<Sort<SortKey>>({ key: "tld", dir: 1 });
   // A new filter or sort starts from page one: the page is held against the
   // filter it was turned under and reads as 0 under any other, so no setter
   // has to remember to reset it.
@@ -623,30 +572,17 @@ export default function StringsTable({
             </colgroup>
             <thead>
               <tr className="text-left">
-                {SORT_COLS.map((col) => {
-                  const active = sort.key === col.key;
-                  return (
-                    <th
-                      key={col.key}
-                      aria-sort={
-                        active
-                          ? sort.dir === 1
-                            ? "ascending"
-                            : "descending"
-                          : undefined
-                      }
-                      className={`pb-2 font-medium whitespace-nowrap ${
-                        col.right ? "text-right" : "pr-4"
-                      }`}
-                    >
-                      <SortButton
-                        col={col}
-                        sort={sort}
-                        onSort={setSort}
-                      />
-                    </th>
-                  );
-                })}
+                {SORT_COLS.map((col) => (
+                  <SortHead
+                    key={col.key}
+                    col={col}
+                    sort={sort}
+                    onSort={setSort}
+                    thClassName={`pb-2 font-medium whitespace-nowrap ${
+                      col.right ? "text-right" : "pr-4"
+                    }`}
+                  />
+                ))}
               </tr>
             </thead>
             <tbody key={slice}>

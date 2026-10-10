@@ -72,3 +72,36 @@ export const cjkGloss: Record<string, string> = {
   "非遗": "intangible heritage",
   "汉服": "hanfu",
 };
+
+// English glosses for the IDN strings in ICANN's APS record, ours, a word or
+// two each, read from the meaning each applicant gave (AGB Q118). Where the
+// applicant gave none (a brand), the brand's own English name; where the
+// characters have a plain meaning, that. Keyed by U-label.
+export const idnGloss: Record<string, string> = {
+  "在线": "online",
+  "株式会社": "stock company",
+  "地址": "address",
+  "商标": "trademark",
+  "名片": "business card",
+  "中文网": "Chinese website",
+  "番茄": "tomato",
+  "购物": "shopping",
+  "数字人": "digital human",
+  "人工智能": "artificial intelligence",
+  "机器人": "robot",
+  "红果": "red fruit",
+  "酒店": "hotel",
+  "餐厅": "restaurant",
+  "网络": "network",
+  "品牌": "brand",
+  "官网": "official website",
+  "防伪": "anti-counterfeiting",
+  "智能体": "intelligent agent",
+  "钱包": "wallet",
+  "海尔": "Haier",
+  "海尔兄弟": "Haier Brothers",
+  "瑞幸": "Luckin",
+  "瑞幸咖啡": "Luckin Coffee",
+  "抖音": "Douyin",
+  "海信": "Hisense",
+};

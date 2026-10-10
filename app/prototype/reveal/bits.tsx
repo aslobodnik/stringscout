@@ -62,16 +62,27 @@ const HOW = { applied: "applied for by", named: "also named by" };
 
 // A `group relative` wrapper whose tip is built on first hover and kept.
 // Sixteen hundred lines each carrying a tip full of names is what made typing
-// feel frozen; built on demand, the table carries no tip until asked.
-export function Hover({ tip, className = "", children }: { tip: () => ReactNode; className?: string; children: ReactNode }) {
+// feel frozen; built on demand, the table carries no tip until asked. The tip
+// is told whether the column cut the name short (measured on the way in, not
+// while rendering), so it can lead with the whole name.
+export function Hover({ tip, className = "", children }: { tip: (cut: boolean) => ReactNode; className?: string; children: ReactNode }) {
   const [hot, setHot] = useState(false);
+  const [cut, setCut] = useState(false);
+  const enter = (e: { currentTarget: HTMLElement }) => {
+    const el = e.currentTarget.lastElementChild;
+    setCut(!!el && el.scrollWidth > el.clientWidth);
+    setHot(true);
+  };
   return (
-    <span className={`group relative ${className}`} onMouseEnter={() => setHot(true)} onFocus={() => setHot(true)}>
-      {hot && tip()}
+    <span className={`group relative ${className}`} onMouseEnter={enter} onFocus={enter}>
+      {hot && tip(cut)}
       {children}
     </span>
   );
 }
+
+// a name that may be cut short by its column and sits beside a tip
+export const FIT = "inline-block max-w-full align-bottom";
 
 // An application's replacement. Knocked out, it is struck through and carries
 // the number of applications that knock it out; hovering names them. None
@@ -79,13 +90,16 @@ export function Hover({ tip, className = "", children }: { tip: () => ReactNode;
 export function Replacement({ a }: { a: MockApp }) {
   if (!a.replacement) return DASH;
   const n = a.blockers.length;
+  // one tip for the cell: the gloss, then whoever knocks the replacement out
+  const gloss = a.replacementGloss;
   return (
     <span className="inline-flex flex-wrap items-baseline gap-x-2">
       <Hover
-        className={n ? "cursor-default" : ""}
+        className={n || gloss ? "cursor-help" : ""}
         tip={() =>
-          n > 0 && (
+          (n > 0 || gloss) && (
             <Tip>
+              {gloss && <span className="block serif italic">“{gloss}”</span>}
               {a.blockers.map((b) => (
                 <span key={b.how + b.name} className="block">
                   <span className="serif italic text-ink-soft">{HOW[b.how]}</span> {b.name}
@@ -96,7 +110,7 @@ export function Replacement({ a }: { a: MockApp }) {
         }
       >
         <span className={n ? "line-through decoration-oxblood text-ink-soft" : ""}>
-          <Shown a={{ tld: a.replacement, uLabel: a.replacementU }} />
+          <Shown a={{ tld: a.replacement, uLabel: a.replacementU, gloss }} cell glossTip={false} />
         </span>
         {n > 0 && <sup className="text-oxblood ml-0.5">{n}</sup>}
       </Hover>
@@ -113,15 +127,28 @@ export const MockTag = ({ on }: { on: boolean }) =>
 // A string in contention is set in oxblood with its count, as the issue
 // states are everywhere else; one alone stays in ink.
 // An IDN prints as its U-label; the A-label the record keys it by follows
-// small, so the punycode is still there to copy.
-export function Shown({ a }: { a: { tld: string; uLabel?: string } }) {
+// small, so the punycode is still there to copy. In a table cell the punycode
+// sits under the label, so the column is as wide as the label, and a glossed
+// label is dotted and gives its English on hover, unless a tip around it
+// carries the gloss instead (glossTip false).
+export function Shown({ a, cell, glossTip = true }: { a: { tld: string; uLabel?: string; gloss?: string }; cell?: boolean; glossTip?: boolean }) {
+  const label = <Tld>{a.uLabel ?? a.tld}</Tld>;
+  const dotted = cell && a.gloss ? <span className={GLOSSED}>{label}</span> : null;
   return (
     <>
-      <Tld>{a.uLabel ?? a.tld}</Tld>
-      {a.uLabel && <span className={`${TAG} text-ink-soft ml-1.5 !normal-case !tracking-normal`}>{a.tld}</span>}
+      {dotted && glossTip ? (
+        <Hover tip={() => <Tip className="serif italic">“{a.gloss}”</Tip>}>{dotted}</Hover>
+      ) : (
+        (dotted ?? label)
+      )}
+      {a.uLabel && (
+        <span className={`${TAG} text-ink-soft !normal-case !tracking-normal ${cell ? "block" : "ml-1.5"}`}>{a.tld}</span>
+      )}
     </>
   );
 }
+
+const GLOSSED = "cursor-help border-b border-dotted border-ink-soft hover:border-gold transition-colors duration-200 ease-in-out";
 
 // A string anywhere links to the strings page searched for it, as the
 // applicant and parent links do, rather than to a row anchor.

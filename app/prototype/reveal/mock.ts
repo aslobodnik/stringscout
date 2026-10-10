@@ -24,10 +24,12 @@ export type MockApp = {
   id: string;
   tld: string; // the A-label, as the record keys it
   uLabel?: string; // an IDN's U-label, what a reader sees
+  gloss?: string; // its English, from data/translations.ts
   applicant: string;
   slug: string;
   replacement: string | null; // A-label
   replacementU?: string; // an IDN replacement's U-label
+  replacementGloss?: string;
   status: Status;
   // every application that knocks the replacement out (AGB §5.1): one that
   // applied for the same string, or one that named it as its replacement too
