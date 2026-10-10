@@ -16,13 +16,15 @@ export default function Page() {
     <>
       <TopBar current="/" />
       {/* the one way in from the strings to the check before a conversation */}
-      <p className="pt-6 pb-6">
-        <Link
-          href="/overlap"
-          className={`${LINK} label text-ink !text-xs !tracking-[0.1em] sm:!text-sm sm:!tracking-[0.18em]`}
-        >
-          Applicant? <span className="whitespace-nowrap">Find who you overlap with →</span>
-        </Link>
+      <p className="pt-6 pb-6 label text-ink !text-xs !tracking-[0.1em] sm:!text-sm sm:!tracking-[0.18em]">
+        Applicant?{" "}
+        <span className="whitespace-nowrap">
+          Find who you{" "}
+          <Link href="/overlap" className={LINK}>
+            overlap
+          </Link>{" "}
+          with
+        </span>
       </p>
       <Reveal data={data} />
     </>

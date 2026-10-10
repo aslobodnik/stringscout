@@ -85,26 +85,22 @@ export function suggestPicks(q: string, picks: Pick[], max = 8): Pick[] {
 export const suggestPeople = (q: string, people: MockPerson[], max = 8) =>
   suggestPicks(q, people.map(personPick), max).map((k) => people.find((p) => p.slug === k.slug)!);
 
-// People behind the same parents read as one row, every name on it, with
-// the union of their strings: three directors of one company are not three
-// copies of one line. A name on fewer strings than the row keeps its own
-// list, so the row can mark how many it shares. Order is kept by the first person in,
-// then by the union, so the merged list is still most shared first.
+// People behind the same parents on the same strings read as one row, every
+// name on it: three directors of one company are not three copies of one
+// line. A name on other strings gets a row of its own, so a row's strings
+// are every name's. Most shared first, then in the order the first came in.
 export type OverlapGroup = { people: OverlapRow[]; apps: MockApp[]; theirs: MockApp[] };
 export function mergeByParent(rows: OverlapRow[]): OverlapGroup[] {
   const out = new Map<string, OverlapGroup>();
   for (const r of rows) {
-    const key = [...new Set(r.theirs.map((a) => a.group))].sort().join(" ");
+    const parents = [...new Set(r.theirs.map((a) => a.group))].sort().join(" ");
+    const key = `${parents}|${r.apps.map((a) => a.tld).join(" ")}`; // apps come sorted by string
     const g = out.get(key);
     if (g) {
       g.people.push(r);
-      const seen = new Set(g.apps.map((a) => a.tld));
-      for (const a of r.apps) if (!seen.has(a.tld)) g.apps.push(a);
       const ids = new Set(g.theirs.map((a) => a.id));
       for (const a of r.theirs) if (!ids.has(a.id)) g.theirs.push(a);
     } else out.set(key, { people: [r], apps: [...r.apps], theirs: [...r.theirs] });
   }
-  return [...out.values()]
-    .map((g) => ({ ...g, apps: g.apps.sort((x, y) => x.tld.localeCompare(y.tld)) }))
-    .sort((x, y) => y.apps.length - x.apps.length);
+  return [...out.values()].sort((x, y) => y.apps.length - x.apps.length);
 }

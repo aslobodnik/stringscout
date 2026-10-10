@@ -59,6 +59,15 @@ describe("mergeByParent", () => {
       [["Sal Fox"], ["hub"]],
     ]);
   });
+  it("a name behind the same parent on other strings gets its own row", () => {
+    const cy = person("Cy Ho", "a", [aHub]); // on Ann's entity, but only .hub
+    const g = mergeByParent(overlapsFor(bob, { ...data, people: [ann, al, bob, sis, cy] } as MockData));
+    expect(g.map((r) => [r.people.map((p) => p.person.name), r.apps.map((a) => a.tld)])).toEqual([
+      [["Al Ng", "Ann Lee"], ["agent", "hub"]],
+      [["Cy Ho"], ["hub"]],
+      [["Sal Fox"], ["hub"]],
+    ]);
+  });
   it("each person keeps their own strings inside the row", () => {
     // Sal shares only .hub with Ann; Bob shares .agent and .hub
     const g = mergeByParent(overlapsFor(ann, data));

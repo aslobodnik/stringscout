@@ -9,14 +9,15 @@
 // the strings page filtered to that person.
 //
 // The list is one list, a hundred a page, as the people page: no fold for
-// the tail, since a second heading hides most of a list. A row names its
-// people inline, who is behind their strings under them, and prints the
-// shared strings three lines deep, opening to the rest in place.
+// the tail, since a second heading hides most of a list. A row is the people
+// behind the same parents on the same strings, a name a line, who is behind
+// them under the names, and the shared strings three lines deep, opening to
+// the rest in place.
 import Link from "next/link";
 import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
 import Tip from "@/components/Tip";
-import { ENTITIES, LINK, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
+import { ENTITIES, LINK, StringFold, StringList, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
 import { mergeByParent, overlapsFor, personPick, type OverlapRow, type Pick } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
@@ -135,31 +136,18 @@ function Behinds({ items, hot }: { items: Behind[]; hot: string | null }) {
   );
 }
 
-// The people on a row, inline as the applicants cell: a dot between, kept
-// with the name before it so no line opens on one. A name moves to the next
-// line whole; one longer than the column wraps inside itself rather than
-// running into the next. A name on fewer strings than the row carries how
-// many it shares, read out on hover; rare enough that a phone goes without.
-function Names({ people, of, hot }: { people: OverlapRow[]; of: number; hot: string | null }) {
+// The people on a row, a line each: they share every string on it. A name
+// longer than the column wraps inside itself rather than running into the
+// next.
+function Names({ people, hot }: { people: OverlapRow[]; hot: string | null }) {
   return (
     <div>
-      {people.map(({ person: p, apps: own }, i) => (
-        <Fragment key={p.slug}>
-          <span className="inline-block max-w-full">
-            <Link href={stringsFor("person", p.name)} scroll={false} className={`${LINK} font-medium ${p.slug === hot ? GOLD : ""}`}>
-              {p.name}
-            </Link>
-            {own.length < of && (
-              <span className="group relative">
-                <Tip>
-                  {own.length} of {of} strings
-                </Tip>
-                <sup className="text-oxblood ml-0.5">{own.length}</sup>
-              </span>
-            )}
-            {i < people.length - 1 && <span className="text-ink-soft">{"\u00a0·"}</span>}
-          </span>{" "}
-        </Fragment>
+      {people.map(({ person: p }) => (
+        <div key={p.slug}>
+          <Link href={stringsFor("person", p.name)} scroll={false} className={`${LINK} font-medium ${p.slug === hot ? GOLD : ""}`}>
+            {p.name}
+          </Link>
+        </div>
       ))}
     </div>
   );
@@ -301,9 +289,6 @@ export default function Overlap({ data: d }: { data: MockData }) {
           )}
           {slice.length > 0 && (
             <>
-              <p className={`${TAG} text-ink-soft mb-4`}>
-                <sup className="text-oxblood">n</sup> applications for the string
-              </p>
               <table className="w-full text-sm border-collapse table-fixed">
                 <thead>
                   <tr>
@@ -321,7 +306,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
                       <Fragment key={ps[0].person.slug}>
                         <tr className="border-t border-rule-faint align-top">
                           <td className="py-2 pr-4">
-                            <Names people={ps} of={apps.length} hot={hotPerson} />
+                            <Names people={ps} hot={hotPerson} />
                             <Behinds items={who} hot={hotCompany} />
                           </td>
                           <td className="py-2 pr-4 text-right tabular-nums">{apps.length}</td>
