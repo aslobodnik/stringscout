@@ -9,13 +9,13 @@
 //   a dash                     = none named, or no parent
 
 import Link from "next/link";
-import { Fragment, memo, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import KindRule from "./KindRule";
-import Choice from "./Choice";
 import Tip from "@/components/Tip";
 import { pressDelay } from "@/lib/press";
 import {
   DASH,
+  FIT,
   ENTITIES,
   Hover,
   LINK,
@@ -27,13 +27,40 @@ import {
   Shown,
 } from "./bits";
 import type { MockApp, MockData, MockGroup } from "./mock";
+import { SortHead, type Sort, type SortCol } from "@/components/SortButton";
+import { csvText, saveCsv } from "@/components/strings-table/csv";
+import { slugify } from "@/lib/format";
 
 const INPUT =
   "border border-ink bg-transparent px-3 h-10 text-base sm:text-sm w-full placeholder:text-ink-soft focus:border-gold focus:outline-none transition-colors duration-200 ease-in-out";
 // replacement, applicant, parent: the head and every line share it
 // minmax(0,1fr): a long applicant name truncates instead of widening the column
 const LINE =
-  "grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[11rem_minmax(0,1fr)_16rem] gap-x-4";
+  "grid grid-cols-[4.5rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[8rem_minmax(0,1fr)_12rem] gap-x-4";
+
+// the heads that sort: the string A to Z, or its applications, most first
+type SortKey = "string" | "apps";
+const SORT_COLS: SortCol<SortKey>[] = [
+  { key: "string", label: "String" },
+  { key: "apps", label: "Apps", dir: -1 },
+];
+const SORT_TH = "label !tracking-[0.06em] sm:!tracking-[0.18em]";
+
+// The CSV is the table as shown: its rows, filtered and sorted, one per
+// string. Each string's applications run as parallel "; " lists, so entry n
+// of applicants, parents, replacements and the rest is the same application.
+const CSV_COLS = [
+  "string",
+  "punycode",
+  "english",
+  "applications",
+  "contested",
+  "applicants",
+  "parents",
+  "replacements",
+  "replacement_status",
+  "kinds",
+] as const;
 
 // What the applicant designated the string as (AGB Q179, Q158, Module 1),
 // else open. A registry that asked to keep every name for itself without a
@@ -49,8 +76,7 @@ const kindOf = (a: MockApp): Kind =>
         : a.registration === "closed"
           ? "closed"
           : "open";
-const KINDS: { value: Kind | "all"; label: string }[] = [
-  { value: "all", label: "All types" },
+const KINDS: { value: Kind; label: string }[] = [
   { value: "open", label: "Open" },
   { value: "brand", label: "Brand" },
   { value: "community", label: "Community" },
@@ -71,12 +97,11 @@ const KIND_TAG: Record<Kind, string> = {
   closed: "closed",
 };
 
-// what the search box reads: everything, or one column. A person is read
-// only when asked for: the names behind 1,614 applications would flood
-// Anything with rows the query does not name.
+// what the search box reads: every column, or the one a picked suggestion or
+// a ?by= link set. A person is read only when picked: the names behind 1,614
+// applications would flood an open search with rows the query does not name.
 type By = "all" | "string" | "applicant" | "parent" | "person";
-const BY: { value: By; label: string }[] = [
-  { value: "all", label: "Anything" },
+const BY: { value: Exclude<By, "all">; label: string }[] = [
   { value: "string", label: "String" },
   { value: "applicant", label: "Applicant" },
   { value: "parent", label: "Parent" },
@@ -117,142 +142,78 @@ const SCOPE_LABEL: Record<Scope, string> = {
   uncontested: "Uncontested",
 };
 
-// The replacement legend, the shipped table's marker legend copied: the
-// definition and the way to isolate it in one control. A mark per state.
+// The table's two filters, each a segmented control under its own name: what
+// state the string is in, and what its replacement is. One of each may be on,
+// since they are different questions. The rows show the states their own way
+// (lines, strike, dash), so the controls carry words, not marks.
 type RMark = "live" | "blocked" | "none";
-type CMark = "contention" | "uncontested";
-type LMark = RMark | CMark;
-const RMARKS: { mark: LMark; glyph: string; label: string; detail: string }[] =
-  [
-    {
-      mark: "contention",
-      glyph: "n",
-      label: "contested",
-      detail: "Two or more applications for the string: a contention set.",
-    },
-    {
-      mark: "uncontested",
-      glyph: "1",
-      label: "uncontested",
-      detail: "One application for the string.",
-    },
-    {
-      mark: "live",
-      glyph: "r",
-      label: "replacement live",
-      detail:
-        "Replacement named, and nobody else applied for it or named it (AGB §5.1).",
-    },
-    {
-      mark: "blocked",
-      glyph: "r",
-      label: "replacement blocked",
-      detail:
-        "Replacement named, but another applicant applied for it or named it too (AGB §5.1).",
-    },
-    {
-      mark: "none",
-      glyph: "–",
-      label: "no replacement",
-      detail: "No replacement string named.",
-    },
-  ];
-const RBLOCK: Record<LMark, string> = {
-  contention: "border-oxblood text-oxblood",
-  uncontested: "border-ink text-ink",
-  live: "bg-ink text-paper border-ink",
-  blocked: "border-oxblood text-oxblood line-through",
-  none: "border-rule-faint text-ink-soft",
-};
-const isScope = (m: LMark): m is CMark =>
-  m === "contention" || m === "uncontested";
 const rmarkOf = (a: MockApp): RMark =>
   !a.replacement ? "none" : a.blockers.length ? "blocked" : "live";
+type Opt<T> = { value: T; short: string; detail: string };
+const SCOPE_OPTS: Opt<Exclude<Scope, "all">>[] = [
+  { value: "contention", short: SCOPE_LABEL.contention, detail: "Two or more applications for the string: a contention set." },
+  { value: "uncontested", short: SCOPE_LABEL.uncontested, detail: "One application for the string." },
+];
+const RMARK_OPTS: Opt<RMark>[] = [
+  { value: "live", short: "Live", detail: "Replacement named, and nobody else applied for it or named it (AGB §5.1)." },
+  { value: "blocked", short: "Blocked", detail: "Replacement named, but another applicant applied for it or named it too (AGB §5.1)." },
+  { value: "none", short: "None", detail: "No replacement string named." },
+];
 
-function RBlock({ mark, inverted }: { mark: LMark; inverted?: boolean }) {
-  const m = RMARKS.find((x) => x.mark === mark)!;
-  return (
-    <span
-      aria-hidden
-      className={`inline-flex items-center justify-center w-[13px] h-[13px] text-[9px] font-medium uppercase leading-none border ${
-        inverted ? "border-paper/45 text-paper" : RBLOCK[mark]
-      }`}
-    >
-      {m.glyph}
-    </span>
-  );
-}
-
-// Contention on the left, replacement state on the right, a rule between:
-// one of each may be on, since they are different questions.
-function RLegend({
-  scope,
-  rmark,
-  onScope,
-  onMark,
-}: {
-  scope: Scope;
-  rmark: RMark | null;
-  onScope: (m: CMark) => void;
-  onMark: (m: RMark) => void;
-}) {
-  return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-      {RMARKS.map(({ mark, label, detail }, i) => {
-        const on = isScope(mark) ? scope === mark : rmark === mark;
-        return (
-          <Fragment key={mark}>
-            {i === 2 && (
-              <span aria-hidden className="hidden sm:block w-px h-4 bg-rule" />
-            )}
-            <button
-              type="button"
-              aria-pressed={on}
-              aria-label={`${on ? "Show every string" : `Show only ${label}`}. ${detail}`}
-              onClick={() => (isScope(mark) ? onScope(mark) : onMark(mark))}
-              className={`group relative flex items-center gap-1.5 cursor-pointer px-1.5 -mx-1.5 py-1 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
-                on ? "bg-ink text-paper" : "hover:bg-paper-deep"
-              }`}
-            >
-              <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">
-                {detail}
-              </Tip>
-              <RBlock mark={mark} inverted={on} />
-              <span
-                className={`label !text-[10px] !tracking-[0.08em] ${on ? "text-paper" : "text-ink-soft"}`}
-              >
-                {label}
-              </span>
-            </button>
-          </Fragment>
-        );
-      })}
-    </div>
-  );
-}
-
-function Chip({
+// The name, then the control: two grid cells, so the names of both filters
+// share a column and the controls one width, the narrower control's segments
+// growing to fill it.
+function Segmented<T extends string>({
   label,
-  verbatim,
-  onClear,
+  value,
+  options,
+  onPick,
+  className = "",
 }: {
   label: string;
-  verbatim?: boolean;
-  onClear: () => void;
+  value: T | null;
+  options: Opt<T>[];
+  onPick: (v: T) => void;
+  className?: string;
 }) {
+  return (
+    <>
+      <span className={`label text-ink-soft ${className}`}>{label}</span>
+      <div role="group" aria-label={label} className="flex border border-ink">
+        {options.map((o, i) => {
+          const on = value === o.value;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              aria-pressed={on}
+              aria-label={`${on ? "Show every string" : `Show only ${o.short}`}. ${o.detail}`}
+              onClick={() => onPick(o.value)}
+              className={`group relative grow flex items-center justify-center h-7 px-2.5 cursor-pointer transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold ${
+                i ? "border-l border-ink" : ""
+              } ${on ? "bg-rule-faint" : "hover:bg-paper-deep"}`}
+            >
+              <Tip className="max-md:!whitespace-normal max-md:w-max max-md:max-w-56">{o.detail}</Tip>
+              {/* on: a ground darker than hover's, the word in oxblood */}
+              <span className={`label !text-[10px] !tracking-[0.08em] transition-colors duration-200 ease-in-out ${on ? "text-oxblood" : "text-ink"}`}>{o.short}</span>
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function Chip({ label, onClear }: { label: string; onClear: () => void }) {
   return (
     <button
       type="button"
       onClick={onClear}
-      aria-label={`Clear the ${label.toLowerCase()} filter`}
+      aria-label={`Clear the ${label} filter`}
       className="group relative label !text-[10px] border border-oxblood text-oxblood px-2 h-7 cursor-pointer hover:bg-oxblood hover:text-paper transition-colors duration-200 ease-in-out flex items-center gap-2"
     >
-      <Tip>Clear the {label.toLowerCase()} filter</Tip>
-      {verbatim ? (
-        <span className="normal-case tracking-normal text-xs">{label}</span>
-      ) : (
-        label
-      )}
+      <Tip>Clear the {label} filter</Tip>
+      <span className="normal-case tracking-normal text-xs">{label}</span>
       <span aria-hidden className="text-[11px] leading-none">
         ×
       </span>
@@ -268,8 +229,9 @@ function Parent({ a, g }: { a: MockApp; g: MockGroup }) {
   const href = `${ENTITIES}?q=${encodeURIComponent(g.name)}`;
   if (!inferred(g.link))
     return (
-      <Hover tip={() => <Above a={a} g={g} />}>
-        <Link href={href} scroll={false} className={LINK}>
+      // from lg the column cuts a long name short; the tip then leads with it
+      <Hover tip={(cut) => <Above g={g} cut={cut} />} className={FIT}>
+        <Link href={href} scroll={false} className={`${LINK} ${FIT} lg:truncate`}>
           {g.name}
         </Link>
       </Hover>
@@ -289,7 +251,7 @@ function Parent({ a, g }: { a: MockApp; g: MockGroup }) {
 // Hovering a parent names the people behind it: everyone the records of the
 // entities under it list, merged by role. The parent itself files nothing, so
 // its people are only ever those its subsidiaries name.
-function Above({ g }: { a: MockApp; g: MockGroup }) {
+function Above({ g, cut }: { g: MockGroup; cut: boolean }) {
   const byRole = new Map<string, string[]>();
   for (const e of g.entities)
     for (const r of e.roles ?? []) {
@@ -313,10 +275,11 @@ function Above({ g }: { a: MockApp; g: MockGroup }) {
   const roles = [...byRole.entries()]
     .filter(([, names]) => names.length)
     .sort((x, y) => order.indexOf(x[0]) - order.indexOf(y[0]));
-  if (!roles.length) return null;
+  if (!roles.length && !cut) return null;
   const n = g.entities.length;
   return (
     <Tip side="right" className="!whitespace-normal w-max max-w-[28rem]">
+      {cut && <span className="block">{g.name}</span>}
       {roles.map(([role, names]) => (
         <span key={role} className="block">
           <span className="serif italic text-ink-soft">
@@ -335,15 +298,14 @@ function Above({ g }: { a: MockApp; g: MockGroup }) {
 }
 
 // Hovering an applicant names the people its record lists, one line per
-// AGB question. 1,613 of 1,614 applications name at least one person.
-const LONG = 34; // characters of applicant name the column holds on one line
-function Behind({ a }: { a: MockApp }) {
+// AGB question, after the whole name when the column cut it short. 1,613 of
+// 1,614 applications name at least one person.
+function Behind({ a, cut }: { a: MockApp; cut: boolean }) {
   const roles = a.entity.roles ?? [];
-  const long = a.applicant.length > LONG;
-  if (!roles.length && !long) return null;
+  if (!roles.length && !cut) return null;
   return (
     <Tip className="!whitespace-normal w-max max-w-[28rem]">
-      {long && <span className="block font-medium">{a.applicant}</span>}
+      {cut && <span className="block font-medium">{a.applicant}</span>}
       {roles.map((r) => (
         <span key={r.role} className="block">
           <span className="serif italic text-ink-soft">
@@ -405,8 +367,9 @@ const Row = memo(function Row({
       style={pressDelay(Math.min(vi * 22, 500))}
     >
       <td className="py-2 pr-4 font-medium">
-        <Shown a={r.apps[0]} />
+        <Shown a={r.apps[0]} cell />
       </td>
+      <td className="py-2 pr-4 tabular-nums">{r.apps.length}</td>
       {/* one line per application: its replacement, who applied, who is behind them */}
       <td className="py-2">
         {r.apps.map((a, li) => {
@@ -421,16 +384,13 @@ const Row = memo(function Row({
                 <Replacement a={a} />
               </span>
               <span>
-                <Hover
-                  tip={() => <Behind a={a} />}
-                  className="inline-block max-w-full align-bottom"
-                >
+                <Hover tip={(cut) => <Behind a={a} cut={cut} />} className={FIT}>
                   <button
                     type="button"
                     aria-current={applicant === a.applicant || undefined}
                     aria-label={a.applicant}
                     onClick={() => onPick(a.applicant)}
-                    className={`text-left inline-block max-w-full sm:truncate align-bottom ${LINK} ${applicant === a.applicant ? "text-gold decoration-gold" : ""}`}
+                    className={`text-left ${FIT} sm:truncate ${LINK} ${applicant === a.applicant ? "text-gold decoration-gold" : ""}`}
                   >
                     {a.applicant}
                   </button>
@@ -442,14 +402,14 @@ const Row = memo(function Row({
                   </span>
                 )}
                 <MockTag on={a.fixture} />
-                {/* below sm the parent has no column: it sits under the name */}
+                {/* below lg the parent has no column: it sits under the name */}
                 {g.link && (
-                  <span className="block text-xs mt-0.5 sm:hidden">
+                  <span className="block text-xs mt-0.5 lg:hidden">
                     <Parent a={a} g={g} />
                   </span>
                 )}
               </span>
-              <span className="hidden sm:block">
+              <span className="hidden lg:block">
                 <Parent a={a} g={g} />
               </span>
             </div>
@@ -515,6 +475,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
   const [applicant, setApplicant] = useState<string | null>(null);
   const [kind, setKind] = useState<Kind | "all">("all");
   const [by, setBy] = useState<By>("all");
+  const [sort, setSort] = useState<Sort<SortKey>>({ key: "string", dir: 1 });
   // arriving from another page with ?by=applicant&q=Name, the box is filled
   // and the column set once mounted, so the link lands on the rows it means.
   // Read after mount, not with useSearchParams: that would turn the whole
@@ -543,6 +504,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
   // the box updates on every key; the table filters on the deferred value,
   // so typing never waits for 986 rows to re-render
   const dq = useDeferredValue(q);
+  const dby = useDeferredValue(by); // a keystroke resets it; the table follows when idle
   const names = useMemo(
     () => ({
       string: [...new Set(d.apps.map((a) => a.uLabel ?? a.tld))].sort(),
@@ -572,12 +534,12 @@ export default function Reveal({ data: d }: { data: MockData }) {
     const m = new Map<string, MockApp[]>();
     for (const a of d.apps) m.set(a.tld, [...(m.get(a.tld) ?? []), a]);
     // within a string: applications with a replacement first, by replacement
-    const order = (a: MockApp) => a.replacement ?? "~";
     return [...m.entries()].map(([tld, apps]) => ({
       tld,
       apps: [...apps].sort(
         (x, y) =>
-          order(x).localeCompare(order(y)) ||
+          Number(!x.replacement) - Number(!y.replacement) ||
+          (x.replacement ?? "").localeCompare(y.replacement ?? "") ||
           x.applicant.localeCompare(y.applicant),
       ),
     }));
@@ -592,20 +554,65 @@ export default function Reveal({ data: d }: { data: MockData }) {
       (scope === "uncontested" && a.setSize === 1);
     return (a: MockApp) =>
       hit(a) &&
-      matches(a, dq, groupOf.get(a.group), by, peopleOn.get(a.id)) &&
+      matches(a, dq, groupOf.get(a.group), dby, peopleOn.get(a.id)) &&
       (!rmark || rmarkOf(a) === rmark) &&
       (!applicant || a.applicant === applicant) &&
       (kind === "all" || kindOf(a) === kind);
-  }, [scope, dq, by, rmark, applicant, kind, groupOf, peopleOn]);
+  }, [scope, dq, dby, rmark, applicant, kind, groupOf, peopleOn]);
   const filtering =
     scope !== "all" || dq.trim() || rmark || applicant || kind !== "all";
   const rows = useMemo(
     () => strings.filter((r) => r.apps.some(keep)),
     [strings, keep],
   );
-  const stale = dq !== q; // the table is still catching up with the box
-  const pickApplicant = (name: string) =>
-    setApplicant((cur) => (cur === name ? null : name));
+  // rows arrive A to Z; the sort is stable, so equal counts keep that order
+  const sorted = useMemo(() => {
+    if (sort.key === "string") return sort.dir === 1 ? rows : [...rows].reverse();
+    return [...rows].sort((a, b) => (a.apps.length - b.apps.length) * sort.dir);
+  }, [rows, sort]);
+  const stale = dq !== q || dby !== by; // the table is still catching up with the box
+  // stable, so the memoised rows skip a render when only the box changed
+  const pickApplicant = useCallback(
+    (name: string) => setApplicant((cur) => (cur === name ? null : name)),
+    [],
+  );
+
+  // the file name says which slice of the table it holds
+  const exportCsv = () => {
+    const parent = (a: MockApp) => {
+      const g = groupOf.get(a.group);
+      return g?.link && !inferred(g.link) ? g.name : "";
+    };
+    const list = (apps: MockApp[], f: (a: MockApp) => string) => apps.map(f).join("; ");
+    const slice = [
+      scope !== "all" && SCOPE_LABEL[scope],
+      rmark && `replacement-${rmark}`,
+      kind !== "all" && kind,
+      applicant,
+      dq.trim(),
+    ]
+      .filter((x): x is string => !!x)
+      .map((x) => slugify(x))
+      .join("-");
+    saveCsv(
+      `stringscout-${slice || "all"}`,
+      csvText(
+        CSV_COLS,
+        sorted.map(({ tld, apps }) => [
+          apps[0].uLabel ?? tld,
+          tld,
+          apps[0].gloss ?? "",
+          String(apps.length),
+          apps[0].setSize > 1 ? "yes" : "no",
+          list(apps, (a) => a.applicant),
+          list(apps, parent),
+          list(apps, (a) => a.replacementU ?? a.replacement ?? ""),
+          list(apps, rmarkOf),
+          list(apps, kindOf),
+        ]),
+      ),
+    );
+  };
 
   // row one: what state the strings are in; row two: what kind they are
   const tiles: { v: number; s: Scope }[] = [
@@ -613,8 +620,8 @@ export default function Reveal({ data: d }: { data: MockData }) {
     { v: d.stats.sets, s: "contention" },
     { v: d.stats.strings - d.stats.sets, s: "uncontested" },
   ];
-  const kinds = KINDS.filter((k) => k.value !== "all").map((k) => ({
-    k: k.value as Kind,
+  const kinds = KINDS.map((k) => ({
+    k: k.value,
     label: k.label,
     v: strings.filter((r) => kindOfRow(r.apps) === k.value).length,
   }));
@@ -646,14 +653,17 @@ export default function Reveal({ data: d }: { data: MockData }) {
 
       <div className="double-rule mb-5" />
       <div id="strings-search" className="mb-5 scroll-mt-6">
-        {/* the box and, beside it, which column it reads */}
-        <div className="flex flex-wrap gap-3">
-          <div className="relative w-full sm:w-80">
+        {/* the column it reads is set by the suggestion picked or by the
+            link that brought the reader here, and shows in the chip; the
+            export sits at the row's right end */}
+        <div className="flex gap-3">
+          <div className="relative flex-1 min-w-0 sm:flex-none sm:w-80">
             <input
               type="search"
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
+                setBy("all"); // new text reads every column again
                 setSuggesting(true);
                 setCursor(-1);
               }}
@@ -717,44 +727,44 @@ export default function Reveal({ data: d }: { data: MockData }) {
               </ul>
             )}
           </div>
-          <div className="w-36 shrink-0">
-            <Choice
-              label="Search by"
-              value={by}
-              options={BY}
-              onChange={(v) => setBy(v as By)}
-            />
-          </div>
+          <button
+            type="button"
+            onClick={exportCsv}
+            aria-label="Download the strings below as CSV, punycode included"
+            className="group relative ml-auto shrink-0 label border border-ink text-ink px-3 h-10 cursor-pointer hover:bg-paper-deep hover:border-gold transition-colors duration-200 ease-in-out flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-gold"
+          >
+            <Tip side="right">Download the strings below as CSV, punycode included</Tip>
+            CSV
+            <span aria-hidden className="text-[9px] text-rule group-hover:text-gold transition-colors duration-200 ease-in-out">
+              ↓
+            </span>
+          </button>
         </div>
-        <RLegend
-          scope={scope}
-          rmark={rmark}
-          onScope={(m) => setScope(scope === m ? "all" : m)}
-          onMark={(m) => setRmark(rmark === m ? null : m)}
-        />
+        {/* a line each until lg, where both fit on one */}
+        <div className="mt-3 grid min-[360px]:grid-cols-[max-content_max-content] justify-start items-center gap-x-3 gap-y-2 lg:flex">
+          <Segmented
+            label="Strings"
+            value={scope === "all" ? null : scope}
+            options={SCOPE_OPTS}
+            onPick={(m) => setScope(scope === m ? "all" : m)}
+          />
+          <Segmented
+            label="Replacement"
+            value={rmark}
+            options={RMARK_OPTS}
+            onPick={(m) => setRmark(rmark === m ? null : m)}
+            className="lg:ml-5"
+          />
+        </div>
         <div className="flex flex-wrap items-center gap-3 mt-3 min-h-7">
           <span className="label text-ink-soft tabular-nums shrink-0 sm:w-80">
             {rows.length} {rows.length === 1 ? "string" : "strings"}
           </span>
-          {scope !== "all" && (
-            <Chip label={SCOPE_LABEL[scope]} onClear={() => setScope("all")} />
-          )}
-          {kind !== "all" && (
-            <Chip
-              label={KINDS.find((k) => k.value === kind)!.label}
-              onClear={() => setKind("all")}
-            />
-          )}
-          {rmark && (
-            <Chip
-              label={RMARKS.find((m) => m.mark === rmark)!.label}
-              onClear={() => setRmark(null)}
-            />
-          )}
+          {/* the tiles and the legend show their own state; a chip only for
+              what is picked in the rows or typed in the box */}
           {applicant && (
             <Chip
               label={applicant}
-              verbatim
               onClear={() => setApplicant(null)}
             />
           )}
@@ -765,7 +775,6 @@ export default function Reveal({ data: d }: { data: MockData }) {
                   ? q.trim()
                   : `${BY.find((b) => b.value === by)!.label}: ${q.trim()}`
               }
-              verbatim
               onClear={() => setQ("")}
             />
           )}
@@ -774,17 +783,20 @@ export default function Reveal({ data: d }: { data: MockData }) {
 
       <table className="w-full table-fixed text-sm border-collapse">
         <colgroup>
-          <col className="w-24 sm:w-44" />
+          <col className="w-24 sm:w-32" />
+          <col className="w-14 sm:w-[4.25rem]" />
           <col />
         </colgroup>
         <thead>
           <tr>
-            <th className={TH}>String</th>
-            <th className="pb-2 font-medium">
+            {SORT_COLS.map((col) => (
+              <SortHead key={col.key} col={col} sort={sort} onSort={setSort} thClassName={`${TH} align-bottom`} className={SORT_TH} />
+            ))}
+            <th className="pb-2 font-medium align-bottom">
               <span className={LINE}>
                 <span className={`${TH} !pb-0 !pr-0`}>Replacement</span>
                 <span className={`${TH} !pb-0 !pr-0`}>Applicant</span>
-                <span className={`${TH} !pb-0 !pr-0 hidden sm:block`}>
+                <span className={`${TH} !pb-0 !pr-0 hidden lg:block`}>
                   Parent
                 </span>
               </span>
@@ -792,10 +804,10 @@ export default function Reveal({ data: d }: { data: MockData }) {
           </tr>
         </thead>
         <tbody
-          key={`${scope}|${by}|${rmark}|${applicant}|${kind}`}
+          key={`${scope}|${dby}|${rmark}|${applicant}|${kind}|${sort.key}|${sort.dir}`}
           className={`transition-opacity duration-200 ease-in-out ${stale ? "opacity-60" : ""}`}
         >
-          {rows.map((r, vi) => (
+          {sorted.map((r, vi) => (
             <Row
               key={r.tld}
               r={r}
@@ -812,7 +824,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
           ))}
           {rows.length === 0 && (
             <tr className="border-t border-rule-faint">
-              <td colSpan={2} className="py-6 text-ink-soft serif italic">
+              <td colSpan={3} className="py-6 text-ink-soft serif italic">
                 No strings match.
               </td>
             </tr>

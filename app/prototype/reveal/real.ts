@@ -9,6 +9,7 @@ import { claims } from "@/data/claims";
 import { applicants } from "@/data/applicants";
 import { sources } from "@/data/sources";
 import { rootZone } from "@/data/rootZone";
+import { idnGloss } from "@/data/translations";
 import type { AppType, Link, MockApp, MockData, MockEntity, MockGroup, MockPerson, MockSet, Outlook, Registration, Role, Status } from "./mock";
 
 // the one derived file, from scripts/derive-aps.mjs; the raw pull stays out of git
@@ -214,7 +215,9 @@ export function buildReal(): MockData {
       id: r.applicationHumanReadableId,
       tld,
       uLabel: r.primaryString.uLabel || undefined,
+      gloss: idnGloss[r.primaryString.uLabel],
       replacementU: rep?.primaryString.uLabel || undefined,
+      replacementGloss: rep ? idnGloss[rep.primaryString.uLabel] : undefined,
       applicant: r.organizationName,
       slug,
       replacement,

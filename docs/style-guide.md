@@ -117,13 +117,19 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
   focus:outline-none`. `text-base` below `sm` so iOS does not zoom.
 - Buttons are `.label` text. At rest ink on paper; hover `bg-paper-deep` and
   `border-gold`. A segmented control is one `border border-ink` box with
-  `border-l` between segments, selected segment `bg-ink text-paper`.
+  `border-l` between segments. A filter's selected segment is `bg-rule-faint`
+  with its word in oxblood, darker than hover's `bg-paper-deep`; its name sits
+  before it in `label text-ink-soft` (`Segmented` in
+  `app/prototype/reveal/Variants.tsx`). The archive's page-size toggle still
+  fills the selected segment `bg-ink text-paper`.
 - No browser-native `select`; use the site's own (`ApplicantSelect.tsx`).
 - Toolbar order: search, selects, view toggles, CSV. Under it, flush left: the
   count (`label text-ink-soft`, in a slot the width of the search box), then
   the chips for whatever is filtering.
 - Every interactive element: `cursor-pointer` and `focus-visible:outline-2
   focus-visible:outline-gold`.
+- Text that only answers a hover (a tip, nothing to click): `cursor-help`,
+  never the text I-beam. A gloss is also dotted underneath.
 - Hover, the standard: nothing changes on hover without a transition, and the
   transition is `duration-200 ease-in-out`, which runs both ways, in and out.
   `transition-colors` for colour, underline and border changes;
@@ -133,10 +139,11 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
   `transition` with no duration. Off under `prefers-reduced-motion`.
 - Links in text: `underline decoration-rule underline-offset-2
   hover:decoration-gold`.
-- Search with suggestions: `app/prototype/reveal/SearchBox.tsx` (the strings
-  page's box without its column choice). Box `sm:w-80`; suggestions name their
-  kind at the right in a 9px label; count and clear chip under it. It reads
-  `?q=` after mount. Matching lives in `app/prototype/reveal/search.ts`.
+- Search with suggestions: `app/prototype/reveal/SearchBox.tsx`. Box
+  `sm:w-80`; suggestions name their kind at the right in a 9px label; count and
+  clear chip under it. It reads `?q=` after mount. The strings page has no
+  column choice either: picking a suggestion, or a `?by=` link, sets the column,
+  the chip names it, and typing again reads every column. Matching lives in `app/prototype/reveal/search.ts`.
 - Searching a list that reads more than the row shows: the row stays, and a
   line under it says why in `text-xs`, the reason word serif italic soft ink,
   the name in ink: "names Eric Trump", "named by Toddler Logic, LLC". A matched

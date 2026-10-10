@@ -6,7 +6,7 @@
 // string count, an entity's parent) so two people at different companies
 // tell apart, and names
 // its kind on the right when the list mixes kinds. The list may run wider
-// than the box, as Choice's does; a box at the right of a row opens it
+// than the box; a box at the right of a row opens it
 // leftward so it stays on screen. Picking one hands back the pick; clearing
 // hands back null. The box never leaves: a picked name sits in it with the
 // border gold, the house mark for the active pick, and an × at its end

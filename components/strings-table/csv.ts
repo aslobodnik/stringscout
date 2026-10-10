@@ -19,9 +19,29 @@ const CSV_COLS = [
 const csvCell = (v: string) =>
   /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
+// a header and its rows as one file; the BOM keeps the CJK strings readable
+// when the file is opened in Excel
+export const csvText = (cols: readonly string[], rows: string[][]) =>
+  `\uFEFF${cols.join(",")}\n${rows.map((r) => r.map(csvCell).join(",")).join("\n")}\n`;
+
+// hands the file to the browser as name-YYYY-MM-DD.csv
+export function saveCsv(name: string, text: string) {
+  const stamp = new Date().toISOString().slice(0, 10);
+  const url = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${name}-${stamp}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // revoking synchronously cancels the download in Safari and Firefox
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export function toCsv(rows: UiStringRow[], cites: Citations): string {
-  const lines = rows.map((r) =>
-    [
+  return csvText(
+    CSV_COLS,
+    rows.map((r) => [
       r.tld,
       r.punycode,
       r.gloss ?? "",
@@ -39,25 +59,10 @@ export function toCsv(rows: UiStringRow[], cites: Citations): string {
       r.overlap ? "yes" : "no",
       isDelegated(r.issues) ? "yes" : "no",
       r.issues.map(issueLabel).join("; "),
-    ]
-      .map(csvCell)
-      .join(",")
+    ])
   );
-  // BOM keeps the CJK strings readable when the file is opened in Excel
-  return `\uFEFF${CSV_COLS.join(",")}\n${lines.join("\n")}\n`;
 }
 
 export function downloadCsv(rows: UiStringRow[], scope: string, cites: Citations) {
-  const stamp = new Date().toISOString().slice(0, 10);
-  const url = URL.createObjectURL(
-    new Blob([toCsv(rows, cites)], { type: "text/csv;charset=utf-8" })
-  );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `stringscout-${scope}-${stamp}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  // revoking synchronously cancels the download in Safari and Firefox
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  saveCsv(`stringscout-${scope}`, toCsv(rows, cites));
 }
