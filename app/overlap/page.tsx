@@ -5,8 +5,9 @@ import { buildReal } from "@/app/prototype/reveal/real";
 import Overlap from "./Overlap";
 
 export const metadata: Metadata = {
-  title: "Overlap",
-  robots: { index: false },
+  title: "Overlaps",
+  description: "Who shares a string with you in ICANN's 2026 new gTLD round, most shared first.",
+  alternates: { canonical: "/overlap" },
 };
 
 export default function Page() {
