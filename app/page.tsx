@@ -19,9 +19,9 @@ export default function Page() {
       <p className="pt-6 pb-6">
         <Link
           href="/overlap"
-          className={`${LINK} label text-ink !text-[10px] !tracking-[0.08em] sm:!text-[0.6875rem] sm:!tracking-[0.18em]`}
+          className={`${LINK} label text-ink !text-xs !tracking-[0.1em] sm:!text-sm sm:!tracking-[0.18em]`}
         >
-          Applicant? Find who you overlap with →
+          Applicant? <span className="whitespace-nowrap">Find who you overlap with →</span>
         </Link>
       </p>
       <Reveal data={data} />
