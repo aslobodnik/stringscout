@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import PageHeader from "@/components/PageHeader";
 import SourceMark from "@/components/SourceMark";
 import SectionHead from "@/components/SectionHead";
@@ -10,11 +11,14 @@ import {
   KIND_LABEL,
 } from "@/data/sources";
 
+const description =
+  "Every source behind the strings and applicants on Stringscout, grouped by how close it is to the applicant.";
+
 export const metadata: Metadata = {
   title: "Sources",
   alternates: { canonical: "/sources" },
-  description:
-    "Every source behind the strings and applicants on Stringscout, grouped by how close it is to the applicant.",
+  description,
+  ...share("Sources", "/sources", description),
 };
 
 const ROMAN = ["I", "II", "III", "IV"];

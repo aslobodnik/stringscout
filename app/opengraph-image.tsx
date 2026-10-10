@@ -1,33 +1,15 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { buildReal } from "@/app/prototype/reveal/real";
+import { GOLD, INK, INK_SOFT, ogFonts, PAPER, Plate, Tiles } from "@/lib/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Stringscout: every string applied for in ICANN's 2026 gTLD round";
 
-// The two Jost cuts the card sets, vendored so the build never reaches
-// Google Fonts and a missing file fails the build instead of the card
-// silently falling back to sans-serif. Satori needs TTF or OTF.
-const jost = (weight: 300 | 500) =>
-  readFile(join(process.cwd(), "app/fonts", `jost-${weight}.ttf`));
-
-const PAPER = "#f4efe3";
-const INK = "#211d15";
-const INK_SOFT = "#6b6353";
-const GOLD = "#8a5f1a";
-const RULE = "rgba(33, 29, 21, 0.25)";
-
 // The card is the page's own header counts, rendered at build from ICANN's
 // APS record, so a shared link carries the numbers as of that deploy.
 export default async function OgImage() {
   const s = buildReal().stats;
-  const [light, medium] = await Promise.all([jost(300), jost(500)]);
-  const fonts = [
-    { name: "Jost", data: light, style: "normal" as const, weight: 300 as const },
-    { name: "Jost", data: medium, style: "normal" as const, weight: 500 as const },
-  ];
   const tiles = [
     [s.strings, "Strings"],
     [s.applications, "Applications"],
@@ -51,27 +33,7 @@ export default async function OgImage() {
           fontWeight: 500,
         }}
       >
-        {/* the plate frame from the site: a hairline, then a gold one inside */}
-        <div
-          style={{
-            position: "absolute",
-            top: 14,
-            left: 14,
-            right: 14,
-            bottom: 14,
-            border: "1px solid rgba(33, 29, 21, 0.2)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            right: 20,
-            bottom: 20,
-            border: "1px solid rgba(138, 95, 26, 0.3)",
-          }}
-        />
+        <Plate />
         <div
           style={{
             fontSize: 22,
@@ -100,37 +62,7 @@ export default async function OgImage() {
           <span>String</span>
           <span style={{ color: GOLD }}>scout</span>
         </div>
-        <div style={{ display: "flex", border: `1px solid ${INK}`, marginTop: 34 }}>
-          {tiles.map(([n, label], i) => (
-            <div
-              key={label}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-                padding: "22px 20px",
-                ...(i ? { borderLeft: `1px solid ${RULE}` } : {}),
-              }}
-            >
-              <div style={{ fontSize: 60, fontWeight: 300, lineHeight: 1 }}>{String(n)}</div>
-              <div
-                style={{
-                  display: "flex",
-                  alignSelf: "flex-start",
-                  fontSize: 13,
-                  letterSpacing: 3,
-                  textTransform: "uppercase",
-                  color: INK_SOFT,
-                  marginTop: 14,
-                  paddingBottom: 3,
-                  borderBottom: `1px dashed ${RULE}`,
-                }}
-              >
-                {label}
-              </div>
-            </div>
-          ))}
-        </div>
+        <Tiles tiles={tiles} dashed style={{ marginTop: 34 }} />
         <div
           style={{
             fontSize: 17,
@@ -144,6 +76,6 @@ export default async function OgImage() {
         </div>
       </div>
     ),
-    { ...size, fonts }
+    { ...size, fonts: await ogFonts() }
   );
 }
