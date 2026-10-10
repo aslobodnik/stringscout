@@ -57,14 +57,20 @@ export default function PickBox({
         value={picked ? picked.name : q}
         autoFocus={autoFocus}
         onChange={(e) => {
+          // typing over a pick is a new search: only what was typed, wherever
+          // the caret sat in the name (a phone tap leaves it there)
+          const v = e.target.value;
           if (picked) onPick(null);
-          setQ(e.target.value);
+          setQ(picked && v.includes(picked.name) ? v.replace(picked.name, "") : v);
           setSuggesting(true);
           setCursor(-1);
         }}
         onFocus={(e) => {
           setSuggesting(true);
-          if (picked) e.target.select();
+          if (!picked) return;
+          // select the name once the tap has placed its caret, or iOS keeps the caret
+          const el = e.target;
+          setTimeout(() => el.setSelectionRange(0, el.value.length), 0);
         }}
         onBlur={() => setTimeout(() => setSuggesting(false), 150)}
         onKeyDown={(e) => {
