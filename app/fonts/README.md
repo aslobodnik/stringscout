@@ -6,4 +6,7 @@ remote font service.
 - `old-standard-400.ttf`: unmodified Old Standard TT Regular from
   [Google Fonts](https://github.com/google/fonts/blob/main/ofl/oldstandardtt/OldStandard-Regular.ttf).
   Its license is included in `old-standard-OFL.txt`.
+- `old-standard-400-italic.ttf`: unmodified Old Standard TT Italic from
+  [Google Fonts](https://github.com/google/fonts/blob/main/ofl/oldstandardtt/OldStandard-Italic.ttf),
+  same license.
 - `jost-300.ttf` and `jost-500.ttf`: existing Jost cuts used by the site's share images.
