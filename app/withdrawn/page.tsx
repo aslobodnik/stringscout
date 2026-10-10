@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import PageHeader from "@/components/PageHeader";
 import SectionHead from "@/components/SectionHead";
 import Tld from "@/components/Tld";
@@ -6,11 +7,14 @@ import { formatDate } from "@/lib/format";
 import { withdrawnClaims } from "@/data/announcedAdapter";
 import { sourceById, sourceIndex } from "@/data/sources";
 
+const description =
+  "Strings announced for the 2026 gTLD round and then pulled before the application reached ICANN.";
+
 export const metadata: Metadata = {
   title: "Withdrawn",
   alternates: { canonical: "/withdrawn" },
-  description:
-    "Strings announced for the 2026 gTLD round and then pulled before the application reached ICANN.",
+  description,
+  ...share("Withdrawn", "/withdrawn", description),
 };
 
 export default function WithdrawnPage() {
