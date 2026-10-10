@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 
-// /withdrawn is kept for the record, not promoted in the navigation.
+// /withdrawn is kept for the record, not promoted in the navigation. /people
+// is off it too; overlap rows link to it.
 const NAV = [
   { href: "/", label: "Strings" },
   { href: "/explore", label: "Explore" },
   { href: "/applicants", label: "Applicants" },
-  { href: "/people", label: "People" },
+  { href: "/overlap", label: "Overlaps" },
   // /sources stays up for the pre-reveal record; it is off the nav since reveal day
 ];
 

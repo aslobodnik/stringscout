@@ -1,0 +1,106 @@
+// Who shares a string with a person: the view an applicant checks before a
+// conversation. Only humans talk, so the unit is the person the records name,
+// never the entity or its parent.
+//
+// A string counts when one of the person's applications sits in an
+// identical-string set (ICANN's reveal-day contention sets) with an
+// application that is not theirs; everyone named on that other application
+// shares the string. A colleague on the person's own application never
+// qualifies through it, but does through a sibling entity filing separately.
+// Each string counts once per pair however many applications carry it.
+import type { MockApp, MockData, MockPerson } from "@/app/prototype/reveal/mock";
+
+export type OverlapRow = {
+  person: MockPerson;
+  apps: MockApp[]; // the viewer's own applications on the shared strings, by string
+  theirs: MockApp[]; // the other person's applications on those strings, by string
+};
+
+// everyone the records name on an application, by application id
+const peopleOn = (people: MockPerson[]) => {
+  const m = new Map<string, MockPerson[]>();
+  for (const p of people) for (const a of p.apps) m.set(a.id, [...(m.get(a.id) ?? []), p]);
+  return m;
+};
+
+export function overlapsFor(me: MockPerson, d: MockData): OverlapRow[] {
+  const onApp = peopleOn(d.people ?? []);
+  const inSet = new Map<string, MockApp[]>();
+  for (const a of d.apps) if (a.setSize > 1) inSet.set(a.tld, [...(inSet.get(a.tld) ?? []), a]);
+  const mine = new Set(me.apps.map((a) => a.id));
+  const shared = new Map<string, Map<string, MockApp>>(); // person slug -> tld -> my app
+  const theirs = new Map<string, Map<string, MockApp>>(); // person slug -> app id -> their app
+  const who = new Map<string, MockPerson>();
+  for (const a of me.apps) {
+    if (a.setSize <= 1) continue;
+    for (const other of inSet.get(a.tld) ?? []) {
+      if (mine.has(other.id)) continue;
+      for (const p of onApp.get(other.id) ?? []) {
+        if (p.slug === me.slug) continue;
+        who.set(p.slug, p);
+        const byTld = shared.get(p.slug) ?? new Map<string, MockApp>();
+        if (!byTld.has(a.tld)) byTld.set(a.tld, a);
+        shared.set(p.slug, byTld);
+        theirs.set(p.slug, (theirs.get(p.slug) ?? new Map<string, MockApp>()).set(other.id, other));
+      }
+    }
+  }
+  return [...shared.entries()]
+    .map(([slug, byTld]) => ({
+      person: who.get(slug)!,
+      apps: [...byTld.values()].sort((x, y) => x.tld.localeCompare(y.tld)),
+      theirs: [...theirs.get(slug)!.values()].sort((x, y) => x.tld.localeCompare(y.tld)),
+    }))
+    .sort((x, y) => y.apps.length - x.apps.length || x.person.name.localeCompare(y.person.name));
+}
+
+// What a box can pick: a person, or a company (a parent or a lone entity).
+// `sub` is the line under the name in a suggestion and what a company search
+// reaches for a person, so "GoDaddy" finds its officers.
+export type Pick = { kind: "person" | "company"; slug: string; name: string; sub: string };
+
+export const personPick = (p: MockPerson): Pick => ({
+  kind: "person",
+  slug: p.slug,
+  name: p.name,
+  sub: p.entities.map((e) => e.name).join(", "),
+});
+
+// Names a typed fragment starts, then names it sits in, then names whose
+// line under reaches it. At most `max`, each once.
+export function suggestPicks(q: string, picks: Pick[], max = 8): Pick[] {
+  const t = q.trim().toLowerCase().replace(/^\./, "");
+  if (t.length < 2) return [];
+  const starts: Pick[] = [];
+  const within: Pick[] = [];
+  for (const p of picks) {
+    const n = p.name.toLowerCase();
+    if (n.startsWith(t)) starts.push(p);
+    else if (n.includes(t) || p.sub.toLowerCase().includes(t)) within.push(p);
+    if (starts.length >= max) return starts.slice(0, max);
+  }
+  return [...starts, ...within].slice(0, max);
+}
+
+export const suggestPeople = (q: string, people: MockPerson[], max = 8) =>
+  suggestPicks(q, people.map(personPick), max).map((k) => people.find((p) => p.slug === k.slug)!);
+
+// People behind the same parents on the same strings read as one row, every
+// name on it: three directors of one company are not three copies of one
+// line. A name on other strings gets a row of its own, so a row's strings
+// are every name's. Most shared first, then in the order the first came in.
+export type OverlapGroup = { people: OverlapRow[]; apps: MockApp[]; theirs: MockApp[] };
+export function mergeByParent(rows: OverlapRow[]): OverlapGroup[] {
+  const out = new Map<string, OverlapGroup>();
+  for (const r of rows) {
+    const parents = [...new Set(r.theirs.map((a) => a.group))].sort().join(" ");
+    const key = `${parents}|${r.apps.map((a) => a.tld).join(" ")}`; // apps come sorted by string
+    const g = out.get(key);
+    if (g) {
+      g.people.push(r);
+      const ids = new Set(g.theirs.map((a) => a.id));
+      for (const a of r.theirs) if (!ids.has(a.id)) g.theirs.push(a);
+    } else out.set(key, { people: [r], apps: [...r.apps], theirs: [...r.theirs] });
+  }
+  return [...out.values()].sort((x, y) => y.apps.length - x.apps.length);
+}

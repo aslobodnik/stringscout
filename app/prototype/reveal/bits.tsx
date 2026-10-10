@@ -13,13 +13,14 @@ export const PEOPLE = "/people";
 
 export const TAG = "label !text-[9px]";
 export const LINK =
-  "cursor-pointer underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out";
+  "cursor-pointer underline decoration-rule underline-offset-2 hover:decoration-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold";
 export const TH = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium whitespace-nowrap text-left";
 export const DASH = <span className="text-ink-soft">—</span>;
 
 // The strings page, filtered to one column and name. A parent is searched
-// as a parent, an entity as an applicant, so the link always lands.
-export const stringsFor = (by: "applicant" | "parent", name: string) =>
+// as a parent, an entity as an applicant, a person as a person, so the link
+// always lands.
+export const stringsFor = (by: "applicant" | "parent" | "person", name: string) =>
   `${STRINGS}?by=${by}&q=${encodeURIComponent(name)}`;
 
 // A small arrow beside a name that opens the strings page filtered to it.

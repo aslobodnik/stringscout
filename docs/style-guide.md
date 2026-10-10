@@ -102,6 +102,9 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
   as on `/applicants`. Not "none", not a zero, not a blank cell.
 - Superscripts: oxblood `n` for a count, oxblood `†` for an issue, gold number
   for a cite. A legend line names them once, above the list.
+- People sharing a row (`/overlap`) share every string on it, a name a line.
+  A person on other strings gets a row of their own rather than a count
+  beside the name.
 - Struck-through text (`line-through decoration-oxblood text-ink-soft`) means
   ruled out. The count of what rules it out is an oxblood superscript; the
   names are in a `Tip`.

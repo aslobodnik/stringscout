@@ -1,8 +1,9 @@
 // The post-reveal strings view on APS data. The pre-reveal page is at /archive.
 import type { Metadata } from "next";
+import Link from "next/link";
 import { TopBar } from "@/components/PageHeader";
 import { buildReal } from "@/app/prototype/reveal/real";
-import Header from "@/app/prototype/reveal/Header";
+import { LINK } from "@/app/prototype/reveal/bits";
 import Reveal from "@/app/prototype/reveal/Variants";
 
 export const metadata: Metadata = {
@@ -14,7 +15,17 @@ export default function Page() {
   return (
     <>
       <TopBar current="/" />
-      <Header stats={data.stats} current="strings" />
+      {/* the one way in from the strings to the check before a conversation */}
+      <p className="pt-6 pb-6 label text-ink !text-xs !tracking-[0.1em] sm:!text-sm sm:!tracking-[0.18em]">
+        Applicant?{" "}
+        <span className="whitespace-nowrap">
+          Find who you{" "}
+          <Link href="/overlap" className={LINK}>
+            overlap
+          </Link>{" "}
+          with
+        </span>
+      </p>
       <Reveal data={data} />
     </>
   );

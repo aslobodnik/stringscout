@@ -71,19 +71,23 @@ const KIND_TAG: Record<Kind, string> = {
   closed: "closed",
 };
 
-// what the search box reads: everything, or one column
-type By = "all" | "string" | "applicant" | "parent";
+// what the search box reads: everything, or one column. A person is read
+// only when asked for: the names behind 1,614 applications would flood
+// Anything with rows the query does not name.
+type By = "all" | "string" | "applicant" | "parent" | "person";
 const BY: { value: By; label: string }[] = [
   { value: "all", label: "Anything" },
   { value: "string", label: "String" },
   { value: "applicant", label: "Applicant" },
   { value: "parent", label: "Parent" },
+  { value: "person", label: "Person" },
 ];
 const matches = (
   a: MockApp,
   q: string,
   group: MockGroup | undefined,
   by: By,
+  people: string[] | undefined, // the names on the application, lowercased
 ) => {
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (!t) return true;
@@ -99,6 +103,8 @@ const matches = (
       return applicant;
     case "parent":
       return parent;
+    case "person":
+      return (people ?? []).some((n) => n.includes(t));
     default:
       return string || applicant || parent;
   }
@@ -362,7 +368,7 @@ function suggest(
   const t = q.trim().toLowerCase().replace(/^\./, "");
   if (t.length < 2) return [];
   // every column, whatever the box is set to read: picking one sets the column
-  const kinds: Exclude<By, "all">[] = ["string", "applicant", "parent"];
+  const kinds: Exclude<By, "all">[] = ["string", "applicant", "parent", "person"];
   const starts: Suggestion[] = [];
   const within: Suggestion[] = [];
   for (const kind of kinds)
@@ -545,9 +551,16 @@ export default function Reveal({ data: d }: { data: MockData }) {
         .filter((g) => g.link === "parent")
         .map((g) => g.name)
         .sort(),
+      person: [...new Set((d.people ?? []).map((p) => p.name))].sort(),
     }),
-    [d.apps, d.groups],
+    [d.apps, d.groups, d.people],
   );
+  // who each application names, for the person column
+  const peopleOn = useMemo(() => {
+    const m = new Map<string, string[]>();
+    for (const p of d.people ?? []) for (const a of p.apps) m.set(a.id, [...(m.get(a.id) ?? []), p.name.toLowerCase()]);
+    return m;
+  }, [d.people]);
   const suggestions = suggesting ? suggest(q, names) : [];
   const pick = (sg: Suggestion) => {
     setQ(sg.kind === "string" ? `.${sg.text}` : sg.text);
@@ -579,11 +592,11 @@ export default function Reveal({ data: d }: { data: MockData }) {
       (scope === "uncontested" && a.setSize === 1);
     return (a: MockApp) =>
       hit(a) &&
-      matches(a, dq, groupOf.get(a.group), by) &&
+      matches(a, dq, groupOf.get(a.group), by, peopleOn.get(a.id)) &&
       (!rmark || rmarkOf(a) === rmark) &&
       (!applicant || a.applicant === applicant) &&
       (kind === "all" || kindOf(a) === kind);
-  }, [scope, dq, by, rmark, applicant, kind, groupOf]);
+  }, [scope, dq, by, rmark, applicant, kind, groupOf, peopleOn]);
   const filtering =
     scope !== "all" || dq.trim() || rmark || applicant || kind !== "all";
   const rows = useMemo(
