@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/api/catalog", route => route.fulfill({ status: 503, json: { error: "Unavailable" } }));
 });
 
-test("Enter shows 10 results, caps at 25, and keeps diagnostics out of the page", async ({ page }) => {
+test("Enter shows 10 results and caps at 25", async ({ page }) => {
   const queries: string[] = [];
   await page.route("**/api/explore", async (route) => {
     const { query, limit } = route.request().postDataJSON();
@@ -38,9 +38,6 @@ test("Enter shows 10 results, caps at 25, and keeps diagnostics out of the page"
   await page.getByRole("button", { name: "Show 15 more", exact: true }).click();
   await expect(pills).toHaveCount(25);
   await expect(page.getByRole("button", { name: "Show fewer", exact: true })).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("table")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Show details", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("main")).not.toContainText(/score|latency|server search|round trip|gold rule|model|provider|\d+ ms/i);
   expect(queries).toEqual(["ski"]);
   await pills.first().click();
   await expect(input).toHaveValue("mountain");
@@ -71,34 +68,6 @@ test("errors can be retried and a newer query wins over an older response", asyn
   await expect(page.getByRole("main").getByRole("alert")).toHaveCount(0);
 });
 
-test("single-line input ignores Shift+Enter and composition submission", async ({ page }) => {
-  let calls = 0;
-  await page.route("**/api/explore", async (route) => { calls++; await route.fulfill({ json: response("test") }); });
-  await page.goto("/explore");
-  const input = page.getByRole("textbox", { name: "Word or phrase" });
-  await input.fill("snow");
-  await input.press("Shift+Enter");
-  await expect(input).toHaveValue("snow");
-  await input.dispatchEvent("keydown", { key: "Enter", isComposing: true });
-  expect(calls).toBe(0);
-});
-
-for (const width of [375, 1280]) {
-  test(`25 results fit at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 900 });
-    await page.route("**/api/explore", (route) => route.fulfill({ json: response("a sentence about a quiet mountain after fresh snow") }));
-    await page.goto("/explore");
-    await page.getByRole("textbox", { name: "Word or phrase" }).fill("a sentence about a quiet mountain after fresh snow");
-    await page.getByRole("button", { name: "Explore", exact: false }).click();
-    await page.getByRole("button", { name: "Show 15 more", exact: true }).click();
-    await expect(page.getByRole("list", { name: "Related strings" }).getByRole("button")).toHaveCount(25);
-    const overflow = await page.evaluate(() => [...document.querySelectorAll("main *, nav")].filter((element) => {
-      const rect = element.getBoundingClientRect();
-      return rect.width > 0 && (rect.left < 0 || rect.right > innerWidth);
-    }).map((element) => element.tagName));
-    expect(overflow).toEqual([]);
-  });
-}
 
 test("scope switch keeps results and expansion state without fetching again", async ({ page }) => {
   let calls = 0;

@@ -65,7 +65,8 @@ export function GET() {
 
 The pages read their state from the URL, so a link can carry a search:
 
-- \`/?q=<text>\` searches strings, applicants and parents.
+- \`/?q=<text>\` searches strings (and the replacements applications name),
+  applicants and parents.
   \`/?by=string|applicant|parent|person&q=<name>\` searches one column;
   \`person\` matches the people each application names.
 - \`/applicants?q=<text>\` and \`/people?q=<text>\` search those lists.
