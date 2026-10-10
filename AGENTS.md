@@ -21,6 +21,16 @@ and counted nowhere else. A withdrawal the applicant records after the last
 scrape goes in `data/withdrawn.ts`, keyed by the lead name upstream prints, and is
 laid over the scraped row.
 
+## Reveal-day data
+
+`data/icann/aps-derived.json` is ICANN's APS record boiled down; the strings
+page, Applicants, People, Overlaps and the CSV export read it through
+`app/prototype/reveal/real.ts`. Refresh it with `node scripts/pull-aps.mjs &&
+node scripts/derive-aps.mjs` (the raw pull in `data/icann/aps/` is not in git).
+An IDN string new to the record gets an English gloss in `idnGloss`
+(`data/translations.ts`): a word or two read from the applicant's AGB Q118
+answer, or the brand's own English name where it gave none.
+
 ## Interface
 
 Read `docs/style-guide.md` before adding or changing any page, table or control. A new surface starts as a copy of the closest existing one; `components/StringsTable.tsx` is the reference for anything tabular.
