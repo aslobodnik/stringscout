@@ -7,6 +7,7 @@ import { LINK } from "@/app/prototype/reveal/bits";
 import Reveal from "@/app/prototype/reveal/Variants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/" },
   description: "Every string applied for in ICANN's 2026 new gTLD round, who applied, and who stands behind them.",
 };
 

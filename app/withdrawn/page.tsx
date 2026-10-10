@@ -12,7 +12,6 @@ const description =
 
 export const metadata: Metadata = {
   title: "Withdrawn",
-  alternates: { canonical: "/withdrawn" },
   description,
   ...share("Withdrawn", "/withdrawn", description),
 };
