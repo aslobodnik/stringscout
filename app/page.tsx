@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TopBar } from "@/components/PageHeader";
+import PageIntro from "@/components/PageIntro";
 import { buildReal } from "@/app/prototype/reveal/real";
 import { LINK } from "@/app/prototype/reveal/bits";
 import Reveal from "@/app/prototype/reveal/Variants";
@@ -16,17 +17,16 @@ export default function Page() {
   return (
     <>
       <TopBar current="/" />
-      {/* the one way in from the strings to the check before a conversation */}
-      <p className="pt-6 pb-6 label text-ink !text-xs !tracking-[0.1em] sm:!text-sm sm:!tracking-[0.18em]">
-        Applicant?{" "}
-        <span className="whitespace-nowrap">
-          Find who you{" "}
-          <Link href="/overlap" className={LINK}>
-            overlap
-          </Link>{" "}
-          with
-        </span>
-      </p>
+      <PageIntro title="See who applied for each string in ICANN's 2026 gTLD round">
+        Find contention sets. See the companies and people that own and control
+        each applicant. Check which replacement strings are still free.{" "}
+        {/* the one way in from the strings to the check before a conversation */}
+        If you applied, see exactly who you{" "}
+        <Link href="/overlap" className={LINK}>
+          overlap
+        </Link>{" "}
+        with.
+      </PageIntro>
       <Reveal data={data} />
     </>
   );

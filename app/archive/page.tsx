@@ -62,7 +62,7 @@ export default function Home() {
           here said the same thing twice. */}
       <header className="pt-7 pb-7">
         <div className="press-word" style={PRESS_HEAD}>
-          <h1 className="serif italic text-lg sm:text-xl text-ink max-w-2xl">
+          <h1 className="serif italic text-lg sm:text-xl text-ink">
             Self-revealed strings in the 2026 gTLD round.
           </h1>
           <p className="mt-2 text-sm text-ink-soft">

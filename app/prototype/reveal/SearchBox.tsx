@@ -41,7 +41,7 @@ export default function SearchBox({
   value: string;
   onChange: (q: string) => void;
   names: NameList[];
-  count: string; // "12 applicants"
+  count?: string; // "12 applicants"; leave out when the table head carries it
   ariaLabel: string;
   id: string; // ties the box to its listbox
 }) {
@@ -126,7 +126,7 @@ export default function SearchBox({
         )}
       </div>
       <div className="flex flex-wrap items-center gap-3 mt-3 min-h-7">
-        <span className="label text-ink-soft tabular-nums shrink-0 sm:w-80">{count}</span>
+        {count && <span className="label text-ink-soft tabular-nums shrink-0 sm:w-80">{count}</span>}
         {value.trim() && <Chip label={value.trim()} onClear={() => onChange("")} />}
       </div>
     </div>

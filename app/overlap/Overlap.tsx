@@ -15,7 +15,6 @@
 // the rest in place.
 import Link from "next/link";
 import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
-import SectionHead from "@/components/SectionHead";
 import Tip from "@/components/Tip";
 import { ENTITIES, LINK, StringFold, StringList, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
@@ -170,9 +169,6 @@ export default function Overlap({ data: d }: { data: MockData }) {
     if (key === "me") u.delete("with");
     history.replaceState(null, "", `${window.location.pathname}${u.size ? `?${u}` : ""}`);
   };
-  const me = meSlug ? (bySlug.get(meSlug) ?? null) : null;
-  const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
-  const merged = useMemo(() => mergeByParent(rows), [rows]);
   // what the second box offers: everyone, every company, and every entity
   // under a parent, not only the list, so a name off the list gets an
   // answer rather than silence. An entity's slug carries a prefix, since
@@ -200,6 +196,22 @@ export default function Overlap({ data: d }: { data: MockData }) {
     }
     return [[...mePicks, ...companies, ...entities] as Pick[], under] as const;
   }, [mePicks, d.groups]);
+  // you: a person, a parent company or an entity under one, picked from the
+  // same list as the second box; what counts is the applications behind it
+  const mePick = meSlug ? (withPicks.find((k) => k.slug === meSlug) ?? null) : null;
+  const me = useMemo(() => {
+    if (!mePick) return null;
+    if (mePick.kind === "person") {
+      const p = bySlug.get(mePick.slug);
+      return p ? { slug: p.slug, apps: p.apps, entities: p.entities.map((e) => e.name) } : null;
+    }
+    const e = entityOf.get(mePick.slug);
+    const g = d.groups.find((x) => x.slug === (e ? e.group : mePick.slug));
+    if (!g) return null;
+    return { slug: mePick.slug, apps: e ? g.apps.filter((a) => a.slug === e.entity) : g.apps, entities: undefined };
+  }, [mePick, bySlug, entityOf, d.groups]);
+  const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
+  const merged = useMemo(() => mergeByParent(rows), [rows]);
   const them = withSlug ? (withPicks.find((k) => k.slug === withSlug) ?? null) : null;
   const ent = them ? entityOf.get(them.slug) : undefined;
   // talking to one person: their row, holding only their own strings; to a
@@ -218,7 +230,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
     if (!me || !them || shown.length) return null;
     if (them.kind === "person") {
       const theirs = new Set(bySlug.get(them.slug)?.entities.map((e) => e.name));
-      const both = me.entities.filter((e) => theirs.has(e.name)).map((e) => e.name);
+      const both = (me.entities ?? []).filter((n) => theirs.has(n));
       return both.length ? `Both named by ${both.join(", ")}.` : null;
     }
     return me.apps.some((a) => (ent ? a.slug === ent.entity : a.group === them.slug)) ? "Your own company." : null;
@@ -235,28 +247,12 @@ export default function Overlap({ data: d }: { data: MockData }) {
 
   return (
     <section id="overlap" className="mb-14 scroll-mt-4">
-      <SectionHead n="I" title="Overlaps" count={me ? shown.reduce((n, g) => n + g.people.length, 0) : undefined} />
-      <p className="mb-6 leading-6 text-balance">
-        Applicants for strings in the same contention set may not communicate, directly or indirectly, with each other about their
-        applications or any strategy for the{" "}
-        <span className="whitespace-nowrap">
-          string{" "}
-          <a
-            href="https://newgtldprogram-2026-agb.icann.org/en/9-module-5-contention-set-resolution.html"
-            target="_blank"
-            rel="noopener"
-            className={`${LINK} label !text-[10px] text-ink-soft whitespace-nowrap`}
-          >
-            AGB §5.2.3.1
-          </a>
-          .
-        </span>
-      </p>
+      <div className="double-rule mb-5" />
       {/* side by side from md, stacked below; the you box keeps its width,
           so a pick in one moves nothing in the other */}
       <div className="flex flex-col md:flex-row md:items-start gap-x-8 gap-y-3 mb-6">
         <div className="w-full sm:w-80 md:shrink-0">
-          <PickBox id="me" picks={mePicks} picked={me ? personPick(me) : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
+          <PickBox id="me" picks={withPicks} picked={me ? mePick : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
           <p role="status" className="text-xs text-ink-soft mt-1.5 leading-4 min-h-4">
             {me && <Few items={mine} />}
             {meSlug && !me && <span className="serif italic">No one by that name in the records.</span>}
@@ -292,7 +288,7 @@ export default function Overlap({ data: d }: { data: MockData }) {
               <table className="w-full text-sm border-collapse table-fixed">
                 <thead>
                   <tr>
-                    <th className={`${TH} sm:w-56`}>Person</th>
+                    <th className={`${TH} sm:w-56`}>Person ({shown.reduce((n, g) => n + g.people.length, 0)})</th>
                     <th className={`${NUM} w-14`}>Shared</th>
                     <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
                   </tr>

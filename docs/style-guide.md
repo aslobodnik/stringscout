@@ -46,9 +46,13 @@ number, a strike, a tag or a dagger.
 
 - Shell is in `app/layout.tsx`: `max-w-5xl`, `px-6 sm:px-8`. Pages never set
   their own width.
-- `TopBar` (wordmark + nav) then a header: one serif italic sentence that
-  states what the page is, with a `Dateline` under it (`app/page.tsx`).
-  Inner pages use `PageHeader` with an uppercase title instead.
+- Text runs the shell's full width. No `max-w-*` on headings, intro lines or
+  paragraphs: a cap narrower than the shell wraps the line early and leaves a
+  gap at the right. Only a `Tip` and a table cell may cap their width.
+- `TopBar` (wordmark + nav) then a header. The strings and explore pages use
+  `PageIntro`: a serif h1 that says what the page does, and an h2 in faded
+  oxblood that says what a reader can do there. Inner pages use `PageHeader`
+  with an uppercase title instead.
 - Sections are `<section className="mb-14">` opened by `SectionHead` (double
   rule, label title, `count · numeral` at the right).
 - `Footer` is in the layout. Do not add another.
