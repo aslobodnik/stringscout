@@ -11,6 +11,7 @@ export const PAPER_DEEP = "#ece5d3";
 export const INK = "#211d15";
 export const INK_SOFT = "#6b6353";
 export const GOLD = "#8a5f1a";
+export const OXBLOOD = "#6e2a24";
 export const RULE = "rgba(33, 29, 21, 0.25)";
 
 // Vendored so the build never reaches Google Fonts and a missing file fails
@@ -19,13 +20,15 @@ export const RULE = "rgba(33, 29, 21, 0.25)";
 const font = (file: string) => readFile(join(process.cwd(), "app/fonts", file));
 
 export async function ogFonts() {
-  const [serif, light, medium] = await Promise.all([
+  const [serif, serifItalic, light, medium] = await Promise.all([
     font("old-standard-400.ttf"),
+    font("old-standard-400-italic.ttf"),
     font("jost-300.ttf"),
     font("jost-500.ttf"),
   ]);
   return [
     { name: "Old Standard", data: serif, style: "normal" as const, weight: 400 as const },
+    { name: "Old Standard", data: serifItalic, style: "italic" as const, weight: 400 as const },
     { name: "Jost", data: light, style: "normal" as const, weight: 300 as const },
     { name: "Jost", data: medium, style: "normal" as const, weight: 500 as const },
   ];
