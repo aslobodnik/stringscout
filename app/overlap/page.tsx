@@ -11,7 +11,6 @@ const description =
 export const metadata: Metadata = {
   title: "Overlaps",
   description,
-  alternates: { canonical: "/overlap" },
   ...share("Overlaps", "/overlap", description),
 };
 

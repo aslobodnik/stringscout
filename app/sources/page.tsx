@@ -16,7 +16,6 @@ const description =
 
 export const metadata: Metadata = {
   title: "Sources",
-  alternates: { canonical: "/sources" },
   description,
   ...share("Sources", "/sources", description),
 };

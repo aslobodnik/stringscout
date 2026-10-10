@@ -22,7 +22,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   // every page title ends the same way, rather than each repeating the suffix
   title: { default: "Stringscout", template: "%s — Stringscout" },
-  alternates: { canonical: "/" },
   description:
     "Every string applied for in ICANN's 2026 gTLD round, who applied, and who stands behind them.",
   openGraph: {
