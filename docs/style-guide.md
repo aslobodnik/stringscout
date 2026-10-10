@@ -101,7 +101,11 @@ Reference: `components/StringsTable.tsx`, `app/applicants/page.tsx`.
 - Empty value is a dash in soft ink, `<span className="text-ink-soft">—</span>`,
   as on `/applicants`. Not "none", not a zero, not a blank cell.
 - Superscripts: oxblood `n` for a count, oxblood `†` for an issue, gold number
-  for a cite. A legend line names them once, above the list.
+  for a cite. A legend line names them once, above the list. In a merged row
+  of people (`/overlap`), an oxblood `n` after a person's name is the strings
+  that person shares, printed only when fewer than the row's. It is rare, so
+  a `Tip` ("6 of 7 strings") explains it instead of the legend, and phones go
+  without.
 - Struck-through text (`line-through decoration-oxblood text-ink-soft`) means
   ruled out. The count of what rules it out is an oxblood superscript; the
   names are in a `Tip`.

@@ -1,29 +1,34 @@
 "use client";
 
-// Who shares a string with you. Pick yourself, read the people most shared
+// Who shares a string with you. Pick yourself and read the people most shared
 // first; pick the person you are talking to and only your shared strings
-// stay, or pick the company and every name behind it stays. Both picks live
-// in the URL (?me=&with=) so a link restores them, and
-// nothing after load needs the network.
+// stay, or pick the company and every row it is behind stays, or an entity
+// under a parent and every row it is on. Both picks live in the URL
+// (?me=&with=) so a link restores them, and nothing after load needs the
+// network. The section count is the people on the rows shown. A name opens
+// the strings page filtered to that person.
 //
 // The list is one list, a hundred a page, as the people page: no fold for
-// the tail, since a second heading hides most of a list. A row prints the
-// shared strings three lines deep and opens to the rest in place.
+// the tail, since a second heading hides most of a list. A row names its
+// people inline, who is behind their strings under them, and prints the
+// shared strings three lines deep, opening to the rest in place.
 import Link from "next/link";
 import { Fragment, useMemo, useState, useSyncExternalStore } from "react";
 import SectionHead from "@/components/SectionHead";
-import { ENTITIES, LINK, PEOPLE, StringFold, StringList, TH, stringsFor } from "@/app/prototype/reveal/bits";
+import Tip from "@/components/Tip";
+import { ENTITIES, LINK, StringFold, StringList, TAG, TH, stringsFor } from "@/app/prototype/reveal/bits";
 import Pager, { PAGE } from "@/app/prototype/reveal/Pager";
-import { mergeByParent, overlapsFor, personPick, type Pick } from "@/lib/overlap";
+import { mergeByParent, overlapsFor, personPick, type OverlapRow, type Pick } from "@/lib/overlap";
 import { subscribeToUrl } from "@/lib/url";
 import type { MockApp, MockData, MockGroup } from "@/app/prototype/reveal/mock";
 import PickBox from "./PickBox";
 
 const NUM = "label !tracking-[0.06em] sm:!tracking-[0.18em] text-ink-soft pb-2 pr-4 font-medium text-right whitespace-nowrap";
+const GOLD = "text-gold decoration-gold";
 
 // Who is behind a set of applications: a declared parent prints once as its
 // name, its entities behind "n entities", which opens them in place; an
-// entity with no parent prints as itself. Three names, then "and n more".
+// entity with no parent prints as itself. Three, then "and n more".
 type Behind = { slug: string; name: string; href: string; under: string[] }; // slug: the group
 function behind(apps: MockApp[], groups: MockGroup[]): Behind[] {
   const byGroup = Map.groupBy(apps, (a) => a.group);
@@ -37,6 +42,16 @@ function behind(apps: MockApp[], groups: MockGroup[]): Behind[] {
 
 const FOLD = "cursor-pointer text-ink-soft hover:text-gold transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-gold";
 
+const entityLinks = (names: string[]) =>
+  names.map((n, i) => (
+    <span key={n}>
+      {i > 0 && ", "}
+      <Link href={`${ENTITIES}?q=${encodeURIComponent(n)}`} scroll={false} className={LINK}>
+        {n}
+      </Link>
+    </span>
+  ));
+
 function Under({ names }: { names: string[] }) {
   const [open, setOpen] = useState(false);
   return (
@@ -45,22 +60,12 @@ function Under({ names }: { names: string[] }) {
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={FOLD}>
         {open ? "fewer" : `${names.length} entities`}
       </button>
-      {open && (
-        <span className="block pl-3">
-          {names.map((n, i) => (
-            <span key={n}>
-              {i > 0 && ", "}
-              <Link href={`${ENTITIES}?q=${encodeURIComponent(n)}`} scroll={false} className={LINK}>
-                {n}
-              </Link>
-            </span>
-          ))}
-        </span>
-      )}
+      {open && <span className="block pl-3">{entityLinks(names)}</span>}
     </>
   );
 }
 
+// Who is behind your own strings, on one line under your box.
 function Few({ items }: { items: Behind[] }) {
   const [open, setOpen] = useState(false);
   const shown = open ? items : items.slice(0, 3);
@@ -68,7 +73,7 @@ function Few({ items }: { items: Behind[] }) {
   return (
     <>
       {shown.map((b, i) => (
-        <span key={b.name}>
+        <span key={b.slug}>
           {i > 0 && ", "}
           <Link href={b.href} scroll={false} className={LINK}>
             {b.name}
@@ -85,36 +90,78 @@ function Few({ items }: { items: Behind[] }) {
   );
 }
 
-// The counts, in the house tile row: a copy of the strings page's StatTiles
-// with three tiles. Two leave for the people page; the third is the list
-// below, and clears a "talking to" pick.
-type Tile = { v: number; l: string; href?: string; act?: () => void; on?: boolean };
-function Tiles({ tiles }: { tiles: Tile[] }) {
-  const cell = "p-3 sm:p-4 text-left w-full block";
-  const num = "text-2xl sm:text-3xl font-light tabular-nums";
-  const cap = "label mt-2 text-ink-soft !tracking-[0.08em] !text-[10px] sm:!tracking-[0.18em] sm:!text-[0.6875rem] border-b border-dotted border-rule inline-block";
+// One behind a row, a line each. Above sm a long name is cut and shows
+// whole on hover; below sm, where there is no hover, it wraps instead.
+function BehindLine({ b, hot }: { b: Behind; hot: boolean }) {
+  const [open, setOpen] = useState(false);
   return (
-    <section className="grid grid-cols-3 border border-ink mb-8">
-      {tiles.map(({ v, l, href, act, on }, i) => {
-        const divider = i > 0 ? "border-l border-rule" : "";
-        const inner = (
-          <>
-            <span className={`block ${num}`}>{v}</span>
-            <span className={cap}>{l}</span>
-          </>
-        );
-        const cls = `${cell} ${divider} transition-colors duration-200 ease-in-out hover:bg-paper-deep cursor-pointer ${on ? "bg-paper-deep" : ""}`;
-        return href ? (
-          <Link key={l} href={href} scroll={false} className={cls}>
-            {inner}
+    <div>
+      <div className="sm:flex sm:items-baseline sm:gap-2 max-w-full">
+        <span className="group relative min-w-0">
+          <Tip>{b.name}</Tip>
+          <Link href={b.href} scroll={false} className={`${LINK} sm:block sm:truncate ${hot ? GOLD : ""}`}>
+            {b.name}
           </Link>
-        ) : (
-          <button key={l} type="button" onClick={act} aria-pressed={on} className={cls}>
-            {inner}
-          </button>
-        );
-      })}
-    </section>
+        </span>
+        {b.under.length > 1 && (
+          <>
+            {" "}
+            <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={`${FOLD} whitespace-nowrap sm:shrink-0`}>
+              {open ? "fewer" : `${b.under.length} entities`}
+            </button>
+          </>
+        )}
+      </div>
+      {open && <div className="pl-3">{entityLinks(b.under)}</div>}
+    </div>
+  );
+}
+
+function Behinds({ items, hot }: { items: Behind[]; hot: string | null }) {
+  const [open, setOpen] = useState(false);
+  const shown = open ? items : items.slice(0, 3);
+  const more = items.length - 3;
+  return (
+    <div className="mt-0.5 text-xs text-ink-soft">
+      {shown.map((b) => (
+        <BehindLine key={b.slug} b={b} hot={b.slug === hot} />
+      ))}
+      {more > 0 && (
+        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={`${FOLD} block`}>
+          {open ? "fewer" : `and ${more} more`}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// The people on a row, inline as the applicants cell: a dot between, kept
+// with the name before it so no line opens on one. A name moves to the next
+// line whole; one longer than the column wraps inside itself rather than
+// running into the next. A name on fewer strings than the row carries how
+// many it shares, read out on hover; rare enough that a phone goes without.
+function Names({ people, of, hot }: { people: OverlapRow[]; of: number; hot: string | null }) {
+  return (
+    <div>
+      {people.map(({ person: p, apps: own }, i) => (
+        <Fragment key={p.slug}>
+          <span className="inline-block max-w-full">
+            <Link href={stringsFor("person", p.name)} scroll={false} className={`${LINK} font-medium ${p.slug === hot ? GOLD : ""}`}>
+              {p.name}
+            </Link>
+            {own.length < of && (
+              <span className="group relative">
+                <Tip>
+                  {own.length} of {of} strings
+                </Tip>
+                <sup className="text-oxblood ml-0.5">{own.length}</sup>
+              </span>
+            )}
+            {i < people.length - 1 && <span className="text-ink-soft">{"\u00a0·"}</span>}
+          </span>{" "}
+        </Fragment>
+      ))}
+    </div>
   );
 }
 
@@ -138,28 +185,46 @@ export default function Overlap({ data: d }: { data: MockData }) {
   const me = meSlug ? (bySlug.get(meSlug) ?? null) : null;
   const rows = useMemo(() => (me ? overlapsFor(me, d) : []), [me, d]);
   const merged = useMemo(() => mergeByParent(rows), [rows]);
-  // what the second box offers: everyone and every company, not only the
-  // list, so a name off the list gets an answer rather than silence
-  const withPicks = useMemo<Pick[]>(() => {
-    const companies = d.groups.map<Pick>((g) => ({
-      kind: "company",
-      slug: g.slug,
-      name: g.name,
-      sub: g.entities.length > 1 ? `${g.entities.length} entities` : `${g.apps.length} ${g.apps.length === 1 ? "application" : "applications"}`,
-    }));
-    return [...mePicks, ...companies];
+  // what the second box offers: everyone, every company, and every entity
+  // under a parent, not only the list, so a name off the list gets an
+  // answer rather than silence. An entity's slug carries a prefix, since
+  // one can equal a group's.
+  const [withPicks, entityOf] = useMemo(() => {
+    const companies = d.groups.map<Pick>((g) => {
+      const n = new Set(g.apps.map((a) => a.tld)).size;
+      return {
+        kind: "company",
+        slug: g.slug,
+        name: g.name,
+        sub: g.entities.length > 1 ? `${g.entities.length} entities` : `${n} ${n === 1 ? "string" : "strings"}`,
+      };
+    });
+    const under = new Map<string, { entity: string; group: string }>();
+    const entities: Pick[] = [];
+    for (const g of d.groups) {
+      if (g.link !== "parent") continue;
+      for (const e of g.entities) {
+        if (e.name.toLowerCase() === g.name.toLowerCase()) continue; // the parent's pick is it
+        const slug = `entity-${e.slug}`;
+        under.set(slug, { entity: e.slug, group: g.slug });
+        entities.push({ kind: "company", slug, name: e.name, sub: g.name });
+      }
+    }
+    return [[...mePicks, ...companies, ...entities] as Pick[], under] as const;
   }, [mePicks, d.groups]);
   const them = withSlug ? (withPicks.find((k) => k.slug === withSlug) ?? null) : null;
+  const ent = them ? entityOf.get(them.slug) : undefined;
   // talking to one person: their row, holding only their own strings; to a
-  // company: every row it is behind, every name on it
+  // company: every row it is behind, every name on it; to an entity: every
+  // row it is on
   const shown = useMemo(() => {
     if (!them) return merged;
     if (them.kind === "person") {
       const r = rows.find((x) => x.person.slug === them.slug);
       return r ? [{ people: [r], apps: r.apps, theirs: r.theirs }] : [];
     }
-    return merged.filter((g) => g.theirs.some((a) => a.group === them.slug));
-  }, [them, rows, merged]);
+    return merged.filter((g) => g.theirs.some((a) => (ent ? a.slug === ent.entity : a.group === them.slug)));
+  }, [them, ent, rows, merged]);
   // a pick that shares nothing: the entity both are named by, or your own company
   const aside = useMemo(() => {
     if (!me || !them || shown.length) return null;
@@ -168,116 +233,109 @@ export default function Overlap({ data: d }: { data: MockData }) {
       const both = me.entities.filter((e) => theirs.has(e.name)).map((e) => e.name);
       return both.length ? `Both named by ${both.join(", ")}.` : null;
     }
-    return me.apps.some((a) => a.group === them.slug) ? "Your own company." : null;
-  }, [me, them, shown, bySlug]);
+    return me.apps.some((a) => (ent ? a.slug === ent.entity : a.group === them.slug)) ? "Your own company." : null;
+  }, [me, them, ent, shown, bySlug]);
   const [page, setPage] = useState(0);
   const slice = shown.slice(page * PAGE, (page + 1) * PAGE);
   const turn = (n: number) => {
     setPage(n);
     document.getElementById("overlap")?.scrollIntoView({ block: "start" });
   };
-  const inSets = me ? me.apps.filter((a) => a.setSize > 1).length : 0;
   const mine = me ? behind(me.apps, d.groups) : [];
+  const hotPerson = them?.kind === "person" ? them.slug : null;
+  const hotCompany = them?.kind === "company" ? (ent?.group ?? them.slug) : null; // an entity lights its parent's line
 
   return (
     <section id="overlap" className="mb-14 scroll-mt-4">
-      <SectionHead n="I" title="Overlap" count={me ? rows.length : undefined} />
-      <p className="mb-5 leading-6 max-w-prose">
-        Applicants for strings in the same contention set may not communicate, directly or indirectly, about those applications or
-        any strategy for the string{" "}
-        <a
-          href="https://newgtldprogram-2026-agb.icann.org/en/9-module-5-contention-set-resolution.html"
-          target="_blank"
-          rel="noopener"
-          className={`${LINK} label !text-[10px] text-ink-soft whitespace-nowrap`}
-        >
-          AGB §5.2.3.1
-        </a>
-        .
+      <SectionHead n="I" title="Overlaps" count={me ? shown.reduce((n, g) => n + g.people.length, 0) : undefined} />
+      <p className="mb-6 leading-6 text-balance">
+        Applicants for strings in the same contention set may not communicate, directly or indirectly, with each other about their
+        applications or any strategy for the{" "}
+        <span className="whitespace-nowrap">
+          string{" "}
+          <a
+            href="https://newgtldprogram-2026-agb.icann.org/en/9-module-5-contention-set-resolution.html"
+            target="_blank"
+            rel="noopener"
+            className={`${LINK} label !text-[10px] text-ink-soft whitespace-nowrap`}
+          >
+            AGB §5.2.3.1
+          </a>
+          .
+        </span>
       </p>
-      {/* the two boxes side by side above sm, each under its label, same
-          width, so a pick in one moves nothing in the other */}
-      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 mb-5">
-        <div>
-          <p className="label !text-sm mb-3">Find who you overlap with</p>
+      {/* side by side from md, stacked below; the you box keeps its width,
+          so a pick in one moves nothing in the other */}
+      <div className="flex flex-col md:flex-row md:items-start gap-x-8 gap-y-3 mb-6">
+        <div className="w-full sm:w-80 md:shrink-0">
           <PickBox id="me" picks={mePicks} picked={me ? personPick(me) : null} onPick={(p) => { set("me", p); setPage(0); }} autoFocus={!meSlug} />
-          <p className="text-xs text-ink-soft mt-2 min-h-4 leading-4">
+          <p role="status" className="text-xs text-ink-soft mt-1.5 leading-4 min-h-4">
             {me && <Few items={mine} />}
-            {meSlug && !me && <span className="serif italic">No one named that in the records.</span>}
+            {meSlug && !me && <span className="serif italic">No one by that name in the records.</span>}
           </p>
         </div>
         {me && (
-          <div>
-            <p className="label !text-sm mb-3">Talking to</p>
-            <PickBox id="with" label="Talking to" picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
-            <p className="text-xs text-ink-soft mt-2 min-h-4 leading-4 serif italic">
-              {withSlug && !them && "No one by that name in the records."}
-              {them && shown.length === 0 && `No shared string.${aside ? ` ${aside}` : ""}`}
-            </p>
+          <div className="flex-1 md:flex-none min-w-0">
+            <div className="flex items-start gap-3">
+              <label
+                htmlFor="with-input"
+                className="label text-ink-soft h-10 flex items-center shrink-0 cursor-pointer !text-[10px] !tracking-[0.08em] sm:!text-[0.6875rem] sm:!tracking-[0.18em]"
+              >
+                Talking to
+              </label>
+              <div className="flex-1 md:flex-none md:w-60 lg:w-80 min-w-0">
+                <PickBox id="with" label="Talking to" alignRight picks={withPicks} picked={them} onPick={(p) => { set("with", p); setPage(0); }} />
+                <p role="status" className="text-xs serif italic text-ink-soft mt-1.5 leading-4 min-h-4">
+                  {withSlug && !them && "No one by that name in the records."}
+                  {them && shown.length === 0 && `No shared string.${aside ? ` ${aside}` : ""}`}
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </div>
       {me && (
         <>
-          <Tiles
-            tiles={[
-              { v: me.apps.length, l: me.apps.length === 1 ? "application" : "applications", href: `${PEOPLE}?q=${encodeURIComponent(me.name)}` },
-              { v: inSets, l: "in overlap", href: `${PEOPLE}?q=${encodeURIComponent(me.name)}` },
-              { v: rows.length, l: rows.length === 1 ? "person shares a string" : "people share a string", on: !them, act: () => set("with", null) },
-            ]}
-          />
           {!them && rows.length === 0 && (
-            <p className="serif italic text-ink-soft mb-6">No overlap recorded: none of their strings sits in a set with another applicant&apos;s.</p>
+            <p className="border-t border-rule-faint py-6 serif italic text-ink-soft">No one in the records shares a string with you.</p>
           )}
           {slice.length > 0 && (
-            <table className="w-full text-sm border-collapse table-fixed">
-              <thead>
-                <tr>
-                  <th className={`${TH} sm:w-56`}>Person</th>
-                  <th className={`${NUM} w-14`}>Shared</th>
-                  <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
-                </tr>
-              </thead>
-              <tbody>
-                {slice.map(({ people: ps, apps, theirs }) => {
-                  // who is on the shared strings, not everything the people sit on
-                  const who = behind(theirs, d.groups);
-                  const strings = them ? <StringList apps={apps} /> : <StringFold apps={apps} />;
-                  return (
-                    <Fragment key={ps[0].person.slug}>
-                      <tr className="border-t border-rule-faint align-top">
-                        <td className="py-2 pr-4">
-                          {ps.map(({ person: p, apps: own }) => (
-                            <span key={p.slug} className="block">
-                              <Link
-                                href={`${PEOPLE}?q=${encodeURIComponent(p.name)}`}
-                                scroll={false}
-                                className={`${LINK} font-medium ${them?.slug === p.slug ? "text-gold decoration-gold" : ""}`}
-                              >
-                                {p.name}
-                              </Link>
-                              {own.length < apps.length && (
-                                <span className="text-xs text-ink-soft ml-2 tabular-nums">
-                                  {own.length} of {apps.length}
-                                </span>
-                              )}
-                            </span>
-                          ))}
-                          <span className="block text-xs text-ink-soft mt-0.5">
-                            <Few items={who} />
-                          </span>
-                        </td>
-                        <td className="py-2 pr-4 text-right tabular-nums">{apps.length}</td>
-                        <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{strings}</td>
-                      </tr>
-                      <tr className="sm:hidden">
-                        <td colSpan={2} className="pb-3 leading-6 text-xs">{strings}</td>
-                      </tr>
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
+            <>
+              <p className={`${TAG} text-ink-soft mb-4`}>
+                <sup className="text-oxblood">n</sup> applications for the string
+              </p>
+              <table className="w-full text-sm border-collapse table-fixed">
+                <thead>
+                  <tr>
+                    <th className={`${TH} sm:w-56`}>Person</th>
+                    <th className={`${NUM} w-14`}>Shared</th>
+                    <th className={`${TH} pl-4 !pr-0 hidden sm:table-cell`}>Strings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slice.map(({ people: ps, apps, theirs }) => {
+                    // who is on the shared strings, not everything the people sit on
+                    const who = behind(theirs, d.groups);
+                    const strings = them ? <StringList apps={apps} /> : <StringFold apps={apps} />;
+                    return (
+                      <Fragment key={ps[0].person.slug}>
+                        <tr className="border-t border-rule-faint align-top">
+                          <td className="py-2 pr-4">
+                            <Names people={ps} of={apps.length} hot={hotPerson} />
+                            <Behinds items={who} hot={hotCompany} />
+                          </td>
+                          <td className="py-2 pr-4 text-right tabular-nums">{apps.length}</td>
+                          <td className="py-2 pl-4 leading-6 hidden sm:table-cell">{strings}</td>
+                        </tr>
+                        <tr className="sm:hidden">
+                          <td colSpan={2} className="pb-3 leading-6 text-xs">{strings}</td>
+                        </tr>
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </>
           )}
           {!them && <Pager total={merged.length} page={page} onPage={turn} noun="rows" />}
         </>

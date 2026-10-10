@@ -88,7 +88,7 @@ export const suggestPeople = (q: string, people: MockPerson[], max = 8) =>
 // People behind the same parents read as one row, every name on it, with
 // the union of their strings: three directors of one company are not three
 // copies of one line. A name on fewer strings than the row keeps its own
-// list, so the row can say "6 of 7". Order is kept by the first person in,
+// list, so the row can mark how many it shares. Order is kept by the first person in,
 // then by the union, so the merged list is still most shared first.
 export type OverlapGroup = { people: OverlapRow[]; apps: MockApp[]; theirs: MockApp[] };
 export function mergeByParent(rows: OverlapRow[]): OverlapGroup[] {
