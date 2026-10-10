@@ -14,6 +14,7 @@ const API_URL = process.env.NEXT_PUBLIC_EXPLORE_API_URL ?? (
     : "https://api.stringscout.com/api/explore"
 );
 const CATALOG_URL = API_URL.replace(/\/explore$/, "/catalog");
+const HIT_URL = API_URL.replace(/\/explore$/, "/hit");
 const pill = "max-w-full rounded-full border border-rule bg-paper-deep/50 px-5 py-2.5 text-left text-xl break-words";
 const pillTone = (result: ExploreResult) => result.existing
   ? "text-gold"
@@ -46,6 +47,7 @@ export default function ExploreSearch({ registrations }: { registrations: typeof
   const active = useRef<AbortController | null>(null);
   const catalog = useRef<ExploreCatalog | null>(null);
   const recent = useRef(new Map<string, ExploreResponse>());
+  const recorded = useRef(new Set<string>());
   const shown = useRef<{ query: string; results: ExploreResult[] } | null>(null);
   const resultsBox = useRef<HTMLDivElement | null>(null);
   const resultsList = useRef<HTMLUListElement | null>(null);
@@ -105,14 +107,22 @@ export default function ExploreSearch({ registrations }: { registrations: typeof
     setError(current => current?.query === query ? current : null);
     setBackgroundError(null);
     setPendingQuery(query);
-    const saved = catalog.current?.results.get(catalogKey(query));
-    const cached = saved ? { query, results: saved, resultSets: catalog.current!.resultSets?.get(catalogKey(query)), metrics: { serverMs: 0, evaluated: catalog.current!.results.size } } : recent.current.get(catalogKey(query));
+    const key = catalogKey(query);
+    const saved = catalog.current?.results.get(key);
+    const cached = saved ? { query, results: saved, resultSets: catalog.current!.resultSets?.get(key), metrics: { serverMs: 0, evaluated: catalog.current!.results.size } } : recent.current.get(key);
     let receivedPartial = false;
     try {
       if (cached) {
+        // Catalog answers never reach the API, so the search is recorded with a
+        // beacon, once per string per page visit.
+        if (saved && !recorded.current.has(key)) {
+          recorded.current.add(key);
+          try { navigator.sendBeacon(HIT_URL, JSON.stringify({ query })); } catch { /* Recording never blocks a search. */ }
+        }
         showResults({ ...cached, query });
         return;
       }
+      recorded.current.add(key);
       const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
