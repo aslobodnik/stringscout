@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { withdrawnClaims } from "@/data/announcedAdapter";
 import { GOLD, ogFonts, PageCard } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 const OXBLOOD_70 = "rgba(110, 42, 36, 0.7)"; // the page's decoration-oxblood/70
 
 export const size = { width: 1200, height: 630 };
