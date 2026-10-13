@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { GOLD, INK, INK_SOFT, ogFonts, PAPER_DEEP, PageCard, RULE } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Stringscout Explore — a ski search with related strings: mountain, lift, resort, gear, edge, and himalaya.";

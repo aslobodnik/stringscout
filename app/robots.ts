@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/data/meta";
 
+export const dynamic = "force-static";
+
 // Everything here is a public record compiled from public sources, so nothing
 // is disallowed — including to the AI crawlers, which are named only to say so
 // explicitly rather than to leave it to a wildcard they may read differently.

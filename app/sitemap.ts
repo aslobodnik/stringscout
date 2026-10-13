@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE, lastUpdated } from "@/data/meta";
 
+export const dynamic = "force-static";
+
 // lastModified is the date the data changed, not the date the build ran: a
 // rebuild that adds nothing should not tell a crawler every page is new.
 export default function sitemap(): MetadataRoute.Sitemap {

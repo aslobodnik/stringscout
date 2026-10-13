@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { INK_SOFT, OXBLOOD, ogFonts, PageCard } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Stringscout Overlaps: applicants for strings in the same contention set may not communicate, directly or indirectly, with each other about their applications or any strategy for the string. AGB §5.2.3.1";

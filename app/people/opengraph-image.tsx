@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { buildReal } from "@/app/prototype/reveal/real";
 import { ogFonts, PageCard, Rows } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Stringscout People: the count of people the applications name and the first five by applications, with entities and applications for each";
