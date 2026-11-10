@@ -19,6 +19,9 @@ const pill = "max-w-full rounded-full border border-rule bg-paper-deep/50 px-5 p
 const pillTone = (result: ExploreResult) => result.existing
   ? "text-gold"
   : "text-ink";
+// glosses are for strings in a script a reader may not read; a Latin-script
+// string keeps its gloss for search but shows none, as on the strings table
+const showGloss = (result: ExploreResult) => !!result.gloss && /[^\x00-\x7f]/.test(result.tld);
 type SearchError = { query: string };
 type Scope = "new" | "both" | "existing";
 const resultsForScope = (response: ExploreResponse, scope: Scope) =>
@@ -239,7 +242,7 @@ export default function ExploreSearch({ registrations }: { registrations: typeof
                     <li key={result.tld} className="max-w-full">
                       <span className={`${pill} ${pillTone(result)} block`}>
                         <Tld>{result.tld}</Tld>
-                        {result.gloss && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
+                        {showGloss(result) && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
                         {result.existing && <RegistrationCount count={registrations.counts[result.tld]} />}
                         {result.availability === "coming-soon" && <span className="ml-2 text-xs text-ink-soft">Coming soon</span>}
                       </span>
@@ -257,7 +260,7 @@ export default function ExploreSearch({ registrations }: { registrations: typeof
                     >
                       <Tld>{result.tld}</Tld>
                       {scope !== "new" && <span className="sr-only">{result.existing ? ", existing TLD" : ", new string"}</span>}
-                      {result.gloss && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
+                      {showGloss(result) && <span className="ml-2 text-sm text-ink-soft">{result.gloss}</span>}
                       {result.existing && <RegistrationCount count={registrations.counts[result.tld]} />}
                       {result.availability === "coming-soon" && <span className="ml-2 text-xs text-ink-soft">Coming soon</span>}
                     </button>
