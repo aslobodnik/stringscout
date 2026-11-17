@@ -31,6 +31,14 @@ export type MockApp = {
   replacementU?: string; // an IDN replacement's U-label
   replacementGloss?: string;
   status: Status;
+  // String Confirmation Day, 17 Nov 2026: kept its string, switched to its
+  // replacement (AGB §5.1), or withdrawn
+  outcome?: "kept" | "switched" | "withdrawn";
+  from?: string; // a switched application's Reveal Day string, A-label
+  fromU?: string;
+  // on the string a switched application left: the string it moved to
+  now?: string;
+  nowU?: string;
   // every application that knocks the replacement out (AGB §5.1): one that
   // applied for the same string, or one that named it as its replacement too
   blockers: { name: string; how: "applied" | "named" }[];

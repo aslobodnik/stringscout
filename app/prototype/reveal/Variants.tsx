@@ -59,6 +59,7 @@ const CSV_COLS = [
   "parents",
   "replacements",
   "replacement_status",
+  "confirmation",
   "kinds",
 ] as const;
 
@@ -118,7 +119,7 @@ const matches = (
   if (!t) return true;
   // the string or the replacement the application names: a string named only
   // as a replacement is found by its name too
-  const string = [a.tld, a.uLabel, a.replacement, a.replacementU].some((x) => x?.toLowerCase().includes(t));
+  const string = [a.tld, a.uLabel, a.replacement, a.replacementU, a.from, a.fromU].some((x) => x?.toLowerCase().includes(t));
   const applicant = a.applicant.toLowerCase().includes(t);
   const parent =
     (a.entity.parent ?? "").toLowerCase().includes(t) ||
@@ -155,11 +156,6 @@ type Opt<T> = { value: T; short: string; detail: string };
 const SCOPE_OPTS: Opt<Exclude<Scope, "all">>[] = [
   { value: "contention", short: SCOPE_LABEL.contention, detail: "Two or more applications for the string: a contention set." },
   { value: "uncontested", short: SCOPE_LABEL.uncontested, detail: "One application for the string." },
-];
-const RMARK_OPTS: Opt<RMark>[] = [
-  { value: "live", short: "Live", detail: "Replacement named, and nobody else applied for it or named it (AGB §5.1)." },
-  { value: "blocked", short: "Blocked", detail: "Replacement named, but another applicant applied for it or named it too (AGB §5.1)." },
-  { value: "none", short: "None", detail: "No replacement string named." },
 ];
 
 // The name, then the control: two grid cells, so the names of both filters
@@ -222,6 +218,22 @@ function Chip({ label, onClear }: { label: string; onClear: () => void }) {
     </button>
   );
 }
+
+// String Confirmation Day, 17 Nov 2026: what became of each application
+type Outcome = "kept" | "switched" | "withdrawn";
+// an application no longer on this string: withdrawn, or the line left on its
+// Reveal Day string by one that switched
+const gone = (a: MockApp) => a.outcome === "withdrawn" || !!a.now;
+// the replacement choice on String Confirmation Day, 17 Nov 2026 (AGB §5.1)
+const REPLACEMENT_OPTS: Opt<Outcome>[] = [
+  { value: "switched", short: "Used", detail: "Switched to its replacement on 17 Nov 2026 (AGB §5.1)." },
+  { value: "kept", short: "Not used", detail: "Had a live replacement on 17 Nov 2026 and kept the string it applied for." },
+];
+const WITHDRAWN_OPT: Opt<"withdrawn"> = {
+  value: "withdrawn",
+  short: "Dropped",
+  detail: "Strings nobody holds after 17 Nov 2026: every applicant withdrew or switched to its replacement.",
+};
 
 // Who stands behind the applicant, linking to its group. A declared parent
 // prints as its name; an inferred tie prints as the evidence, so nothing reads
@@ -371,19 +383,43 @@ const Row = memo(function Row({
       <td className="py-2 pr-2 sm:pr-4 font-medium whitespace-nowrap">
         <Shown a={r.apps[0]} cell />
       </td>
-      <td className="py-2 pr-2 sm:pr-4 tabular-nums">{r.apps.length}</td>
+      {/* applications still in, over all of them when some withdrew */}
+      <td className="py-2 pr-2 sm:pr-4 tabular-nums whitespace-nowrap">
+        {(() => {
+          const live = r.apps.filter((a) => !gone(a)).length;
+          return live === r.apps.length ? live : (
+            <>
+              {live}
+              <span className="text-ink-soft">/{r.apps.length}</span>
+            </>
+          );
+        })()}
+      </td>
       {/* one line per application: its replacement, who applied, who is behind them */}
       <td className="py-2">
         {r.apps.map((a, li) => {
-          const g = groupOf.get(a.group)!;
-          const dim = dims[li] === "1";
+          // an applicant whose only application was withdrawn has no group
+          const g = groupOf.get(a.group) ?? ({ link: null } as unknown as MockGroup);
+          const dim = dims[li] === "1" || a.outcome === "withdrawn";
           return (
             <div
               key={a.id}
               className={`${LINE} ${li ? "mt-1.5" : ""} ${dim ? "opacity-40" : ""} transition-opacity duration-200 ease-in-out`}
             >
               <span className="[overflow-wrap:anywhere]">
-                <Replacement a={a} />
+                {/* a switched application used its replacement; the cell
+                    shows the string it gave up instead */}
+                {a.now ? (
+                  <span className="text-ink-soft">
+                    <span className="serif italic">now</span> .{a.nowU ?? a.now}
+                  </span>
+                ) : a.from ? (
+                  <span className="text-ink-soft">
+                    <span className="serif italic">was</span> .{a.fromU ?? a.from}
+                  </span>
+                ) : (
+                  <Replacement a={a} />
+                )}
               </span>
               <span>
                 <Hover tip={(cut) => <Behind a={a} cut={cut} />} className={FIT}>
@@ -403,6 +439,7 @@ const Row = memo(function Row({
                     {KIND_TAG[kindOf(a)]}
                   </span>
                 )}
+                {a.outcome === "withdrawn" && <span className={`${TAG} text-oxblood ml-2`}>withdrawn</span>}
                 <MockTag on={a.fixture} />
                 {/* below lg the parent has no column: it sits under the name */}
                 {g.link && (
@@ -495,7 +532,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
     // later, after the router's own scroll to the top of the new page
     requestAnimationFrame(() => document.getElementById("strings-search")?.scrollIntoView({ block: "start" }));
   }, []);
-  const [rmark, setRmark] = useState<RMark | null>(null);
+  const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [cursor, setCursor] = useState(-1); // highlighted suggestion
   const [suggesting, setSuggesting] = useState(false);
 
@@ -538,12 +575,27 @@ export default function Reveal({ data: d }: { data: MockData }) {
   };
   const strings = useMemo(() => {
     const m = new Map<string, MockApp[]>();
-    for (const a of d.apps) m.set(a.tld, [...(m.get(a.tld) ?? []), a]);
+    // a switched application also leaves a line on the string it gave up
+    const left = d.apps
+      .filter((a) => a.from)
+      .map((a): MockApp => ({
+        ...a,
+        id: `${a.id}~left`,
+        tld: a.from!,
+        uLabel: a.fromU,
+        gloss: undefined,
+        from: undefined,
+        fromU: undefined,
+        now: a.tld,
+        nowU: a.uLabel,
+      }));
+    for (const a of [...d.apps, ...left]) m.set(a.tld, [...(m.get(a.tld) ?? []), a]);
     // within a string: applications with a replacement first, by replacement
     return [...m.entries()].map(([tld, apps]) => ({
       tld,
       apps: [...apps].sort(
         (x, y) =>
+          Number(gone(x)) - Number(gone(y)) ||
           Number(!x.replacement) - Number(!y.replacement) ||
           (x.replacement ?? "").localeCompare(y.replacement ?? "") ||
           x.applicant.localeCompare(y.applicant),
@@ -561,20 +613,30 @@ export default function Reveal({ data: d }: { data: MockData }) {
     return (a: MockApp) =>
       hit(a) &&
       matches(a, dq, groupOf.get(a.group), dby, peopleOn.get(a.id)) &&
-      (!rmark || rmarkOf(a) === rmark) &&
+      (!outcome ||
+        (outcome === "withdrawn"
+          ? gone(a)
+          : !a.now && a.outcome === outcome && (outcome !== "kept" || rmarkOf(a) === "live"))) &&
       (!applicant || a.applicant === applicant) &&
       (kind === "all" || kindOf(a) === kind);
-  }, [scope, dq, dby, rmark, applicant, kind, groupOf, peopleOn]);
+  }, [scope, dq, dby, outcome, applicant, kind, groupOf, peopleOn]);
   const filtering =
-    scope !== "all" || dq.trim() || rmark || applicant || kind !== "all";
+    scope !== "all" || dq.trim() || outcome || applicant || kind !== "all";
   const rows = useMemo(
-    () => strings.filter((r) => r.apps.some(keep)),
-    [strings, keep],
+    () =>
+      strings
+        .filter((r) => (outcome === "withdrawn" ? r.apps.every(gone) : true))
+        // a withdrawn application stays at the foot of its row, greyed; the
+        // line a switched one left shows only under Dropped
+        .map((r) => (outcome === "withdrawn" ? r : { ...r, apps: r.apps.filter((a) => !a.now) }))
+        .filter((r) => r.apps.length && r.apps.some(keep)),
+    [strings, keep, outcome],
   );
   // rows arrive A to Z; the sort is stable, so equal counts keep that order
   const sorted = useMemo(() => {
     if (sort.key === "string") return sort.dir === 1 ? rows : [...rows].reverse();
-    return [...rows].sort((a, b) => (a.apps.length - b.apps.length) * sort.dir);
+    const live = (r: { apps: MockApp[] }) => r.apps.filter((a) => !gone(a)).length;
+    return [...rows].sort((a, b) => (live(a) - live(b)) * sort.dir);
   }, [rows, sort]);
   const stale = dq !== q || dby !== by; // the table is still catching up with the box
   // stable, so the memoised rows skip a render when only the box changed
@@ -592,7 +654,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
     const list = (apps: MockApp[], f: (a: MockApp) => string) => apps.map(f).join("; ");
     const slice = [
       scope !== "all" && SCOPE_LABEL[scope],
-      rmark && `replacement-${rmark}`,
+      outcome,
       kind !== "all" && kind,
       applicant,
       dq.trim(),
@@ -608,12 +670,13 @@ export default function Reveal({ data: d }: { data: MockData }) {
           apps[0].uLabel ?? tld,
           tld,
           apps[0].gloss ?? "",
-          String(apps.length),
+          String(apps.filter((a) => !gone(a)).length),
           apps[0].setSize > 1 ? "yes" : "no",
           list(apps, (a) => a.applicant),
           list(apps, parent),
           list(apps, (a) => a.replacementU ?? a.replacement ?? ""),
           list(apps, rmarkOf),
+          list(apps, (a) => a.outcome ?? ""),
           list(apps, kindOf),
         ]),
       ),
@@ -629,7 +692,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
   const kinds = KINDS.map((k) => ({
     k: k.value,
     label: k.label,
-    v: strings.filter((r) => kindOfRow(r.apps) === k.value).length,
+    v: strings.filter((r) => r.apps.some((a) => !gone(a)) && kindOfRow(r.apps.filter((a) => !gone(a))) === k.value).length,
   }));
   return (
     <section className="mb-14">
@@ -746,20 +809,28 @@ export default function Reveal({ data: d }: { data: MockData }) {
             </span>
           </button>
         </div>
-        {/* a line each until lg, where both fit on one */}
-        <div className="mt-3 grid min-[360px]:grid-cols-[max-content_max-content] justify-start items-center gap-x-3 gap-y-2 lg:flex">
-          <Segmented
+        {/* one control a line: what state the string is in, then what its
+            applicant did with the replacement */}
+        <div className="mt-3 grid min-[360px]:grid-cols-[max-content_max-content] justify-start items-center gap-x-3 gap-y-2">
+          <Segmented<Exclude<Scope, "all"> | "withdrawn">
             label="Strings"
-            value={scope === "all" ? null : scope}
-            options={SCOPE_OPTS}
-            onPick={(m) => setScope(scope === m ? "all" : m)}
+            value={outcome === "withdrawn" ? "withdrawn" : scope === "all" ? null : scope}
+            options={[...SCOPE_OPTS, WITHDRAWN_OPT]}
+            onPick={(m) => {
+              if (m === "withdrawn") {
+                setScope("all");
+                setOutcome(outcome === "withdrawn" ? null : "withdrawn");
+                return;
+              }
+              if (outcome === "withdrawn") setOutcome(null);
+              setScope(scope === m ? "all" : m);
+            }}
           />
           <Segmented
             label="Replacement"
-            value={rmark}
-            options={RMARK_OPTS}
-            onPick={(m) => setRmark(rmark === m ? null : m)}
-            className="lg:ml-5"
+            value={outcome === "withdrawn" ? null : outcome}
+            options={REPLACEMENT_OPTS}
+            onPick={(m) => setOutcome(outcome === m ? null : m)}
           />
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-3 min-h-7">
@@ -802,8 +873,8 @@ export default function Reveal({ data: d }: { data: MockData }) {
             <th className="pb-2 font-medium align-bottom">
               <span className={LINE}>
                 <span className={`${TH} !pb-0 !pr-0`}>
-                  <span className="sm:hidden">Repl.</span>
-                  <span className="hidden sm:inline">Replacement</span>
+                  <span className="sm:hidden">{outcome === "switched" ? "Orig." : "Repl."}</span>
+                  <span className="hidden sm:inline">{outcome === "switched" ? "Original" : "Replacement"}</span>
                 </span>
                 <span className={`${TH} !pb-0 !pr-0`}>Applicant</span>
                 <span className={`${TH} !pb-0 !pr-0 hidden lg:block`}>
@@ -814,7 +885,7 @@ export default function Reveal({ data: d }: { data: MockData }) {
           </tr>
         </thead>
         <tbody
-          key={`${scope}|${dby}|${rmark}|${applicant}|${kind}|${sort.key}|${sort.dir}`}
+          key={`${scope}|${dby}|${outcome}|${applicant}|${kind}|${sort.key}|${sort.dir}`}
           className={`transition-opacity duration-200 ease-in-out ${stale ? "opacity-60" : ""}`}
         >
           {sorted.map((r, vi) => (

@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import Feedback from "@/components/Feedback";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE } from "@/data/meta";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
           </div>
         </div>
+        <Feedback />
         <Analytics />
         <SpeedInsights />
       </body>

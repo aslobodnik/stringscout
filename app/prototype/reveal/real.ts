@@ -14,6 +14,15 @@ import type { AppType, Link, MockApp, MockData, MockEntity, MockGroup, MockPerso
 
 // the one derived file, from scripts/derive-aps.mjs; the raw pull stays out of git
 const DERIVED = path.join(process.cwd(), "data/icann/aps-derived.json");
+// String Confirmation Day outcomes, from scripts/pull-confirmation.mjs
+const CONFIRMED = path.join(process.cwd(), "data/icann/confirmation.json");
+function readOutcomes(): Record<string, MockApp["outcome"]> {
+  try {
+    return JSON.parse(fs.readFileSync(CONFIRMED, "utf8")).outcome;
+  } catch {
+    return {};
+  }
+}
 
 type ListRow = {
   applicationHumanReadableId: string;
@@ -110,6 +119,7 @@ let cache: MockData | null = null;
 export function buildReal(): MockData {
   if (cache && process.env.NODE_ENV === "production") return cache;
   const { list, answers: answered } = readDerived();
+  const outcomes = readOutcomes();
 
   // the replacement record for a primary carries the primary's id plus "-R"
   const replacementOf = new Map<string, ListRow>();
@@ -176,8 +186,7 @@ export function buildReal(): MockData {
     const rep = replacementOf.get(r.applicationHumanReadableId);
     if (rep) replacedBy.set(label(rep), [...(replacedBy.get(label(rep)) ?? []), r]);
   }
-  const applied = new Set(appliedBy.keys());
-  const named = new Set([...applied, ...replacedBy.keys()]);
+  const named = new Set([...appliedBy.keys(), ...replacedBy.keys()]);
 
   const details = new Map<string, Detail | null>();
   const entitySlug = (org: string) => slugify(norm(org)) || slugify(org);
@@ -222,6 +231,7 @@ export function buildReal(): MockData {
       slug,
       replacement,
       status,
+      outcome: outcomes[r.applicationHumanReadableId],
       blockers,
       near,
       setSize: appliedBy.get(tld)!.length,
@@ -240,6 +250,31 @@ export function buildReal(): MockData {
       group: slug, // set below
     };
   });
+
+  // String Confirmation Day: a switched application now stands on its
+  // replacement, which it has used; a withdrawn one stays for the record and
+  // counts toward nothing
+  for (const a of apps) {
+    if (a.outcome !== "switched" || !a.replacement) continue;
+    Object.assign(a, {
+      from: a.tld,
+      fromU: a.uLabel,
+      tld: a.replacement,
+      uLabel: a.replacementU,
+      gloss: a.replacementGloss,
+      replacement: null,
+      replacementU: undefined,
+      replacementGloss: undefined,
+      blockers: [],
+      status: "none",
+      near: undefined,
+    });
+  }
+  const live = (a: MockApp) => a.outcome !== "withdrawn";
+  const holding = new Map<string, number>();
+  for (const a of apps) if (live(a)) holding.set(a.tld, (holding.get(a.tld) ?? 0) + 1);
+  for (const a of apps) a.setSize = holding.get(a.tld) ?? 0;
+  const applied = new Set(holding.keys());
 
   // groups: entities under the same declared parent (Q36 ultimate, else Q26
   // direct). Shared directors and addresses are real in the record but
@@ -278,13 +313,16 @@ export function buildReal(): MockData {
   }
   for (const [slug, p] of parentOf) linkOf.set(find(slug), { link: "parent", evidence: p });
   for (const a of apps) a.group = find(a.slug);
+  // groups, people and overlaps read today's record: a withdrawn application
+  // stays only on the strings table
+  const current = apps.filter(live);
 
   apps.sort((x, y) => x.tld.localeCompare(y.tld) || x.applicant.localeCompare(y.applicant));
 
   const sets: MockSet[] = [...applied]
-    .filter((t) => appliedBy.get(t)!.length > 1)
+    .filter((t) => holding.get(t)! > 1)
     .map((tld) => {
-      const members = apps.filter((a) => a.tld === tld);
+      const members = apps.filter((a) => a.tld === tld && live(a));
       const switchable = members.filter((a) => a.status === "open").length;
       const stuck = members.length - switchable;
       const outlook: Outlook = stuck === 0 ? "empty" : stuck === 1 ? "resolve" : "stays";
@@ -293,10 +331,10 @@ export function buildReal(): MockData {
     .sort((x, y) => y.apps.length - x.apps.length || x.tld.localeCompare(y.tld));
 
   const disclosed: Record<string, number> = {};
-  for (const a of apps) if (a.preReveal) disclosed[a.slug] = (disclosed[a.slug] ?? 0) + 1;
+  for (const a of current) if (a.preReveal) disclosed[a.slug] = (disclosed[a.slug] ?? 0) + 1;
 
   const byGroup = new Map<string, MockApp[]>();
-  for (const a of apps) byGroup.set(a.group, [...(byGroup.get(a.group) ?? []), a]);
+  for (const a of current) byGroup.set(a.group, [...(byGroup.get(a.group) ?? []), a]);
   const groupName = (root: string) => {
     const l = linkOf.get(root);
     if (l?.link === "parent") return l.evidence;
@@ -313,7 +351,7 @@ export function buildReal(): MockData {
       const meets = new Map<string, string[]>();
       for (const a of mine)
         if (a.setSize > 1)
-          for (const o of apps)
+          for (const o of current)
             if (o.tld === a.tld && o.group !== root)
               meets.set(o.group, [...new Set([...(meets.get(o.group) ?? []), a.tld])]);
       const entities: MockEntity[] = [...ents.entries()]
@@ -346,7 +384,7 @@ export function buildReal(): MockData {
   const PERSON_ROLES = new Set(["Directors", "Officers & partners", "Executive responsibility"]);
   const personMap = new Map<string, MockPerson>();
   const entityApps = new Map<string, MockApp[]>();
-  for (const a of apps) entityApps.set(a.slug, [...(entityApps.get(a.slug) ?? []), a]);
+  for (const a of current) entityApps.set(a.slug, [...(entityApps.get(a.slug) ?? []), a]);
   for (const [slug, mine] of entityApps) {
     const d = details.get(mine[0].id);
     if (!d) continue;
@@ -367,7 +405,7 @@ export function buildReal(): MockData {
     .map((p) => ({ ...p, inSets: p.apps.filter((a) => a.setSize > 1).length, apps: [...p.apps].sort((x, y) => x.tld.localeCompare(y.tld)) }))
     .sort((x, y) => y.apps.length - x.apps.length || x.name.localeCompare(y.name));
 
-  const contended = apps.filter((a) => a.setSize > 1);
+  const contended = apps.filter((a) => live(a) && a.setSize > 1);
   cache = {
     people: persons,
     apps,
@@ -376,14 +414,14 @@ export function buildReal(): MockData {
     disclosed,
     stats: {
       groups: groups.length,
-      applications: apps.length,
+      applications: apps.filter(live).length,
       strings: applied.size,
-      applicants: new Set(apps.map((a) => a.slug)).size,
-      replacements: apps.filter((a) => a.replacement).length,
+      applicants: new Set(current.map((a) => a.slug)).size,
+      replacements: current.filter((a) => a.replacement).length,
       sets: sets.length,
       inContention: contended.length,
       canSwitch: contended.filter((a) => a.status === "open").length,
-      blocked: apps.filter((a) => a.status.startsWith("blocked")).length,
+      blocked: current.filter((a) => a.status.startsWith("blocked")).length,
       people: persons.length,
     },
   };

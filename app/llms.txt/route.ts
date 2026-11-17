@@ -16,8 +16,8 @@ export function GET() {
 
 > Every string applied for in ICANN's 2026 new gTLD round, who applied, and
 > who stands behind them: ${n(s.strings)} strings in ${n(s.applications)} applications from
-> ${n(s.groups)} applicants, ${n(s.sets)} strings in contention. From ICANN's own record,
-> published on Reveal Day, 7 October 2026. Last updated ${lastUpdated}.
+> ${n(s.groups)} applicants, ${n(s.sets)} strings in contention. From ICANN's own record
+> as of String Confirmation Day, 17 November 2026. Last updated ${lastUpdated}.
 
 ## Read the terms exactly
 
@@ -29,7 +29,11 @@ export function GET() {
 - **Replacement**: the one alternative string an application may name
   (AGB §5.1). **Live** when no other application applied for it or named it,
   **blocked** otherwise. A blocked replacement is struck through, with the
-  number of applications that block it.
+  number of applications that block it. On 17 November 2026 an application
+  either **used** its replacement, which became its string, or kept its own.
+- **Withdrawn**: an application withdrawn by 17 November 2026. It stays on its
+  string's row, greyed, and is counted nowhere. **Dropped**: a string every
+  applicant withdrew from or switched away from.
 - **Parent**: the direct parent the application names (AGB Q26), else the
   ultimate parent (AGB Q36). Applicants under one parent are one group.
 - **People**: everyone an application names as director, officer or partner,
@@ -42,7 +46,7 @@ export function GET() {
 
 - [Strings](${SITE}/): every string, its applications, their replacements,
   applicants and parents. Sort by string or by number of applications; filter
-  by contested or uncontested and by replacement live, blocked or none.
+  by contested, uncontested or dropped, and by replacement used or not used.
 - [Applicants](${SITE}/applicants): each group and the entities in it, most
   applications first, with the people its records name.
 - [Overlaps](${SITE}/overlap): pick a person; it lists everyone who shares a
