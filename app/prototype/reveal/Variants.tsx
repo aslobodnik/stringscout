@@ -154,8 +154,8 @@ const rmarkOf = (a: MockApp): RMark =>
   !a.replacement ? "none" : a.blockers.length ? "blocked" : "live";
 type Opt<T> = { value: T; short: string; detail: string };
 const SCOPE_OPTS: Opt<Exclude<Scope, "all">>[] = [
-  { value: "contention", short: SCOPE_LABEL.contention, detail: "Two or more applications for the string: a contention set." },
-  { value: "uncontested", short: SCOPE_LABEL.uncontested, detail: "One application for the string." },
+  { value: "contention", short: SCOPE_LABEL.contention, detail: "Two or more applications." },
+  { value: "uncontested", short: SCOPE_LABEL.uncontested, detail: "One application." },
 ];
 
 // The name, then the control: two grid cells, so the names of both filters
@@ -226,13 +226,13 @@ type Outcome = "kept" | "switched" | "withdrawn";
 const gone = (a: MockApp) => a.outcome === "withdrawn" || !!a.now;
 // the replacement choice on String Confirmation Day, 17 Nov 2026 (AGB §5.1)
 const REPLACEMENT_OPTS: Opt<Outcome>[] = [
-  { value: "switched", short: "Used", detail: "Switched to its replacement on 17 Nov 2026 (AGB §5.1)." },
-  { value: "kept", short: "Not used", detail: "Had a live replacement on 17 Nov 2026 and kept the string it applied for." },
+  { value: "switched", short: "Used", detail: "Switched to its replacement on 17 Nov (AGB §5.1)." },
+  { value: "kept", short: "Not used", detail: "Kept its string over a live replacement." },
 ];
 const WITHDRAWN_OPT: Opt<"withdrawn"> = {
   value: "withdrawn",
   short: "Dropped",
-  detail: "Strings nobody holds after 17 Nov 2026: every applicant withdrew or switched to its replacement.",
+  detail: "Every applicant withdrew or switched away.",
 };
 
 // Who stands behind the applicant, linking to its group. A declared parent

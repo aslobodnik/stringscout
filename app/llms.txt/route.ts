@@ -16,8 +16,8 @@ export function GET() {
 
 > Every string applied for in ICANN's 2026 new gTLD round, who applied, and
 > who stands behind them: ${n(s.strings)} strings in ${n(s.applications)} applications from
-> ${n(s.groups)} applicants, ${n(s.sets)} strings in contention. From ICANN's own record
-> as of String Confirmation Day, 17 November 2026. Last updated ${lastUpdated}.
+> ${n(s.groups)} applicants, ${n(s.sets)} strings in contention. From ICANN's own
+> record. Last updated ${lastUpdated}.
 
 ## Read the terms exactly
 
@@ -31,7 +31,7 @@ export function GET() {
   **blocked** otherwise. A blocked replacement is struck through, with the
   number of applications that block it. On 17 November 2026 an application
   either **used** its replacement, which became its string, or kept its own.
-- **Withdrawn**: an application withdrawn by 17 November 2026. It stays on its
+- **Withdrawn**: an application ICANN lists as withdrawn. It stays on its
   string's row, greyed, and is counted nowhere. **Dropped**: a string every
   applicant withdrew from or switched away from.
 - **Parent**: the direct parent the application names (AGB Q26), else the

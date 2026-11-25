@@ -24,6 +24,28 @@ function readOutcomes(): Record<string, MockApp["outcome"]> {
   }
 }
 
+// withdrawals ICANN published after String Confirmation Day, newest first,
+// one entry per applicant per day
+export function recentWithdrawals(): { date: string; applicant: string; tlds: string[] }[] {
+  let on: Record<string, string> = {};
+  try {
+    on = JSON.parse(fs.readFileSync(CONFIRMED, "utf8")).withdrawnOn ?? {};
+  } catch {}
+  const byId = new Map(readDerived().list.map((r) => [r.applicationHumanReadableId, r]));
+  const groups = new Map<string, { date: string; applicant: string; tlds: string[] }>();
+  for (const [id, date] of Object.entries(on)) {
+    const r = byId.get(id);
+    if (!r || date <= "2026-11-17") continue;
+    const key = `${date} ${r.organizationName}`;
+    const g = groups.get(key) ?? { date, applicant: r.organizationName, tlds: [] };
+    g.tlds.push(r.primaryString.aLabel);
+    groups.set(key, g);
+  }
+  return [...groups.values()]
+    .map((g) => ({ ...g, tlds: g.tlds.sort() }))
+    .sort((a, b) => b.date.localeCompare(a.date) || a.applicant.localeCompare(b.applicant));
+}
+
 type ListRow = {
   applicationHumanReadableId: string;
   primaryString: { aLabel: string; uLabel: string };

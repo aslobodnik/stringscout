@@ -1,9 +1,10 @@
 // String Confirmation Day (17 Nov 2026): what became of each Reveal Day
 // application. Reads ICANN's current APS list and writes one outcome per
 // Reveal Day primary to data/icann/confirmation.json. The Reveal Day record
-// (aps-derived.json) is left as it is.
+// (aps-derived.json) is left as it is. Each withdrawal keeps the date ICANN
+// first published it (the application's lastPublishedAt when first seen).
 //   node scripts/pull-confirmation.mjs
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const API = "https://newgtldprogram-aps.icann.org/aps";
@@ -43,6 +44,24 @@ for (const r of reveal) {
   outcome[id] = o;
   tally[o] = (tally[o] ?? 0) + 1;
 }
-writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, active: stats.applications.totalNumOfApplications - (stats.applications.byStatus.find((s) => s.status === "Withdrawn")?.count ?? 0), uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome }, null, 1));
+// a date once recorded stays: a later republish moves lastPublishedAt
+const before = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")).withdrawnOn ?? {} : {};
+const withdrawnOn = {};
+for (const [id, o] of Object.entries(outcome)) {
+  if (o !== "withdrawn") continue;
+  if (before[id]) { withdrawnOn[id] = before[id]; continue; }
+  let r;
+  for (let t = 1; ; t++) {
+    r = await fetch(`${API}/applications/${encodeURIComponent(id)}/summary`, { headers: UA });
+    if (r.status !== 429 || t === 6) break;
+    await new Promise((res) => setTimeout(res, 1000 * 2 ** t));
+  }
+  if (!r.ok) throw new Error(`summary ${id}: ${r.status}`);
+  withdrawnOn[id] = (await r.json()).applicationDetails.lastPublishedAt.slice(0, 10);
+}
+// counted from the list: the stats endpoint's status counts run ahead of the
+// published records (25 Nov 2026: 40 withdrawn there, 21 in the list)
+const active = now.filter((r) => r.applicationStatus === "Active").length;
+writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn }, null, 1));
 console.log(tally);
 for (const [id, o] of Object.entries(outcome)) if (o.startsWith("other")) console.log(id, o);
