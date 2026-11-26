@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TopBar } from "@/components/PageHeader";
 import PageIntro from "@/components/PageIntro";
-import { buildReal, recentWithdrawals } from "@/app/prototype/reveal/real";
+import { buildReal, recentWithdrawals, withdrawalCheck } from "@/app/prototype/reveal/real";
 import { LINK } from "@/app/prototype/reveal/bits";
-import { formatDate } from "@/lib/format";
+import RecentWithdrawals from "@/components/RecentWithdrawals";
 import Reveal from "@/app/prototype/reveal/Variants";
 
 export const metadata: Metadata = {
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 export default function Page() {
   const data = buildReal();
   const recent = recentWithdrawals();
+  const check = withdrawalCheck();
   return (
     <>
       <TopBar current="/" />
@@ -29,28 +30,7 @@ export default function Page() {
         </Link>{" "}
         with.
       </PageIntro>
-      {recent.length > 0 && (
-        <section className="mb-8">
-          <h3 className="label text-ink-soft">Recently withdrawn</h3>
-          <ul className="mt-2 text-sm">
-            {recent.map((g) => (
-              <li key={g.date + g.applicant} className="flex gap-4 py-0.5">
-                <span className="w-14 shrink-0 tabular-nums text-ink-soft">{formatDate(g.date).replace(/ \d{4}$/, "")}</span>
-                <span className="shrink-0">
-                  {g.tlds.map((t, i) => (
-                    <span key={t}>
-                      {i > 0 && " "}
-                      {/* a full load: the table reads ?q= once, on mount */}
-                      <a href={`/?q=${t}`} className={LINK}>.{t}</a>
-                    </span>
-                  ))}
-                </span>
-                <span className="truncate text-ink-soft">{g.applicant}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <RecentWithdrawals groups={recent} checkedAt={check.checkedAt} pending={check.pending} />
       <Reveal data={data} />
     </>
   );

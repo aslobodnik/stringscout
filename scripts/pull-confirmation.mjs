@@ -62,6 +62,10 @@ for (const [id, o] of Object.entries(outcome)) {
 // counted from the list: the stats endpoint's status counts run ahead of the
 // published records (25 Nov 2026: 40 withdrawn there, 21 in the list)
 const active = now.filter((r) => r.applicationStatus === "Active").length;
-writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn }, null, 1));
+// withdrawals ICANN has counted but not yet published (the gap closed in the
+// next nightly batch on 25 Nov 2026: 19 counted ahead, 0 left after)
+const statsWithdrawn = stats.applications.byStatus.find((s) => s.status === "Withdrawn")?.count ?? 0;
+const pending = Math.max(0, statsWithdrawn - now.filter((r) => r.applicationStatus === "Withdrawn").length);
+writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, checkedAt: new Date().toISOString(), pending, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn }, null, 1));
 console.log(tally);
 for (const [id, o] of Object.entries(outcome)) if (o.startsWith("other")) console.log(id, o);

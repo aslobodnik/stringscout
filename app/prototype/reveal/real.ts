@@ -24,6 +24,17 @@ function readOutcomes(): Record<string, MockApp["outcome"]> {
   }
 }
 
+// when the 4-hour job last read ICANN, and how many withdrawals ICANN has
+// counted but not yet published
+export function withdrawalCheck(): { checkedAt: string | null; pending: number } {
+  try {
+    const c = JSON.parse(fs.readFileSync(CONFIRMED, "utf8"));
+    return { checkedAt: c.checkedAt ?? null, pending: c.pending ?? 0 };
+  } catch {
+    return { checkedAt: null, pending: 0 };
+  }
+}
+
 // withdrawals ICANN published after String Confirmation Day, newest first,
 // one entry per applicant per day
 export function recentWithdrawals(): { date: string; applicant: string; tlds: string[] }[] {
