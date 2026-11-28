@@ -1,6 +1,6 @@
 {
- "pulledAt": "2026-11-28T16:39:14.098Z",
- "checkedAt": "2026-11-28T17:07:32.094Z",
+ "pulledAt": "2026-11-28T17:09:13.606Z",
+ "checkedAt": "2026-11-28T17:11:30.295Z",
  "pending": 0,
  "active": 1522,
  "uniqueStrings": 1127,
@@ -1717,5 +1717,6 @@
  "viaReplacement": [
   "A2652T-T59922",
   "LFGL2683T-T94977"
- ]
+ ],
+ "unknown": {}
 }

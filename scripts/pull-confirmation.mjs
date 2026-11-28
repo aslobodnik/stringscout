@@ -28,6 +28,10 @@ const now = [...first.applications];
 for (let p = 1; p < Math.ceil(first.totalApplications / first.pageSize); p++) now.push(...(await page(p)).applications);
 const byId = new Map(now.map((r) => [r.applicationHumanReadableId, r]));
 
+// the last committed record: an application in a status this script does not
+// know keeps its last outcome, so one odd row never holds back the rest
+const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : {};
+const unknown = {}; // id -> ICANN status not understood on this pull
 const reveal = JSON.parse(readFileSync(path.resolve("data/icann/aps-derived.json"), "utf8")).list;
 const outcome = {};
 const tally = {};
@@ -37,20 +41,24 @@ for (const r of reveal) {
   const id = r.applicationHumanReadableId;
   const mine = byId.get(id);
   const rep = byId.get(`${id}-R`);
-  const o =
+  let o =
     mine?.applicationStatus === "Active" ? "kept"
     : rep?.applicationStatus === "Active" ? "switched"
     : mine?.applicationStatus === "Withdrawn" ? "withdrawn"
     // switched, then the replacement was withdrawn: ICANN marks the original
     // Deactivated (27 Nov 2026: .operator, .industry)
     : mine?.applicationStatus === "Deactivated" && rep?.applicationStatus === "Withdrawn" ? "withdrawn"
-    : `other:${mine?.applicationStatus ?? "missing"}`;
+    : null;
+  if (!o) {
+    unknown[id] = `${mine?.applicationStatus ?? "missing"}/${rep?.applicationStatus ?? "none"}`;
+    o = prev.outcome?.[id] ?? `other:${mine?.applicationStatus ?? "missing"}`;
+    if (prev.viaReplacement?.includes(id)) viaReplacement.push(id);
+  } else if (o === "withdrawn" && rep?.applicationStatus === "Withdrawn") viaReplacement.push(id);
   outcome[id] = o;
-  if (o === "withdrawn" && rep?.applicationStatus === "Withdrawn") viaReplacement.push(id);
   tally[o] = (tally[o] ?? 0) + 1;
 }
 // a date once recorded stays: a later republish moves lastPublishedAt
-const before = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")).withdrawnOn ?? {} : {};
+const before = prev.withdrawnOn ?? {};
 const withdrawnOn = {};
 for (const [id, o] of Object.entries(outcome)) {
   if (o !== "withdrawn") continue;
@@ -72,6 +80,7 @@ const active = now.filter((r) => r.applicationStatus === "Active").length;
 // next nightly batch on 25 Nov 2026: 19 counted ahead, 0 left after)
 const statsWithdrawn = stats.applications.byStatus.find((s) => s.status === "Withdrawn")?.count ?? 0;
 const pending = Math.max(0, statsWithdrawn - now.filter((r) => r.applicationStatus === "Withdrawn").length);
-writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, checkedAt: new Date().toISOString(), pending, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn, viaReplacement }, null, 1));
+writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, checkedAt: new Date().toISOString(), pending, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn, viaReplacement, unknown }, null, 1));
 console.log(tally);
 for (const [id, o] of Object.entries(outcome)) if (o.startsWith("other")) console.log(id, o);
+for (const [id, st] of Object.entries(unknown)) console.log("unknown:", id, st, "kept as", outcome[id]);
