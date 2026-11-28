@@ -16,6 +16,14 @@ import type { AppType, Link, MockApp, MockData, MockEntity, MockGroup, MockPerso
 const DERIVED = path.join(process.cwd(), "data/icann/aps-derived.json");
 // String Confirmation Day outcomes, from scripts/pull-confirmation.mjs
 const CONFIRMED = path.join(process.cwd(), "data/icann/confirmation.json");
+// applications withdrawn on their replacement string after switching
+function readViaReplacement(): Set<string> {
+  try {
+    return new Set(JSON.parse(fs.readFileSync(CONFIRMED, "utf8")).viaReplacement ?? []);
+  } catch {
+    return new Set();
+  }
+}
 function readOutcomes(): Record<string, MockApp["outcome"]> {
   try {
     return JSON.parse(fs.readFileSync(CONFIRMED, "utf8")).outcome;
@@ -43,13 +51,14 @@ export function recentWithdrawals(): { date: string; applicant: string; tlds: st
     on = JSON.parse(fs.readFileSync(CONFIRMED, "utf8")).withdrawnOn ?? {};
   } catch {}
   const byId = new Map(readDerived().list.map((r) => [r.applicationHumanReadableId, r]));
+  const via = readViaReplacement();
   const groups = new Map<string, { date: string; applicant: string; tlds: string[] }>();
   for (const [id, date] of Object.entries(on)) {
     const r = byId.get(id);
     if (!r || date <= "2026-11-17") continue;
     const key = `${date} ${r.organizationName}`;
     const g = groups.get(key) ?? { date, applicant: r.organizationName, tlds: [] };
-    g.tlds.push(r.primaryString.aLabel);
+    g.tlds.push((via.has(id) && byId.get(`${id}-R`)?.primaryString.aLabel) || r.primaryString.aLabel);
     groups.set(key, g);
   }
   return [...groups.values()]
@@ -287,8 +296,9 @@ export function buildReal(): MockData {
   // String Confirmation Day: a switched application now stands on its
   // replacement, which it has used; a withdrawn one stays for the record and
   // counts toward nothing
+  const via = readViaReplacement();
   for (const a of apps) {
-    if (a.outcome !== "switched" || !a.replacement) continue;
+    if ((a.outcome !== "switched" && !via.has(a.id)) || !a.replacement) continue;
     Object.assign(a, {
       from: a.tld,
       fromU: a.uLabel,

@@ -31,6 +31,7 @@ const byId = new Map(now.map((r) => [r.applicationHumanReadableId, r]));
 const reveal = JSON.parse(readFileSync(path.resolve("data/icann/aps-derived.json"), "utf8")).list;
 const outcome = {};
 const tally = {};
+const viaReplacement = []; // withdrawn on the replacement string, after switching
 for (const r of reveal) {
   if (r.applicationType === "Replacement String") continue;
   const id = r.applicationHumanReadableId;
@@ -40,8 +41,12 @@ for (const r of reveal) {
     mine?.applicationStatus === "Active" ? "kept"
     : rep?.applicationStatus === "Active" ? "switched"
     : mine?.applicationStatus === "Withdrawn" ? "withdrawn"
+    // switched, then the replacement was withdrawn: ICANN marks the original
+    // Deactivated (27 Nov 2026: .operator, .industry)
+    : mine?.applicationStatus === "Deactivated" && rep?.applicationStatus === "Withdrawn" ? "withdrawn"
     : `other:${mine?.applicationStatus ?? "missing"}`;
   outcome[id] = o;
+  if (o === "withdrawn" && rep?.applicationStatus === "Withdrawn") viaReplacement.push(id);
   tally[o] = (tally[o] ?? 0) + 1;
 }
 // a date once recorded stays: a later republish moves lastPublishedAt
@@ -52,7 +57,8 @@ for (const [id, o] of Object.entries(outcome)) {
   if (before[id]) { withdrawnOn[id] = before[id]; continue; }
   let r;
   for (let t = 1; ; t++) {
-    r = await fetch(`${API}/applications/${encodeURIComponent(id)}/summary`, { headers: UA });
+    const at = viaReplacement.includes(id) ? `${id}-R` : id;
+    r = await fetch(`${API}/applications/${encodeURIComponent(at)}/summary`, { headers: UA });
     if (r.status !== 429 || t === 6) break;
     await new Promise((res) => setTimeout(res, 1000 * 2 ** t));
   }
@@ -66,6 +72,6 @@ const active = now.filter((r) => r.applicationStatus === "Active").length;
 // next nightly batch on 25 Nov 2026: 19 counted ahead, 0 left after)
 const statsWithdrawn = stats.applications.byStatus.find((s) => s.status === "Withdrawn")?.count ?? 0;
 const pending = Math.max(0, statsWithdrawn - now.filter((r) => r.applicationStatus === "Withdrawn").length);
-writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, checkedAt: new Date().toISOString(), pending, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn }, null, 1));
+writeFileSync(OUT, JSON.stringify({ pulledAt: stats.generatedAt, checkedAt: new Date().toISOString(), pending, active, uniqueStrings: stats.applications.totalNumOfUniquePrimaryStrings, outcome, withdrawnOn, viaReplacement }, null, 1));
 console.log(tally);
 for (const [id, o] of Object.entries(outcome)) if (o.startsWith("other")) console.log(id, o);
